@@ -1,0 +1,15 @@
+{
+  "repository": "PseudoDesign/kaiba-provisioning",
+  "jobs": [
+    "checks.aarch64-linux.stable-verifier-aarch64-kexec-vm",
+    "checks.aarch64-linux.stable-handoff-aarch64-kexec-file-vm",
+    "checks.aarch64-linux.device-secret-target-luks-vm",
+    "checks.aarch64-linux.device-secret-storage-development-vm",
+    "checks.aarch64-linux.enrollment-storage-vm",
+    "checks.aarch64-linux.copied-storage-vm",
+    "checks.aarch64-linux.device-secret-offline-storage-vm",
+    "checks.aarch64-linux.device-secret-execution-vm",
+    "checks.aarch64-linux.stable-campaign-provisioner-unsigned-artifacts",
+    "checks.aarch64-linux.device-secret-target-artifacts"
+  ]
+}
