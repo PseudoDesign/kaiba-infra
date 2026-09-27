@@ -1,0 +1,13 @@
+--- a/GithubStatus.pm
++++ b/GithubStatus.pm
+@@ -36,3 +36,3 @@
+         my $jobName = showJobName $build;
+-        my $evals = $topbuild->jobsetevals;
++        my $evals = $build->jobsetevals;
+         my $ua = LWP::UserAgent->new();
+@@ -78,3 +78,4 @@
+                     my $res = $ua->request($req);
+-                    print STDERR $res->status_line, ": ", $res->decoded_content, "\n" unless $res->is_success;
++                    die "GitHub status request failed: HTTP " . $res->code . "\n"
++                        unless $res->is_success;
+                     my $limit = $res->header("X-RateLimit-Limit");

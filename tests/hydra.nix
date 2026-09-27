@@ -1,5 +1,15 @@
 { pkgs }:
-pkgs.testers.runNixOSTest {
+let
+  mockNix = pkgs.writeShellScriptBin "nix-store" ''
+    echo /nix/store/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-fixture.drv
+    echo /nix/store/cccccccccccccccccccccccccccccccc-kernel
+  '';
+  mockCachix = pkgs.writeShellScriptBin "cachix" ''
+    test "$CACHIX_AUTH_TOKEN" = test_only_cache_token
+    ${pkgs.coreutils}/bin/cat > /var/lib/kaiba-hydra-publish/pushed-paths
+    test ! -e /var/lib/kaiba-hydra-publish/fail
+  '';
+in pkgs.testers.runNixOSTest {
   name = "kaiba-hydra-integration";
   # Also runnable under emulation on development machines without KVM.
   requiredFeatures.kvm = false;
@@ -9,6 +19,8 @@ pkgs.testers.runNixOSTest {
       enable = true;
       publicURL = "http://localhost:3000";
       proxyAddress = "192.0.2.1";
+      github = { enable = true; tokenFile = "/run/github-token"; };
+      cachePublish = { enable = true; tokenFile = "/run/cachix-token"; };
       backup = {
         enable = true;
         host = "receiver";
@@ -17,6 +29,12 @@ pkgs.testers.runNixOSTest {
       };
     };
     systemd.timers.kaiba-hydra-backup.wantedBy = lib.mkForce [ ];
+    systemd.timers.kaiba-hydra-publish.wantedBy = lib.mkForce [ ];
+    systemd.services.kaiba-hydra-publish.path = lib.mkForce [ mockNix mockCachix ];
+    systemd.tmpfiles.rules = [
+      "f /run/github-token 0600 root root - test_only_github_token"
+      "f /run/cachix-token 0600 root root - test_only_cache_token"
+    ];
     virtualisation.memorySize = 3072;
     virtualisation.cores = 2;
     environment.systemPackages = [ pkgs.python3 pkgs.curl pkgs.openssh ];
@@ -31,9 +49,20 @@ pkgs.testers.runNixOSTest {
     start_all()
     machine.wait_for_unit("hydra-server.service")
     machine.wait_for_open_port(3000)
+    machine.wait_for_unit("hydra-notify.service")
+    machine.succeed("test $(stat -c %a /run/kaiba-hydra-notify) = 700; test $(stat -c %a /run/kaiba-hydra-notify/hydra.conf) = 600")
+    machine.fail("runuser -u hydra-www -- cat /run/kaiba-hydra-notify/hydra.conf")
+    machine.fail("grep -q test_only_github_token /var/lib/hydra/hydra.conf")
     machine.succeed("su - hydra -c 'hydra-create-user adam --password test-only-password --role admin'")
     machine.succeed("install -m 600 /dev/null /run/hydra-password; printf %s test-only-password > /run/hydra-password")
     machine.succeed("cp -r ${../ci} /tmp/ci")
+    machine.succeed("printf '%s' '{\"build\":999,\"project\":\"kaiba-provisioning\",\"jobset\":\"main\",\"job\":\"aarch64-linux.enrollment-storage-vm\",\"system\":\"aarch64-linux\",\"finished\":true,\"buildStatus\":0,\"drvPath\":\"/nix/store/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-fixture.drv\",\"outputs\":[{\"path\":\"/nix/store/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-fixture\"}]}' > /tmp/publish.json")
+    machine.succeed("runuser -u hydra-queue-runner -- env HYDRA_JSON=/tmp/publish.json python3 /tmp/ci/hydra_publish.py enqueue")
+    machine.succeed("touch /var/lib/kaiba-hydra-publish/fail")
+    machine.fail("systemctl start kaiba-hydra-publish")
+    machine.succeed("test -f /var/lib/kaiba-hydra-publish/999.json; rm /var/lib/kaiba-hydra-publish/fail")
+    machine.succeed("systemctl start kaiba-hydra-publish; test ! -f /var/lib/kaiba-hydra-publish/999.json")
+    machine.succeed("grep -Fx /nix/store/cccccccccccccccccccccccccccccccc-kernel /var/lib/kaiba-hydra-publish/pushed-paths")
     command = "python3 /tmp/ci/setup_hydra.py --url http://localhost:3000 --apply --password-file /run/hydra-password"
     machine.succeed(command)
     machine.succeed(command)
