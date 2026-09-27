@@ -1,5 +1,10 @@
 # CI and build farm design
 
+The initial Hydra implementation follows [Hydra on Ace](hydra-on-ace.md):
+main-branch flake jobsets expose the complete inventory to Hydra, which schedules
+derivations and reuses successful results. The base/head selector below remains
+an independent policy prototype, not a prerequisite or gate for Hydra.
+
 ## Existing workload
 
 `PseudoDesign/kaiba-provisioning` has an ARM64 lane on `ubuntu-24.04-arm`.

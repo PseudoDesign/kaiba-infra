@@ -1,0 +1,10 @@
+{
+  "kaiba-infra": {
+    "description": "Kaiba infrastructure tests",
+    "flake": "github:PseudoDesign/kaiba-infra/main"
+  },
+  "kaiba-provisioning": {
+    "description": "Inventoried native ARM64 provisioning checks",
+    "flake": "github:PseudoDesign/kaiba-provisioning/main"
+  }
+}

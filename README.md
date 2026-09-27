@@ -6,7 +6,23 @@ Nix `checks` and `packages`; this repository decides which revisions and jobs to
 build and where to run them. Device protocol and state contracts remain in
 `kaiba-contracts`.
 
-## First milestone: inspect ARM64 work
+## Hydra on Ace
+
+The flake exports Nix-packaged Python tests, an ARM64 `hydraJobs` output,
+NixOS modules for Hydra, Mako's HTTPS proxy and backup receiver, and native
+qualification/integration tests. See [the deployment runbook](docs/hydra-on-ace.md)
+for deployment, staged jobset setup, backups and recovery.
+
+```sh
+nix build --no-link .#checks.x86_64-linux.selector
+python3 ci/setup_hydra.py  # preview; provisioning starts disabled
+```
+
+`kaiba-provisioning` imports the locked inventory policy to expose the ten ARM64
+derivations to Hydra. Hydra evaluates each repository's `main` directly; GitHub
+Actions remains the PR gate during rollout.
+
+## Selector prototype
 
 The current `kaiba-provisioning` workflow runs ten large ARM64 checks in one
 serial step. `ci/select_jobs.py` is the first piece of the planned selector. It
@@ -38,6 +54,5 @@ order, and prerequisites before using selection in a required check.
 | `nix-pseudo-design` | Existing personal host configurations until deliberately migrated |
 | `kaiba-contracts` | Product and device state contracts |
 
-No hostname, signing key, SSH credential, or production service is configured
-here yet. Host modules should be introduced alongside concrete hardware and
-recovery procedures.
+Host-specific addresses and module composition live in `nix-pseudo-design`.
+Private keys and administrator credentials remain outside Git and the Nix store.
