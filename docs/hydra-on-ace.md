@@ -12,6 +12,7 @@ python3 -m unittest discover -s tests -v
 nix flake check --no-build
 nix build --no-link .#checks.x86_64-linux.selector
 nix build --no-link -L .#hydra-integration-test
+nix build --no-link -L .#hydra-notifier-test
 ```
 
 The integration test starts real Hydra/PostgreSQL services, reconciles the
@@ -79,7 +80,8 @@ sudo -iu hydra hydra-create-user adam --full-name 'Adam Schafer' \
 
 The password is entered interactively and is never supplied as a command-line
 argument or committed. Public visitors can view builds; write operations require
-Hydra authentication. No GitHub write token or cache signing key is required.
+Hydra authentication. The initial deployment needs no GitHub write token or
+cache signing key. The optional integrations below use separate runtime tokens.
 
 ## Stage the jobsets
 
@@ -110,6 +112,70 @@ GitHub Actions remains the PR gate. These jobsets build only `main`; this rollou
 does not claim full provisioning workflow parity. Verify all ten ARM64 jobs,
 their acceleration logs, a subsequent main evaluation, and reuse of unchanged
 successful derivations before expanding the workload.
+
+## GitHub statuses and Cachix publication
+
+Enable `services.kaibaHydra.github.enable` and
+`services.kaibaHydra.cachePublish.enable` in Ace's host configuration after
+installing credentials. Create a GitHub fine-grained token restricted to
+`PseudoDesign/kaiba-infra` and `PseudoDesign/kaiba-provisioning`, with repository
+**Commit statuses: Read and write**. Create a Cachix write token scoped to the
+`kaiba-provisioning` cache. Organization approval may be required for GitHub.
+Enter them on Ace with the entire block running as root:
+
+```sh
+sudo bash -c '
+set -euo pipefail
+umask 077
+install -d -m 0700 /var/lib/kaiba-hydra-secrets
+for name in github cachix; do
+  read -r -s -p "$name token: " token
+  printf "\n"
+  test -n "$token"
+  printf "%s\n" "$token" > "/var/lib/kaiba-hydra-secrets/$name-token"
+  chmod 0600 "/var/lib/kaiba-hydra-secrets/$name-token"
+  unset token
+done
+'
+```
+
+Systemd loads the tokens as service credentials. The notifier renders its
+private configuration under `/run/kaiba-hydra-notify`, outside the Nix store and
+Hydra backups. Token rotation requires restarting `hydra-notify`; the publisher
+loads its credential on each invocation. Recreate these files after recovery.
+
+Hydra posts one GitHub status per inventory job, with context
+`ci/hydra/<repository>/aarch64-linux.<check>` and a link to the build. The
+infrastructure check is `selector`. Native notifications handle pending,
+failure, success, and reuse of an existing build for a new evaluation. A small
+patch makes dependent builds use their own revision and makes HTTP failures
+enter Hydra's persistent notification retry queue. Inspect `hydra-notify`'s
+journal and the `TaskRetries` table when statuses are missing.
+
+Successful provisioning builds enqueue publication under
+`/var/lib/kaiba-hydra-publish`. Every five minutes, `kaiba-hydra-publish` uploads
+their output and build dependency closures, including kernels and compilers,
+to Cachix. Failed uploads remain queued; failed builds are never uploaded.
+Publication is asynchronous and does not change a successful test's status.
+The spool is disposable metadata, not part of the Hydra backup. To replay a
+known successful build after recovering the database, use PostgreSQL
+`NOTIFY build_finished, '<build-id>'`; this also repeats commit-status reporting.
+Verify the build's project, jobset and successful status before replaying it.
+
+```sh
+sudo systemctl start kaiba-hydra-publish
+sudo journalctl -u hydra-notify -u kaiba-hydra-publish
+```
+
+Provisioning's workflow opts into the ten Hydra jobs on **main pushes only**
+through the repository variable `HYDRA_MAIN_ENABLED=true`. Enable it only after
+fresh ARM64 qualification, live status delivery and the workflow change have
+passed review. The workflow checks statuses for the exact commit and verifies
+each Hydra result against its planned derivation; missing results fail closed.
+PRs and manual runs keep their GitHub builders. Five-minute polling can skip an
+intermediate main commit; such a commit cannot receive an assumed success.
+Set the variable to `false` to restore GitHub main builds for subsequent runs,
+without changing the PR gate or stopping Hydra.
 
 ## Backups
 

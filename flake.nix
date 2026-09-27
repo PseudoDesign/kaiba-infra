@@ -47,6 +47,7 @@
         '';
       };
       hydra-integration-test = import ./tests/hydra.nix { inherit pkgs; };
+      hydra-notifier-test = import ./tests/hydra-notifier.nix { inherit pkgs; };
     });
 
     nixosModules.hydra = import ./modules/hydra.nix;
