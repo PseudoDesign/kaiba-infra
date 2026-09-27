@@ -18,6 +18,7 @@ in {
     };
     cachePublish = {
       enable = lib.mkEnableOption "retryable publication of successful provisioning build closures";
+      package = lib.mkPackageOption pkgs "cachix" { };
       tokenFile = lib.mkOption {
         type = lib.types.str;
         default = "/var/lib/kaiba-hydra-secrets/cachix-token";
@@ -63,7 +64,7 @@ in {
         after = [ "network-online.target" "hydra-init.service" ];
         wants = [ "network-online.target" ];
         requires = [ "hydra-init.service" ];
-        path = [ pkgs.nix pkgs.cachix ];
+        path = [ config.nix.package cfg.cachePublish.package ];
         environment.NIX_REMOTE = "daemon";
         serviceConfig = {
           Type = "oneshot";
