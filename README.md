@@ -24,11 +24,10 @@ Actions remains the PR gate during rollout.
 
 ## Selector prototype
 
-The current `kaiba-provisioning` workflow runs ten large ARM64 checks in one
-serial step. `ci/select_jobs.py` is the first piece of the planned selector. It
-compares **evaluated derivation paths** for a fixed job inventory at the base
+`ci/select_jobs.py` compares **evaluated derivation paths** for a fixed job inventory at the base
 and proposed revisions. It emits JSON listing jobs to build and why. It does
-not replace or modify the current GitHub Actions workflow yet.
+not schedule Hydra builds. Provisioning's GitHub Actions workflow now uses
+derivation-based selection independently of this Hydra rollout.
 
 ```sh
 python3 -m unittest discover -s tests
