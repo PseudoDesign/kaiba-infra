@@ -49,7 +49,8 @@ class DiscoveryTests(unittest.TestCase):
         desired = ci.request_for_run(github, run(), WORKFLOW_ID)
         self.assertEqual(desired["name"], "ci-42-2")
         self.assertEqual(desired["flake"], f"github:{ci.REPOSITORY}/{MERGE}")
-        self.assertEqual(desired["enabled"], 2)
+        self.assertEqual(desired["enabled"], 1)
+        self.assertEqual(desired["checkinterval"], 0)
         self.assertEqual(desired["keepnr"], 0)
         self.assertIn("/attempts/2/jobs?", github.paths[0])
 
@@ -107,28 +108,58 @@ class DiscoveryTests(unittest.TestCase):
 
 
 class ReconcileTests(unittest.TestCase):
-    def test_one_shot_is_created_once_and_never_reenabled_or_repointed(self):
+    def test_jobset_is_created_and_triggered_once_without_repointing(self):
         desired = ci.request_for_run(GitHubFixture(), run(), WORKFLOW_ID)
 
         class Hydra:
             current = None
             writes = 0
+            triggers = 0
 
             def request(self, method, path, data=None):
                 if method == "PUT":
-                    self.current = data.copy()
+                    self.current = data | {"lastcheckedtime": 0, "triggertime": None, "starttime": None}
                     self.writes += 1
+                if method == "POST":
+                    self.triggers += 1
+                    self.current["triggertime"] = 100
+                    return {"jobsetsTriggered": ["kaiba-provisioning/ci-42-2".replace("/", ":")]}
                 return self.current
 
         hydra = Hydra()
         ci.reconcile(hydra, desired)
-        hydra.current["enabled"] = 0
+        ci.reconcile(hydra, desired)
+        hydra.current.update(triggertime=None, starttime=100)
+        ci.reconcile(hydra, desired)
+        hydra.current.update(triggertime=None, starttime=None, lastcheckedtime=101)
         ci.reconcile(hydra, desired)
         self.assertEqual(hydra.writes, 1)
+        self.assertEqual(hydra.triggers, 1)
         hydra.current["flake"] = "github:attacker/repo/main"
         with self.assertRaises(RuntimeError):
             ci.reconcile(hydra, desired)
         self.assertEqual(hydra.writes, 1)
+
+    def test_retry_after_creation_triggers_but_missing_state_or_disabled_jobsets_fail(self):
+        desired = ci.request_for_run(GitHubFixture(), run(), WORKFLOW_ID)
+        current = desired | {"lastcheckedtime": 0, "triggertime": None, "starttime": None}
+        calls = []
+
+        class Hydra:
+            def request(self, method, path, data=None):
+                calls.append(method)
+                return current if method == "GET" else {"jobsetsTriggered": ["kaiba-provisioning:ci-42-2"]}
+
+        ci.reconcile(Hydra(), desired)
+        self.assertEqual(calls, ["GET", "POST"])
+        for field in ("lastcheckedtime", "triggertime", "starttime"):
+            prior = current.pop(field)
+            with self.assertRaises(RuntimeError):
+                ci.reconcile(Hydra(), desired)
+            current[field] = prior
+        current["enabled"] = 0
+        with self.assertRaises(RuntimeError):
+            ci.reconcile(Hydra(), desired)
 
 
 class CredentialTests(unittest.TestCase):

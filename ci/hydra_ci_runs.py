@@ -110,9 +110,10 @@ def request_for_run(github, run, workflow_id):
         "name": f'ci-{run["id"]}-{run["run_attempt"]}',
         "description": f'GitHub {run["event"]} run {run["id"]}, attempt {run["run_attempt"]}',
         "type": 1, "flake": f"github:{REPOSITORY}/{sha}", "visible": 1,
-        # Evaluate once. PR outputs remain disposable; main alone publishes to
-        # Cachix. Historical jobsets/results remain visible without polling.
-        "enabled": 2, "checkinterval": 300, "schedulingshares": 1, "keepnr": 0,
+        # Trigger once through the API; zero interval disables automatic polls.
+        # Native enabled=2 removes a live Pid from this Hydra version's evaluator
+        # map before its reaper finishes, causing ECHILD and an abort on Ace.
+        "enabled": 1, "checkinterval": 0, "schedulingshares": 1, "keepnr": 0,
     }
 
 
@@ -122,13 +123,19 @@ def reconcile(hydra, desired):
     if current is None:
         hydra.request("PUT", path, desired)
         current = hydra.request("GET", path)
-    # A one-shot jobset changes enabled from 2 to 0 after evaluation. Never
-    # re-enable it or silently repoint an existing run attempt to another SHA.
-    for key in ("name", "type", "flake", "visible", "checkinterval", "schedulingshares", "keepnr"):
+    # Never silently repoint or re-enable an existing run attempt. Triggering
+    # is recoverable if the service stopped after creation, and idempotent if
+    # the prior trigger succeeded but its HTTP response was lost.
+    for key in ("name", "type", "flake", "visible", "enabled", "checkinterval", "schedulingshares", "keepnr"):
         if current is None or current.get(key) != desired[key]:
             raise RuntimeError(f"Hydra run jobset readback differs: {key}")
-    if current.get("enabled") not in (0, 2):
-        raise RuntimeError("Hydra run jobset must be one-shot or finished")
+    for key in ("lastcheckedtime", "triggertime", "starttime"):
+        if key not in current or current[key] is not None and (type(current[key]) is not int or current[key] < 0):
+            raise RuntimeError("Hydra jobset lacks valid evaluation scheduling state")
+    if not any(current[key] for key in ("lastcheckedtime", "triggertime", "starttime")):
+        response = hydra.request("POST", f'/api/push?jobsets={PROJECT}:{desired["name"]}')
+        if response.get("jobsetsTriggered") != [f'{PROJECT}:{desired["name"]}']:
+            raise RuntimeError("Hydra did not acknowledge the run evaluation trigger")
     print(f'Configured {PROJECT}/{desired["name"]}', flush=True)
 
 

@@ -192,15 +192,20 @@ requested SHA must be a two-parent merge commit whose second parent matches
 that run's head SHA. A manual run must request its dispatched head SHA. Forks
 use the base repository's merge commit and need no repository secret.
 
-Each attempt gets a one-shot `kaiba-provisioning/ci-<run-id>-<attempt>` jobset
-pinned to that SHA. It is never repointed or re-enabled; reruns get another
-attempt number. All ten jobs are checked, and unchanged successful derivations
+Each attempt gets a `kaiba-provisioning/ci-<run-id>-<attempt>` jobset pinned to
+that SHA, with automatic polling disabled (`enabled=1`, `checkinterval=0`).
+The service triggers its initial evaluation through Hydra's API and checks
+pending/running/completed timestamps before retrying, so restarting discovery
+does not trigger another evaluation. This avoids the deployed evaluator's
+child-reaping race when native `enabled=2` jobsets disable themselves before
+their evaluation process exits. It is never repointed or re-enabled; rerunning
+the waiter gets another attempt number. All ten jobs are checked, and unchanged successful derivations
 can be reused. The waiter verifies the pinned jobset, evaluation revision,
 exact inventory, ARM64 architecture and each planned derivation before passing.
 It reports ten build links in the GitHub job summary. Missing results, fetch or
 evaluation errors, and failed/cancelled builds cannot pass the required gate.
 
-Completed run jobsets stop polling. `keepnr=0` makes their outputs disposable
+Run jobsets never poll automatically. `keepnr=0` makes their outputs disposable
 under normal Hydra retention; historical results remain visible. Already
 scheduled work may finish if a GitHub run is subsequently cancelled. Publication
 to Cachix and native commit-status notifications remain scoped to main.

@@ -1,5 +1,17 @@
 { pkgs }:
 let
+  evaluationFixture = pkgs.writeTextDir "flake.nix" ''
+    {
+      outputs = { self }: {
+        hydraJobs.fixture = builtins.derivation {
+          name = "ci-evaluation-fixture";
+          system = "${pkgs.stdenv.hostPlatform.system}";
+          builder = "${pkgs.runtimeShell}";
+          args = [ "-c" "${pkgs.coreutils}/bin/mkdir -p $out" ];
+        };
+      };
+    }
+  '';
   ciFixture = pkgs.writeText "hydra-ci-fixture.py" ''
     import sys
     sys.path.insert(0, "${../ci}")
@@ -20,6 +32,12 @@ let
                 "conclusion": None, "name": "ARM64 checks on Hydra (" + "a" * 40 + ")"}]}
 
     ci.GitHub = GitHub
+    original_request = ci.request_for_run
+    def fixture_request(*args):
+        desired = original_request(*args)
+        desired["flake"] = "path:${evaluationFixture}"
+        return desired
+    ci.request_for_run = fixture_request
     raise SystemExit(ci.main(["--workflow-id", "123", "--username", "adam"]))
   '';
   mockNix = pkgs.writeShellScriptBin "nix-store" ''
@@ -57,6 +75,10 @@ in pkgs.testers.runNixOSTest {
     systemd.services.kaiba-hydra-ci-runs.serviceConfig.ExecStart =
       lib.mkForce "${pkgs.python3}/bin/python3 ${ciFixture}";
     systemd.services.kaiba-hydra-publish.path = lib.mkForce [ mockNix mockCachix ];
+    # The VM's tiny disk is sufficient for the synthetic fixture. Live hosts
+    # retain the 20/10 GiB build/evaluation guards from the infrastructure module.
+    services.hydra.minimumDiskFree = lib.mkForce 0;
+    services.hydra.minimumDiskFreeEvaluator = lib.mkForce 0;
     systemd.tmpfiles.rules = [
       "f /run/github-token 0600 root root - test_only_github_token"
       "f /run/cachix-token 0600 root root - test_only_cache_token"
@@ -92,11 +114,14 @@ in pkgs.testers.runNixOSTest {
     command = "python3 /tmp/ci/setup_hydra.py --url http://localhost:3000 --apply --password-file /run/hydra-password"
     machine.succeed(command)
     machine.succeed(command)
+    evaluator_pid = machine.succeed("systemctl show hydra-evaluator -p MainPID --value").strip()
     machine.succeed("systemctl start kaiba-hydra-ci-runs")
-    machine.succeed("curl -fsS -H 'Accept: application/json' http://localhost:3000/jobset/kaiba-provisioning/ci-42-2 | python3 -c 'import json,sys; x=json.load(sys.stdin); assert x[\"flake\"] == \"github:PseudoDesign/kaiba-provisioning/\" + \"a\"*40; assert x[\"enabled\"] in (0,2); assert x[\"keepnr\"] == 0'")
-    machine.succeed("runuser -u postgres -- psql -d hydra -c \"update jobsets set enabled=0 where name='ci-42-2'\"")
+    machine.succeed("curl -fsS -H 'Accept: application/json' http://localhost:3000/jobset/kaiba-provisioning/ci-42-2 | python3 -c 'import json,sys; x=json.load(sys.stdin); assert x[\"flake\"] == \"path:${evaluationFixture}\"; assert x[\"enabled\"] == 1; assert x[\"checkinterval\"] == 0; assert x[\"keepnr\"] == 0'")
+    machine.wait_until_succeeds("runuser -u postgres -- psql -At -d hydra -c \"select count(*) from jobsetevals e join jobsets j on j.id=e.jobset_id where j.name='ci-42-2'\" | grep -qx 1")
+    machine.wait_until_succeeds("runuser -u postgres -- psql -At -d hydra -c \"select count(*) from jobsets where name='ci-42-2' and starttime is null and lastcheckedtime > 0\" | grep -qx 1")
+    assert machine.succeed("systemctl show hydra-evaluator -p MainPID --value").strip() == evaluator_pid
     machine.succeed("systemctl start kaiba-hydra-ci-runs")
-    assert machine.succeed("runuser -u postgres -- psql -At -d hydra -c \"select enabled from jobsets where name='ci-42-2'\"").strip() == "0"
+    assert machine.succeed("runuser -u postgres -- psql -At -d hydra -c \"select count(*) from jobsetevals e join jobsets j on j.id=e.jobset_id where j.name='ci-42-2'\"").strip() == "1"
     machine.succeed("curl -fsS -H 'Accept: application/json' http://localhost:3000/jobset/kaiba-provisioning/main | python3 -c 'import json,sys; assert json.load(sys.stdin)[\"enabled\"] == 0'")
     machine.fail(command + " --stage provisioning")
     machine.succeed("systemctl restart hydra-server")
