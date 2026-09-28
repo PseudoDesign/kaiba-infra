@@ -167,15 +167,48 @@ sudo systemctl start kaiba-hydra-publish
 sudo journalctl -u hydra-notify -u kaiba-hydra-publish
 ```
 
-Provisioning's workflow opts into the ten Hydra jobs on **main pushes only**
-through the repository variable `HYDRA_MAIN_ENABLED=true`. Enable it only after
-fresh ARM64 qualification, live status delivery and the workflow change have
-passed review. The workflow checks statuses for the exact commit and verifies
-each Hydra result against its planned derivation; missing results fail closed.
-PRs and manual runs keep their GitHub builders. Five-minute polling can skip an
-intermediate main commit; such a commit cannot receive an assumed success.
-Set the variable to `false` to restore GitHub main builds for subsequent runs,
-without changing the PR gate or stopping Hydra.
+Provisioning's workflow opts into the ten Hydra jobs on main pushes through
+`HYDRA_MAIN_ENABLED=true`, and on PR/manual CI runs through
+`HYDRA_CI_ENABLED=true`. The flags are independent rollback controls; `false`
+restores the corresponding GitHub ARM64 matrix on subsequent runs. The other
+GitHub lanes and the required aggregate remain in place.
+
+Main verifies the latest per-job statuses for its exact commit and planned
+derivations. Five-minute main polling can skip an intermediate commit; such a
+commit cannot receive an assumed success.
+
+For PR and manual runs, enable `services.kaibaHydra.ciRuns` on Ace with the
+numeric GitHub ID of provisioning's `.github/workflows/ci.yml`, a Hydra account
+allowed to create its jobsets, and a runtime password file. Its GitHub credential
+needs Actions and Contents read access. The service loads both credentials
+through systemd and runs as a separate dynamic user; neither credential is sent
+to a GitHub runner, build sandbox, or Nix output.
+
+Every minute, the service discovers **running** `ARM64 checks on Hydra (<sha>)`
+waiter jobs in the exact run attempt. GitHub's approval gates must admit the run
+before it can request work. Main pushes, queued/unapproved runs, cancelled runs,
+other workflows, and other repositories cannot create these jobsets. A PR's
+requested SHA must be a two-parent merge commit whose second parent matches
+that run's head SHA. A manual run must request its dispatched head SHA. Forks
+use the base repository's merge commit and need no repository secret.
+
+Each attempt gets a one-shot `kaiba-provisioning/ci-<run-id>-<attempt>` jobset
+pinned to that SHA. It is never repointed or re-enabled; reruns get another
+attempt number. All ten jobs are checked, and unchanged successful derivations
+can be reused. The waiter verifies the pinned jobset, evaluation revision,
+exact inventory, ARM64 architecture and each planned derivation before passing.
+It reports ten build links in the GitHub job summary. Missing results, fetch or
+evaluation errors, and failed/cancelled builds cannot pass the required gate.
+
+Completed run jobsets stop polling. `keepnr=0` makes their outputs disposable
+under normal Hydra retention; historical results remain visible. Already
+scheduled work may finish if a GitHub run is subsequently cancelled. Publication
+to Cachix and native commit-status notifications remain scoped to main.
+
+Deploy and verify the discovery service before enabling `HYDRA_CI_ENABLED`.
+Check `systemctl status kaiba-hydra-ci-runs` and its journal, then qualify one PR
+and one manual CI run before merging the workflow change. Other manual release
+and component workflows retain their existing build and publication behavior.
 
 ## Backups
 
