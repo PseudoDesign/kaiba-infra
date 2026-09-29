@@ -45,7 +45,8 @@ existing services and device state preserved; their persistent boot profiles
 remain unchanged and the new pilot units remain stopped. The two-host DNS
 and imported Fleet control-plane VMs passed. The protected source inventory is
 now verified, and encrypted transfer preparation and source-fencing helpers
-are published with 76 passing local migration checks. Ace's recipient key and
+are published with 92 passing local migration checks, including device endpoint
+transfer; a separate real bind-mount regression also passes. Ace's recipient key and
 transport CSR are prepared; the source-bound request must be refreshed after
 Mako credential recovery. Transferring
 Malak's complete pilot control plane, native

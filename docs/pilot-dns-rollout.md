@@ -135,12 +135,22 @@ transfer. Source operator credentials and transport/management CA
 private keys remain on Malak. Operational issuer keys, Reader credentials,
 signed records and full database histories are part of the encrypted transfer.
 Source credential and record paths must be absolute; relative paths must not be
-silently relocated during import. The current published implementation is
+silently relocated during import. The staged host runtime uses
 [Fleet `0bd55c5`](https://github.com/PseudoDesign/kaiba-fleet/tree/0bd55c576536c29825aada2f7ce6fa052a877402/nix/pilot-control-plane)
 and [DNS `67574bb`](https://github.com/pd-codex/nixos-kaiba-network/blob/67574bb1fe88a60118c680d823ac2ddb7656975b/docs/lan-two-host.md).
 The [published migration protocol](https://github.com/PseudoDesign/kaiba-fleet/blob/0bd55c576536c29825aada2f7ce6fa052a877402/deploy/pilot-migration/README.md)
 records the implemented export/import, transport, target-policy and receipt
 boundaries in [Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30).
+
+The subsequent [device endpoint helper](https://github.com/PseudoDesign/kaiba-fleet/blob/797a9e2b7de9f94ad5bd29ebe21420434cff2b7b/deploy/pilot-migration/device-endpoint.md)
+changes only the retained Fleet URL after current authenticated admission on Ace.
+It preserves credentials and history, keeps private backups on encrypted storage,
+and publishes the replacement within the device's actual bind mount. Interrupted
+writes retain evidence for read-only reconciliation. The complete migration
+check now passes **92 tests with zero skips**, including 16 endpoint cases; a
+separate isolated user/mount-namespace regression passes against the real mount
+boundary. This helper has not run on either device. Recovery and authority
+activation precede its use, followed by a fresh installed-client identity check.
 
 After the recovery prerequisite below, the remaining owner operations are
 concrete and separate: refresh and inspect the source-bound transport request

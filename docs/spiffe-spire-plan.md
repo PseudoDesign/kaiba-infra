@@ -120,8 +120,9 @@ application processes, device state and ownership, boot identity and persistent
 profiles. Ace's existing SPIRE processes were preserved; no authority state was
 imported or activated. The rollout record distinguishes these checks from the
 observed activation changes to DBus, firewall and Ace's mounts/setup services.
-The final two-host DNS and imported Fleet control-plane VMs each passed eight
-groups. Fleet also passed
+The final two-host DNS VM passed eight groups. The imported Fleet control-plane
+VM passes nine checks, including startup denial and authenticated readiness.
+Fleet also passed
 seven guard tests, six real PostgreSQL groups and module/all-system evaluation.
 Import must preserve the Reader paths and
 endpoints covered by the retained issuer scope, rather than rewriting scope rows
@@ -132,6 +133,10 @@ and encrypted export helper passed seventeen synthetic tests; the importer passe
 a disposable PG18 dump/restore comparison. The complete migration Nix check
 passed 76 tests with zero skips; the changes are published at
 [Fleet `0bd55c5`](https://github.com/PseudoDesign/kaiba-fleet/tree/0bd55c576536c29825aada2f7ce6fa052a877402/deploy/pilot-migration).
+The subsequent [device endpoint helper](https://github.com/PseudoDesign/kaiba-fleet/blob/797a9e2b7de9f94ad5bd29ebe21420434cff2b7b/deploy/pilot-migration/device-endpoint.md)
+extends that suite to 92 passing checks and has a separate passing real
+bind-mount regression. It preserves credentials and history while changing only
+the Fleet URL after authenticated target admission; it has not run on the devices.
 The reviewed issuer-only callback
 dial override preserves the canonical source URL, TLS name and all four scope
 pins while reaching Ace. Source signing, fenced export, verified import and
