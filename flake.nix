@@ -15,7 +15,7 @@
         nativeBuildInputs = [ pkgs.python3 ];
         src = nixpkgs.lib.fileset.toSource {
           root = ./.;
-          fileset = nixpkgs.lib.fileset.unions [ ./ci ./tests ./examples ];
+          fileset = nixpkgs.lib.fileset.unions [ ./ci ./client ./identity ./tests ./examples ];
         };
       } ''
         cp -r "$src" source
@@ -48,10 +48,22 @@
       };
       hydra-integration-test = import ./tests/hydra.nix { inherit pkgs; };
       hydra-notifier-test = import ./tests/hydra-notifier.nix { inherit pkgs; };
+      kaiba-login = pkgs.callPackage ./packages/kaiba-login.nix { };
+      ssh-ca-init = import ./identity/ssh-ca-init-package.nix { inherit pkgs; };
+      ssh-user-ca = import ./identity/ssh-ca-package.nix { inherit pkgs; };
+      ssh-user-ca-test = import ./tests/ssh-user-ca.nix { inherit pkgs; };
+      human-identity-test = import ./tests/human-identity.nix { inherit pkgs; };
+      ssh-human-access-test = import ./tests/ssh-human-access.nix { inherit pkgs; };
+      human-access-backup-test = import ./tests/human-access-backup.nix { inherit pkgs; };
     });
 
     nixosModules.hydra = import ./modules/hydra.nix;
     nixosModules.hydra-proxy = import ./modules/hydra-proxy.nix;
     nixosModules.hydra-backup-receiver = import ./modules/hydra-backup-receiver.nix;
+    nixosModules.human-identity = import ./modules/human-identity.nix;
+    nixosModules.ssh-user-ca = import ./modules/ssh-user-ca.nix;
+    nixosModules.ssh-human-access = import ./modules/ssh-human-access.nix;
+    nixosModules.human-access-backup = import ./modules/human-access-backup.nix;
+    nixosModules.human-access-backup-receiver = import ./modules/human-access-backup-receiver.nix;
   };
 }
