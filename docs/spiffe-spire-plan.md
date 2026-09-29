@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Implemented locally; native activation pending | Pilot admission and operator client tests; identity-preserving promotion VM; isolated DNS VM; disabled host composition and station review-packet renderer; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Draft PRs published; native activation pending | Pilot admission and operator client tests; promotion and DNS VMs; native Ace candidate built with preservation checks; active enrollment preflight; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -99,7 +99,8 @@ explicit current-pilot admission adapter, operator readback/client, preserved
 authority promotion and isolated primary/replicas. The promotion VM passes
 fourteen checks and the focused DNS VM passes fifteen; a separate combined VM
 exercises the SPIFFE application path against synthetic inventory. Native LAN
-activation awaits the protected station preflight and current admission review. The
+activation awaits the protected station serving-window preparation; the owner's
+initial preflight confirmed active current Ace enrollment. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
 public-delegation boundaries. Persistent identity service acceptance and physical
 offline qualification remain separate evidence tracks.

@@ -33,14 +33,14 @@ stack must be built and validated before its service deployment is applied.
 
 ## Prepared LAN implementation and evidence
 
-The next software slice is implemented locally; it has not been activated on
-the LAN. Its review boundaries are:
+The next software slice is published in draft PRs; it has not been activated
+on the LAN. Its review boundaries are:
 
 | Repository and branch | Prepared change | Local validation |
 | --- | --- | --- |
-| `kaiba-fleet`, `codex/spiffe-pilot-admission` | Explicit current-pilot inventory adapter; schema-qualified parent reads; separate workload tables and operator grant/readback client; identity-preserving server promotion; additive Ubuntu station review-packet renderer | Go race tests and real PostgreSQL role/mTLS checks; combined SPIRE/DNS application VM; 14-check persistence/promotion VM |
-| `nixos-kaiba-network`, `codex/spiffe-lan-qualification` | Opt-in isolated primary and two replica processes, runtime-generated persistent TSIG keys, narrow source firewall and explicit private-address allowance | 15-check DNS VM, module evaluation, formatting and workflow checks |
-| `nix-pseudo-design`, `codex/spiffe-lan-qualification` | Disabled-by-default Ace composition with exact peer addresses and SPIFFE identities | Native enabled candidate built on Ace; protected boot/storage/existing service comparisons passed; no activation; disabled Ace and Mako closures unchanged |
+| [Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30) | Explicit current-pilot inventory adapter; schema-qualified parent reads; separate workload tables and operator grant/readback client; identity-preserving server promotion; additive Ubuntu station review-packet renderer | Go race tests and real PostgreSQL role/mTLS checks; combined SPIRE/DNS application VM; 14-check persistence/promotion VM |
+| [DNS PR 4](https://github.com/pd-codex/nixos-kaiba-network/pull/4) | Opt-in isolated primary and two replica processes, runtime-generated persistent TSIG keys, narrow source firewall and explicit private-address allowance | 15-check DNS VM, module evaluation, formatting and workflow checks |
+| [Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) | Disabled-by-default Ace composition with exact peer addresses and SPIFFE identities | Native enabled candidate built on Ace; protected boot/storage/existing service comparisons passed; no activation; disabled Ace and Mako closures unchanged |
 
 The station registry reads the existing `public.pilot_enrollments` through
 `SELECT(id, data)` and `REFERENCES(id)` grants; it owns only a separate workload
@@ -64,10 +64,17 @@ The prepared source revisions are Fleet
 `66ee0d6aa6fa3747ad69566567f465af32c31580` and DNS
 `2edf05378b3b2c88773dc95044408a50a20229fc`. The native Ace candidate built to
 `/nix/store/ipk6rwq7h1rk4zpxyyym9s550f5i0ka7-nixos-system-ace-26.05.20260807.ee48b14`;
-active, booted and persistent systems remained at generation 10. These local
-source overrides must be replaced with matching published revision locks and
-the same closure verified before activation. Final station registry/operator
+active, booted and persistent systems remained at generation 10. The final
+published dependency lock evaluates to the same candidate closure, and disabled
+Ace and Mako evaluate unchanged. Final station registry/operator
 packages and all ten renderer tests also passed locally.
+
+The owner ran the read-only station preflight at `2026-09-29T07:27:24Z`.
+It confirmed the expected active Ace enrollment, current pilot policy and
+Reader configuration; the observed credential expires `2026-10-03T02:06:35Z`.
+This dated observation does not extend admission or the serving window. The
+remaining root preparation must bind the station packet to the protected
+current serving deadline, then native activation must recheck live admission.
 
 ## Observed DNS and available hosts
 
