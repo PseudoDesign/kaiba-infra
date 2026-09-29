@@ -4,7 +4,8 @@ Status: installed persistently on Ace and verified at
 `2026-09-29T06:09:10Z`, using the owner-selected SPIFFE trust domain
 `pilot.kaiba.pseudo.design`. Guarded test activation, explicit initialization,
 persistent switch, fresh SSH access, and a post-switch identity probe passed.
-The earlier native SPIRE smoke used temporary state and completed cleanup;
+A subsequent controlled warm reboot passed at `2026-09-29T06:44:11Z`;
+the earlier native SPIRE smoke used temporary state and completed cleanup;
 it is separate evidence from this installation.
 
 ## Selected scope
@@ -147,8 +148,8 @@ Recovery must use a generation compatible with the current root-backed home
 layout. Older generations requiring the removed home LV can enter emergency
 mode; do not select historical boot entries blindly. NixOS generation rollback
 does not restore database state or prove that an old authority snapshot is
-safe. No reboot is part of the current acceptance result, and no boot or
-recovery claim follows from service activation.
+safe. The installation acceptance below did not reboot Ace. The subsequent warm-reboot
+record is separate evidence and does not establish cold boot or recovery.
 
 ## Acceptance record
 
@@ -167,8 +168,8 @@ systemd unit. The probe could not access authority keys or the admin socket.
 Server/agent restart reused the authority, admitted node and registration while
 the consumed grant was absent. Existing public enrollment status was unchanged,
 existing services including Hydra and PostgreSQL were healthy, and there were
-no failed units. The report explicitly marks hardware qualification, reboot,
-and DNS publication as untested.
+no failed units. That original installation report explicitly marks hardware qualification, reboot,
+and DNS publication as untested; the later warm-reboot record is additive.
 
 The booted system remained
 `80qsyq2nvpx0d8g0c5jwm6912qmp9yc4-nixos-system-ace-26.05.20260807.ee48b14`.
@@ -207,8 +208,29 @@ and acceptance outcomes.
 | Established-state loss fails closed in software rehearsal | Passed in the ten-group VM suite |
 | Guarded persistent switch, fresh SSH and post-switch probe | Passed on Ace; generation 10 active and persistent |
 | Prior generation retained and Mako configuration unchanged | Verified |
+| Controlled online warm reboot on Ace | Passed with automatic startup; generation 10, bundle, enrollment and exact probe identity preserved |
 | Cold boot, offline restart and recovery on Ace | Not exercised by this rollout |
 | Physical boot, rollback and time-continuity qualification | Open |
+
+## Subsequent controlled warm reboot
+
+Ace was rebooted at `2026-09-29T06:42:40Z` after confirming idle Hydra builds,
+retained recovery generation 9, and matching default boot kernel/initrd. The
+first observation at 35 seconds correctly failed readiness: SPIRE was waiting
+for time synchronization and the probe output still belonged to the old boot.
+At `2026-09-29T06:44:11Z` (77 seconds uptime), all eleven comparison checks
+passed automatically, without manually starting the probe, SPIRE or clock.
+
+The [separate warm-reboot receipt](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-persistent-pilot/docs/observations/2026-09-29-ace-identity-warm-reboot.json)
+records changed boot/probe invocation IDs, the expected booted/current/persistent
+generation, unchanged trust-bundle and public enrollment digests, a fresh valid
+identity and healthy existing services. The [read-only observation tool](https://github.com/PseudoDesign/kaiba-provisioning/blob/80edf573aadbca788df2c547dfaf3f96ad37e6a8/scripts/offline-qualification/observe_reboot.py)
+retains bounded evidence privately and rejects stale preboot output. Its
+self-reported observations do not attest the boot chain or qualify cold boot,
+clock continuity, offline recovery or hardware rollback protection.
+
+The owner selected LAN DNS qualification as the next integration step. The
+[LAN/DNS rollout record](pilot-dns-rollout.md) keeps public delegation separate.
 
 Local identity success does not establish fleet admission, DNS-update
 authorization, public reachability, or autonomous production readiness. The

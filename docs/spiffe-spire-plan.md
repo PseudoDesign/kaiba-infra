@@ -13,7 +13,8 @@ qualification evidence.
 | SPIRE membership and identity contracts | Additive draft implemented | `WorkloadBinding` `0.5.0-draft.1`; pinned prototype corpus conformance; production adoption pending |
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
-| Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
+| Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
+| Current-pilot LAN integration | Implemented locally; native activation pending | Pilot admission and operator client tests; identity-preserving promotion VM; isolated DNS VM; disabled host composition and station review-packet renderer; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -87,12 +88,21 @@ synthetic VM groups covering initialization, live-source rotation, reboot,
 state-loss denial, SQLite restart and guarded bundle restoration. Kernel,
 initrd/modules, fstab/crypttab and existing service definitions matched the
 pre-change system; the previous generation is retained, and Mako's evaluated
-configuration is unchanged. Ace has not been rebooted for this pilot. This
+configuration is unchanged. Ace subsequently passed a controlled online warm
+reboot at `2026-09-29T06:44:11Z`, preserving its authority, exact probe identity
+and existing public enrollment. Cold/offline boot remains unqualified. This
 phase does not yet connect real fleet admission or DNS publication. Future separate
 `spire.pilot.kaiba.pseudo.design` and `updates.pilot.kaiba.pseudo.design` endpoint
 names are design choices; this phase creates no corresponding DNS records.
-Persistent identity service acceptance and physical offline qualification remain
-separate evidence tracks.
+The owner selected LAN qualification first. The prepared software slice adds an
+explicit current-pilot admission adapter, operator readback/client, preserved
+authority promotion and isolated primary/replicas. The promotion VM passes
+fourteen checks and the focused DNS VM passes fifteen; a separate combined VM
+exercises the SPIFFE application path against synthetic inventory. Native LAN
+activation awaits the protected station preflight and current admission review. The
+[DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
+public-delegation boundaries. Persistent identity service acceptance and physical
+offline qualification remain separate evidence tracks.
 
 Shared interfaces belong in
 [`kaiba-contracts`](https://github.com/pd-codex/kaiba-contracts). Extend the existing
