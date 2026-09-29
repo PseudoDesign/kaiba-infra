@@ -29,6 +29,23 @@ paths for demonstration; they are not evaluated repository revisions.
 See [the CI design](docs/ci-design.md) for the evaluation boundary, rollout
 order, and prerequisites before using selection in a required check.
 
+## Next steps: owner-controlled identity and deployment roles
+
+The accepted [SPIFFE/SPIRE integration plan](docs/spiffe-spire-plan.md) defines
+standalone, server, and agent installations, with optional `kaiba.network`
+enrollment kept separate from the owner's local fleet. The additive workload
+contract and opt-in identity foundation are implemented and passed local unit,
+module, and four-machine VM checks on 2026-09-29. The next steps are to
+integrate real DNS and fleet inventory, and qualify offline boot and rollback
+protection on Raspberry Pi hardware. Publication and remote CI remain pending.
+
+This is a product roadmap, not a production-readiness claim. Extend the existing
+[`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime
+identity and role presets; shared contracts belong in
+[`kaiba-contracts`](https://github.com/pd-codex/kaiba-contracts). This repository
+retains CI and deployment infrastructure ownership, including the existing
+ARM64 selection milestone above.
+
 ## Ownership
 
 | Repository | Owns |
@@ -37,6 +54,10 @@ order, and prerequisites before using selection in a required check.
 | `kaiba-infra` | CI policy, job inventory, scheduling, builder and cache configuration |
 | `nix-pseudo-design` | Existing personal host configurations until deliberately migrated |
 | `kaiba-contracts` | Product and device state contracts |
+| `kaiba-fleet` | Inventory and enrollment; planned owner-fleet identity integration and NixOS presets |
+| `kaiba-provisioning` | Provisioning, verified boot, and hardware security qualification |
+| `nixos-kaiba-network` | Optional provider DNS service and updater integration |
+| `kaiba-ui` | Enrollment, role selection, and health interfaces |
 
 No hostname, signing key, SSH credential, or production service is configured
 here yet. Host modules should be introduced alongside concrete hardware and
