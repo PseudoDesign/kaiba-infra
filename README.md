@@ -35,10 +35,12 @@ The accepted [SPIFFE/SPIRE integration plan](docs/spiffe-spire-plan.md) defines
 standalone, server, and agent installations, with optional `kaiba.network`
 enrollment kept separate from the owner's local fleet. The additive workload
 contract and opt-in identity foundation are implemented and passed local unit,
-module, and four-machine VM checks on 2026-09-29. The next steps are to
-integrate real DNS and fleet inventory, and qualify offline boot and rollback
-protection on Raspberry Pi hardware. The changes are under draft review;
-the validation reported here is local.
+module, and four-machine VM checks on 2026-09-29. Real DNS and fleet inventory
+integration has passed software checks, and Ace's
+[LAN candidate](docs/pilot-dns-rollout.md) is test-activated. The next steps are
+station installation and native LAN acceptance, followed by offline boot and
+rollback qualification on Raspberry Pi hardware. The changes are under draft
+review; the LAN candidate has not been made persistent or qualified for production.
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime

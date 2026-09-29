@@ -1,10 +1,12 @@
 # Pilot DNS rollout readiness
 
-Status: **LAN qualification selected by the owner, 2026-09-29; public DNS deployment deferred**.
+Status as of 2026-09-29 08:23 UTC: **Ace LAN candidate test-activated;
+pre-station checks passed; station installation and end-to-end acceptance pending**.
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
-DNS zone, an update endpoint, or permission to publish a device address. This
-investigation changed no public records, router settings, credentials or services.
+DNS zone, an update endpoint, or permission to publish a device address. The
+bounded LAN trial changes no public records, parent delegation or router resolver.
+Public DNS deployment remains deferred.
 
 ## Selected LAN rollout
 
@@ -24,23 +26,25 @@ handling, but do not establish independent failure domains or Internet DNS
 availability. The actual current pilot instance and a separate operator grant
 must authorize the updater; the probe installation label is not fleet admission.
 
-Native activation depends on a reviewed station deployment. The workstation
+Native acceptance depends on a reviewed station deployment. The workstation
 account cannot read the root-protected pilot configuration or run passwordless
 sudo. The read-only [station preflight](../scripts/pilot-lan-preflight.py)
 exports allowlisted public configuration and the existing Ace enrollment tuple,
-without private keys, database credentials or database changes. The complete
-stack must be built and validated before its service deployment is applied.
+without private keys, database credentials or database changes. Ace's candidate
+has been built, checked and test-activated; the owner's station installation
+command and end-to-end acceptance remain pending.
 
 ## Prepared LAN implementation and evidence
 
-The next software slice is published in draft PRs; it has not been activated
-on the LAN. Its review boundaries are:
+The software slice is published in draft PRs. Ace is running its candidate under
+test activation; this is not yet a qualified or persistent LAN deployment. Its
+review boundaries are:
 
 | Repository and branch | Prepared change | Local validation |
 | --- | --- | --- |
-| [Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30) | Explicit current-pilot inventory adapter; schema-qualified parent reads; separate workload tables and operator grant/readback client; identity-preserving server promotion; additive Ubuntu station review-packet renderer | Go race tests and real PostgreSQL role/mTLS checks; combined SPIRE/DNS application VM; 14-check persistence/promotion VM |
+| [Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30) | Explicit current-pilot inventory adapter; schema-qualified parent reads; separate workload tables and operator grant/readback client; identity-preserving server promotion; additive Ubuntu station review-packet renderer and bounded installer | Go race tests and real PostgreSQL role/mTLS checks; combined SPIRE/DNS application VM; 14-check persistence/promotion VM; 23 station preparation/installer tests and isolated PostgreSQL 18 validation |
 | [DNS PR 4](https://github.com/pd-codex/nixos-kaiba-network/pull/4) | Opt-in isolated primary and two replica processes, runtime-generated persistent TSIG keys, narrow source firewall and explicit private-address allowance | 15-check DNS VM, module evaluation, formatting and workflow checks |
-| [Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) | Disabled-by-default Ace composition with exact peer addresses and SPIFFE identities | Native enabled candidate built on Ace; protected boot/storage/existing service comparisons passed; no activation; disabled Ace and Mako closures unchanged |
+| [Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) | Disabled-by-default Ace composition with exact peer addresses and SPIFFE identities | Native enabled candidate built and test-activated on Ace; protected boot/storage/existing service comparisons passed; booted and persistent generation 10 unchanged; disabled Ace and Mako closures unchanged |
 
 The station registry reads the existing `public.pilot_enrollments` through
 `SELECT(id, data)` and `REFERENCES(id)` grants; it owns only a separate workload
@@ -55,6 +59,17 @@ credentials or firewall. New services bind to the existing encrypted mount and
 serving deadline. Protected station metadata and current admission must be
 checked before producing the live packet.
 
+The separate [station installer at Fleet `17b5a8c`](https://github.com/PseudoDesign/kaiba-fleet/blob/17b5a8ca7124a9eb6e5aa31c8fad91dba17818da/deploy/pilot-lan/README.md#explicit-installation-and-bounded-cleanup)
+is published and passed 23 preparation/installer tests plus isolated PostgreSQL
+18 validation. Before mutation it checks the immutable packet, current admission,
+existing serving guards, peer authentication and exact database/socket privileges.
+It creates only the reviewed bridge resources, arms deadline cleanup and supports
+one explicit initial grant followed by authenticated readback. An ambiguous grant
+is not retried. The existing UFW check required a narrow unit sandbox correction:
+Unix, IPv4/IPv6 and netlink socket families, and write access only to the existing
+root-owned `/run/ufw.lock`. The installer tests both immutable guards in that
+sandbox before installing units; this does not change UFW policy.
+
 The DNS VM tests the primary/replicas with the application services stopped.
 The separate combined VM exercises the actual SPIFFE updater/controller and
 registry against synthetic inventory. These complementary checks do not
@@ -64,21 +79,51 @@ The prepared source revisions are Fleet
 `66ee0d6aa6fa3747ad69566567f465af32c31580` and DNS
 `2edf05378b3b2c88773dc95044408a50a20229fc`. The native Ace candidate built to
 `/nix/store/ipk6rwq7h1rk4zpxyyym9s550f5i0ka7-nixos-system-ace-26.05.20260807.ee48b14`;
-active, booted and persistent systems remained at generation 10. The final
-published dependency lock evaluates to the same candidate closure, and disabled
+test activation reached its first probe at approximately `2026-09-29T08:18:42Z`.
+The booted and
+persistent systems remain at generation 10; no persistent switch of the LAN
+candidate has been performed. The final published dependency lock evaluates to
+the same candidate closure, and disabled
 Ace and Mako evaluate unchanged. Final station registry/operator packages
 passed locally. The station preparation refinement at Fleet
 `869a8184c8a773f7a4d811ac2f74a7ba0c4ef49b` passed fourteen renderer tests.
 It accepts an explicit maximum duration capped by current serving and credential
 deadlines, and transfers only the newly created private review packet to its
-named reviewer. Runtime package and host pins remain at `66ee0d6`.
+named reviewer. The subsequent installer is pinned to published Fleet
+`17b5a8ca7124a9eb6e5aa31c8fad91dba17818da`; runtime package and host pins remain
+at `66ee0d6`.
+
+Native pre-station observation passed at `2026-09-29T08:22:35Z`: all fifteen
+expected services were active, including Hydra, PostgreSQL and SSH; the identity
+manifest, original agent alias, exact probe identity and public pilot enrollment
+status were preserved. Four expiring registrations and the source-restricted
+SPIRE listener at `192.168.8.214:8081` matched the reviewed configuration. The
+controller had no accepted desired state and the primary and both replicas had
+no assigned-device A/AAAA answers, as expected before the station grant. At
+`2026-09-29T08:22:24Z`, the same updater user under an unregistered systemd unit
+failed to obtain a workload identity. At `08:23:23Z`, an authenticated request
+verified the exact controller SPIFFE identity and received HTTP 503 while the
+station registry was unavailable; the real updater was then restored. These
+checks do not prove station attestation, authorization, signed publication or
+native outage recovery. Sanitized observations are tracked in
+[Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15).
 
 The owner ran the read-only station preflight at `2026-09-29T07:27:24Z`.
 It confirmed the expected active Ace enrollment, current pilot policy and
 Reader configuration; the observed credential expires `2026-10-03T02:06:35Z`.
 This dated observation does not extend admission or the serving window. The
-remaining root preparation must bind the station packet to the protected
-current serving deadline, then native activation must recheck live admission.
+reviewed station packet is now bound to cleanup at `2026-09-29T08:52:37Z`; its
+prepared join grant expires at `2026-09-29T08:32:58Z`. These deadlines describe
+this attempt only and do not authorize a later retry. Station installation must
+still recheck live admission, and its native receipt, initial grant/readback,
+signed publication and replica queries have not yet been accepted.
+
+The trial's bounded cleanup stops the new DNS applications and Knot processes,
+and the station bridge removes only its own firewall and socket ACL changes.
+Encrypted authority, agent and workload state must be retained. After acceptance
+or failure, restore the retained generation 10 configuration through the guarded
+manual test-activation procedure and verify identity, storage and existing
+services. This is not an automatic Nix rollback or a hardware rollback test.
 
 ## Observed DNS and available hosts
 
@@ -101,16 +146,17 @@ those names. They are a dated observation, not an exported zone inventory.
 
 The inspected
 [`nix-pseudo-design` host configuration](https://github.com/PseudoDesign/nix-pseudo-design/tree/5ff9b5f3e161ba62f1e595338681fdaea3ff9dd6/hosts)
-defines two existing deployment targets:
+records the baseline for two existing deployment targets, before the LAN trial:
 
-| Host | Existing role and relevant boundary | Candidate DNS role, not yet enabled |
+| Host | Baseline role and relevant boundary | DNS role |
 | --- | --- | --- |
-| Ace, reserved LAN address `192.168.8.214` | Standalone SPIRE, Hydra/PostgreSQL and existing pilot credentials; SPIRE listens on loopback | Local updater, controller and one publisher; writable hidden DNS origin P0 |
+| Ace, reserved LAN address `192.168.8.214` | Standalone SPIRE, Hydra/PostgreSQL and existing pilot credentials; baseline SPIRE listens on loopback | Test-activated local updater/controller/publisher, writable hidden origin and two isolated read-only replicas |
 | Mako, reserved LAN address `192.168.8.247` | Public HTTP entry point, human identity, SSH CA, backups and existing applications | Read-only hidden origin P1 after service/resource review |
 
-No authoritative DNS, publisher TSIG provisioning, or managed-secondary
-configuration is wired into those host definitions. Existing PostgreSQL for
-Hydra or human identity is not fleet enrollment inventory. Ace and Mako share a
+That inspected baseline has no authoritative DNS, publisher TSIG provisioning or
+managed-secondary configuration; the new Ace composition is tracked above.
+Existing PostgreSQL for Hydra or human identity is not fleet enrollment
+inventory. Ace and Mako share a
 LAN and public entry point; using them together does not establish independent
 public DNS availability.
 
@@ -132,12 +178,12 @@ end-to-end connection, such as a direct LAN route or reviewed TCP forwarding.
    `enrollments` rows. Bind the DNS workload to the actual enrollment through an
    operator-reviewed mapping; `ace-pilot-20260929` is presently the identity
    probe's instance, not an existing DNS admission decision.
-2. **Finalize the disabled host composition.** Pin the tested DNS
-   packages/modules, add separate updater/controller/registry service identities
-   and exact user-plus-unit registrations, and preserve the existing authority
-   and probe. Keep the current enrollment authority authoritative; copying its
-   database to Ace would be a separate service transfer. Use isolated desired
-   state and runtime credentials. Build and test the candidate before activation.
+2. **Accept the staged host composition.** The tested DNS packages/modules and
+   exact identities are pinned, and Ace's candidate is test-activated. Complete
+   station acceptance and the checks below before considering a persistent
+   switch. Preserve the existing authority and probe. Keep the current enrollment
+   authority authoritative; copying its database to Ace would be a separate
+   service transfer. Retain isolated desired state and runtime credentials.
 3. **Qualify the selected LAN arrangement.** Use Ace's loopback primary at
    port `15352`, LAN replicas at `15353`/`15354`, local controller at `18443`,
    and Malak registry at `18446`. Review the proposed numeric DNS assignment
@@ -214,7 +260,7 @@ The remaining deployment inputs are:
    including the LAN route. `204.8.14.108` is observed existing infrastructure,
    not an approved new destination mapping.
 
-The prepared pilot admission adapter, explicit workload mapping and disabled
-host composition do not depend on resolving those public-deployment inputs.
+The pilot admission adapter, explicit workload mapping and bounded LAN trial do
+not depend on resolving those public-deployment inputs.
 This rollout does not qualify boot integrity, hardware identity, offline time,
 authority rollback protection, DNS redundancy or full production admission.
