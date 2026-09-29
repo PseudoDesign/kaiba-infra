@@ -3,10 +3,11 @@
 Status, 2026-09-29: **The owner accepted the Ace/Mako deployment target.
 Software and host-composition validation passed, and the changes are published
 in draft PRs. The protected source inventory is now verified and transfer
-helpers are published with passing local checks; no state export, cutover or native
-end-to-end acceptance has occurred. Ace remains on its restored
-baseline after the expired first trial. Mako's expired operational credential
-requires supported recovery before export/cutover; Malak continues serving.**
+helpers are published with passing local checks. Both hosts passed temporary
+dormant staging; their persistent boot profiles remain unchanged. No state
+export, cutover or native end-to-end acceptance has occurred. Mako's expired
+operational credential requires supported recovery before export/cutover;
+Malak continues serving.**
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
 DNS zone, an update endpoint, or permission to publish a device address. The
@@ -51,11 +52,11 @@ Separate host compositions and a two-host replica module are now authored;
 the first trial's profile ran both replica processes on Ace. Native acceptance must exercise
 authorization, credential renewal, restart and signed DNS publication with Malak
 disconnected, plus queries and outage recovery on Mako's actual replica. No
-migration or Mako activation has been performed. Two hosts on one LAN do not
-establish high availability or qualify offline boot/rollback protection.
+migration or Mako agent startup/admission has been performed. Two hosts on one
+LAN do not establish high availability or qualify offline boot/rollback protection.
 
 The new host profiles are disabled by default. Their disabled evaluations match
-Ace's restored generation 10 and Mako's existing closure exactly. Staging with
+Ace's retained generation 10 and Mako's persistent closure exactly. Staging with
 `enable = true` and `activate = false` selects an immutable deny guard and does
 not autostart the new services. Active configuration requires the reviewed
 policy guard and verified imported state. Ace's prepared
@@ -68,7 +69,21 @@ records the staged and active interfaces. Its
 records passing checks against the published dependency pins, including exact
 disabled closure preservation. This is evaluation evidence, not host activation.
 
-Current validation is software evidence only:
+Native dormant staging passed on Mako at `2026-09-29T19:31:24Z` and Ace at
+`2026-09-29T19:31:54Z`. Both hosts built the reviewed candidates natively with
+Fleet `0bd55c5`, then applied them through `switch-to-configuration test` with
+`enable = true`, `activate = false`. Selected existing application processes,
+Ace's SPIRE processes, device state and directory, ownership, boot identity and
+persistent system profiles were preserved. New pilot units were nonrunning
+with no main process; imported authority state was absent. Both activations
+reloaded DBus and the firewall; Ace also restarted tmpfiles setup and started
+its boot automount/mount, `local-fs.target` and `systemd-timedated`. These checks
+do not assert that every service or mount was unchanged. The
+[sanitized host observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-29-ace-mako-dormant-staging.json)
+records the temporary candidates and retained persistent baselines. Dormant
+staging does not activate the authority or establish native end-to-end acceptance.
+
+The application and migration qualification checks remain software evidence:
 
 - The final two-host DNS VM passed eight groups: real cross-host AXFR/NOTIFY,
   credential-role separation, source restrictions, outage and journal restart,

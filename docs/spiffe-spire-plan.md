@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Ace/Mako target accepted; transfer preparation in progress | Disabled host closures unchanged; two-host DNS and imported Fleet control-plane VMs passed; protected inventory verified and transfer helpers tested locally; no live export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Dormant native staging passed; transfer preparation in progress | Persistent boot profiles unchanged; new pilot units stopped; two-host DNS and imported Fleet control-plane VMs passed; protected inventory verified and transfer helpers tested locally; no live export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -113,9 +113,15 @@ existing services preserved. The owner accepted Ace as Kaiba
 server, Mako as agent and a real LAN replica, and Malak as operator only. It
 requires transferring the complete pilot control plane and qualifying normal
 operation with Malak disconnected. Disabled host profiles are authored and their
-disabled closures match the current Ace/Mako baselines; enabled staging selects
-an immutable deny guard and leaves new services stopped. The final two-host DNS
-and imported Fleet control-plane VMs each passed eight groups. Fleet also passed
+disabled closures match the persistent Ace/Mako baselines; enabled staging selects
+an immutable deny guard and leaves new services stopped. Both hosts passed native
+builds and temporary dormant test activation at `19:31Z`, preserving selected
+application processes, device state and ownership, boot identity and persistent
+profiles. Ace's existing SPIRE processes were preserved; no authority state was
+imported or activated. The rollout record distinguishes these checks from the
+observed activation changes to DBus, firewall and Ace's mounts/setup services.
+The final two-host DNS and imported Fleet control-plane VMs each passed eight
+groups. Fleet also passed
 seven guard tests, six real PostgreSQL groups and module/all-system evaluation.
 Import must preserve the Reader paths and
 endpoints covered by the retained issuer scope, rather than rewriting scope rows

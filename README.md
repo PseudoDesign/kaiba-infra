@@ -40,7 +40,9 @@ integration has passed software checks. Ace's first bounded LAN trial passed
 pre-station checks, expired, and was restored to its retained baseline.
 The [accepted deployment target](docs/pilot-dns-rollout.md#accepted-acemako-deployment-target)
 uses Ace as the Kaiba server, Mako as an agent and DNS replica, and Malak as an
-operator workstation. Host staging keeps new services stopped; the two-host DNS
+operator workstation. Both hosts passed temporary dormant staging with selected
+existing services and device state preserved; their persistent boot profiles
+remain unchanged and the new pilot units remain stopped. The two-host DNS
 and imported Fleet control-plane VMs passed. The protected source inventory is
 now verified, and encrypted transfer preparation and source-fencing helpers
 are published with 76 passing local migration checks. Ace's recipient key and
