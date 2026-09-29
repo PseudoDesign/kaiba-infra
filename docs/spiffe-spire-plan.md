@@ -12,8 +12,8 @@ qualification evidence.
 | Existing fleet enrollment | Software rehearsal implemented | Existing `kaiba-fleet` tests; production admission remains unavailable |
 | SPIRE membership and identity contracts | Additive draft implemented | `WorkloadBinding` `0.5.0-draft.1`; pinned prototype corpus conformance; production adoption pending |
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
-| Real DNS and fleet inventory integration | Planned | Authenticated current registry integration and DNS updater/controller acceptance |
-| Offline hardware continuity | Unqualified | Pinned hardware/firmware profile and complete physical evidence |
+| Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
+| Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
 
@@ -33,6 +33,42 @@ is synthetic and explicitly marks hardware as unqualified. This slice has no
 real DNS integration, authenticated production registry, or complete fleet
 installer. The linked branches and contract draft are under review; no remote
 CI result is claimed here.
+
+The next integration slice now supplies a real `kaiba-workload-registry` backed
+by the existing fleet PostgreSQL inventory, plus opt-in SPIFFE transport in the
+DNS updater and controller. An exact operator identity grants a workload one
+stable numeric DNS assignment; each protected request checks current instance,
+permission, configured authority/tenant/security scope, and inventory policy.
+The logical fleet ID remains distinct from the assigned DNS number. The
+[authorization contract](https://github.com/pd-codex/kaiba-contracts/pull/14),
+[DNS integration](https://github.com/pd-codex/nixos-kaiba-network/pull/3), and
+[live fleet integration](https://github.com/PseudoDesign/kaiba-fleet/pull/28)
+record these interfaces. Contract tests, DNS Go/Nix checks, and 14 PostgreSQL
+registry tests with the Go race detector pass locally. The combined
+SPIRE/PostgreSQL/DNS VM passes, including actual publication, quarantine on a
+reused connection, updater denial during database outage, and replaced-instance
+denial. The DNS compatibility seven-VM suite and ARM64 package build also pass
+in remote CI. This service reads the original `enrollments` lifecycle and
+does not silently migrate `pilot_enrollments` or enable production admission.
+
+The [hardware inventory draft](https://github.com/PseudoDesign/kaiba-provisioning/pull/95)
+records read-only observations from Ace and Mako. Both report Pi 5 Model B
+Rev 1.1; Ace has newer observed bootloader firmware and fewer observed
+application services, making it the preferred first research host. Its SSH
+key was verified against the owner's supplied fingerprint. Neither board's
+secure boot, offline rollback prevention, TPM suitability, or offline time
+continuity is established. No firmware, OTP, disk, service or boot configuration
+was changed by these checks.
+
+A subsequent isolated SPIRE 1.15.2 smoke on Ace passed real Workload API SVID
+rotation in one process, agent restart after deleting its consumed grant, and
+expiry denial during an authority outage with the agent still running. The
+nonroot runner used temporary private state and loopback networking, then
+confirmed process/state cleanup. Signed runtime packages were added to the
+Nix store without activating a system profile or installing persistent
+services. This demonstrates native ARM64 identity behavior; it does not deploy
+the complete DNS stack or qualify any offline boot/rollback gate. The hardware
+draft retains the pinned runner and sanitized observations.
 
 Shared interfaces belong in
 [`kaiba-contracts`](https://github.com/pd-codex/kaiba-contracts). Extend the existing

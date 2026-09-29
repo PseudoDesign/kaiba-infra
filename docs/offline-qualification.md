@@ -33,6 +33,33 @@ state, expected result, observed result, and independently retained evidence.
 Interrupted operations require before/after state observations. A missing
 observation is an open gate.
 
+## Initial board inventory
+
+Read-only inventories were collected on 2026-09-29 from
+[Ace](https://github.com/PseudoDesign/kaiba-provisioning/blob/0d15634b5eefb4f63146e0e29182ebaf37369e9a/docs/observations/2026-09-29-ace-offline-inventory.md)
+and [Mako](https://github.com/PseudoDesign/kaiba-provisioning/blob/0d15634b5eefb4f63146e0e29182ebaf37369e9a/docs/observations/2026-09-29-mako-offline-inventory.md).
+Both report Pi 5 Model B Rev 1.1, writable encrypted roots, and currently
+synchronized network time. No TPM device interface was observed, and the
+signed-boot device-tree property was absent; neither absence establishes the
+complete hardware or secure-boot posture.
+
+Ace is the preferred first research target because it has newer observed
+firmware and fewer observed services. Mako remains useful for later comparisons
+with its existing workloads accounted for. These inventories pin starting
+observations only. All qualification rows remain open, including offline time,
+old signed boot paths, authority-state rollback, and recovery. The next
+reversible identity smoke is recorded separately from a reviewed physical
+boot/monotonic-state campaign.
+
+The isolated Ace SPIRE 1.15.2 smoke subsequently passed native ARM64 credential
+rotation, agent restart without the consumed bootstrap grant, and expiry denial
+during an authority outage. Its private temporary state and processes were
+removed. This supplies preliminary software evidence for the identity portion
+of OFF-08, with network-synchronized time and no reboot; it does not close
+OFF-08 or establish boot, hardware continuity, protected-state recovery, or
+clock assurance. Runtime Nix packages remain ordinary unrooted store objects;
+no system profile, persistent service, firmware, OTP or TPM policy was changed.
+
 ## Required observations
 
 All rows are open. A candidate is qualified only when every applicable row has
