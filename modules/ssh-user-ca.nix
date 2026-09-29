@@ -43,7 +43,7 @@ let
     exec ${pkgs.python3}/bin/python3 ${../identity/ssh-oidc-ready.py} \
       --issuer ${lib.escapeShellArg cfg.issuer} \
       --trust-bundle ${lib.escapeShellArg (if cfg.oidcTrustBundle != null
-        then toString cfg.oidcTrustBundle else "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt")}
+        then "${cfg.oidcTrustBundle}" else "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt")}
   '';
   run = pkgs.writeShellScript "kaiba-ssh-ca-start" ''
     set -eu
@@ -106,7 +106,9 @@ in {
         StartLimitIntervalSec = 0;
       };
       environment = lib.optionalAttrs (cfg.oidcTrustBundle != null) {
-        SSL_CERT_FILE = toString cfg.oidcTrustBundle;
+        # Interpolation copies Nix path literals into the closure; toString
+        # would leave a reference to an unavailable source-tree path at runtime.
+        SSL_CERT_FILE = "${cfg.oidcTrustBundle}";
       };
       serviceConfig = {
         Type = "simple";
