@@ -13,6 +13,7 @@ qualification evidence.
 | SPIRE membership and identity contracts | Additive draft implemented | `WorkloadBinding` `0.5.0-draft.1`; pinned prototype corpus conformance; production adoption pending |
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
+| Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -53,9 +54,10 @@ does not silently migrate `pilot_enrollments` or enable production admission.
 
 The [hardware inventory draft](https://github.com/PseudoDesign/kaiba-provisioning/pull/95)
 records read-only observations from Ace and Mako. Both report Pi 5 Model B
-Rev 1.1; Ace has newer observed bootloader firmware and fewer observed
-application services, making it the preferred first research host. Its SSH
-key was verified against the owner's supplied fingerprint. Neither board's
+Rev 1.1; Ace has newer observed bootloader firmware and is the selected first
+research host. The inventory's small service sample was incomplete: Ace runs
+Hydra and PostgreSQL, which subsequent work must preserve. Its SSH key was
+verified against the owner's supplied fingerprint. Neither board's
 secure boot, offline rollback prevention, TPM suitability, or offline time
 continuity is established. No firmware, OTP, disk, service or boot configuration
 was changed by these checks.
@@ -69,6 +71,28 @@ Nix store without activating a system profile or installing persistent
 services. This demonstrates native ARM64 identity behavior; it does not deploy
 the complete DNS stack or qualify any offline boot/rollback gate. The hardware
 draft retains the pinned runner and sanitized observations.
+
+The owner has now selected `pilot.kaiba.pseudo.design` and authorized a
+[persistent identity pilot on Ace](persistent-identity-pilot.md). Guarded native
+test activation, explicit initialization and persistent switch passed, followed
+by fresh SSH access and a successful probe at `2026-09-29T06:09:10Z`. This slice
+runs a loopback SPIRE authority, local agent, durable bootstrap guard, and dedicated
+systemd-unit probe. Ace obtained its intended identity, denied the same user
+under the wrong unit, and restarted the server and agent with the consumed
+grant absent while preserving the authority, node and registration. Existing
+public enrollment status remained unchanged; Hydra and PostgreSQL stayed
+healthy, and there were no failed units. The
+[fleet pilot](https://github.com/PseudoDesign/kaiba-fleet/pull/29) also passed ten
+synthetic VM groups covering initialization, live-source rotation, reboot,
+state-loss denial, SQLite restart and guarded bundle restoration. Kernel,
+initrd/modules, fstab/crypttab and existing service definitions matched the
+pre-change system; the previous generation is retained, and Mako's evaluated
+configuration is unchanged. Ace has not been rebooted for this pilot. This
+phase does not yet connect real fleet admission or DNS publication. Future separate
+`spire.pilot.kaiba.pseudo.design` and `updates.pilot.kaiba.pseudo.design` endpoint
+names are design choices; this phase creates no corresponding DNS records.
+Persistent identity service acceptance and physical offline qualification remain
+separate evidence tracks.
 
 Shared interfaces belong in
 [`kaiba-contracts`](https://github.com/pd-codex/kaiba-contracts). Extend the existing
