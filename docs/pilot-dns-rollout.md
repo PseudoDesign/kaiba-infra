@@ -2,9 +2,11 @@
 
 Status, 2026-09-29: **The owner accepted the Ace/Mako deployment target.
 Software and host-composition validation passed, and the changes are published
-in draft PRs. The protected source inventory is awaited; no state export, cutover
-or native end-to-end acceptance has occurred. Ace remains on its restored
-baseline after the expired first trial.**
+in draft PRs. The protected source inventory is now verified and transfer
+helpers are published with passing local checks; no state export, cutover or native
+end-to-end acceptance has occurred. Ace remains on its restored
+baseline after the expired first trial. Mako's expired operational credential
+requires supported recovery before export/cutover; Malak continues serving.**
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
 DNS zone, an update endpoint, or permission to publish a device address. The
@@ -36,12 +38,14 @@ authority must continue to deny authorization. The target policy verifier must
 preserve the station's current storage and serving-window requirements.
 
 The retained issuer scope hashes Reader configuration, including endpoint URLs,
-file paths and certificate references. Before import, compare the source and
-destination Reader values exactly and preserve the paths and endpoints covered
-by that scope. A host move does not permit rewriting retained issuer scope rows
-to accept a changed configuration. Resolve any mismatch through the existing
-contract and explicit migration design before enabling issuance; keep the
-original ledger and scope evidence intact.
+file paths and certificate references. The source inventory confirms that the
+issuer's canonical fleet callback uses `192.168.8.249:18444`. The prepared
+issuer-only transport override dials Ace at `192.168.8.214` while retaining the
+canonical URL, TLS name and scope inputs. A new transport leaf covers both
+addresses under the existing transport CA and existing deadline; its private
+key stays on Ace. Original configuration bytes and all original, active,
+renewal-source and recovery-source scope rows remain preserved. Import must
+verify scope equality; it must not rewrite scope rows to accept a host move.
 
 Separate host compositions and a two-host replica module are now authored;
 the first trial's profile ran both replica processes on Ace. Native acceptance must exercise
@@ -77,25 +81,82 @@ Current validation is software evidence only:
   reviewed restart and deadline shutdown. Seven guard tests, six real PostgreSQL
   groups, module evaluation and all-system flake evaluation also passed. These
   fixtures contain synthetic state; no real device was migrated.
-- Migration preparation has a read-only inventory helper with twelve passing
-  tests. The exact helper was frozen in the Nix store and its owner command
-  requested; the protected live inventory is still awaited. This is not an
-  export, backup, source fence or authorization to initialize replacement state.
+- The owner ran the frozen read-only inventory helper, and its private report
+  was verified against the owner-provided SHA-256 digest. The helper has twelve
+  passing tests. The inventory confirms the encrypted source mount, four
+  authority roles, private PG18 cluster, two active pilot memberships, complete
+  retained issuance/renewal history and unchanged serving deadline. It is a
+  point-in-time inventory, not a coordinated backup.
+- The exporter passed seventeen synthetic checks, including
+  fence-before-stop ordering, a boot/process/deadline-bound PG-only permit,
+  preservation after partial failure, refusal to overwrite prior attempts,
+  full row-content drift detection and real age encryption/decryption with
+  generated test keys. The importer passed a disposable PG18 logical
+  dump/restore comparison using the same snapshot normalization. These are
+  software checks; neither helper has exported or imported live pilot state.
+- Transport signing passed sixteen focused tests; target-policy preparation
+  passed eleven. They retain the source policy deadline and trust pins, verify the
+  requested transport identity, and permit only the reviewed callback dial
+  override. The complete migration Nix check passed **76 tests with zero skips**,
+  including final import-receipt checks, real age archive/export-import coverage
+  and disposable PG18 restore verification. Eight real PostgreSQL guard groups,
+  issuer callback scope/history preservation and the control-plane VM also
+  passed. Its follow-up readiness regression has nine checks: it deliberately
+  holds one Reader authority unavailable, requires Fleet to deny access, then
+  verifies authenticated readiness and unchanged memberships. These results
+  are local software evidence, not live migration.
 
 DNS CI also passed formatting/module checks, ARM package builds and VM topology
-checks at `67574bb`. Fleet CI at `8ac42e1` is still running; the Fleet results
-above are local validation.
+checks at `67574bb`. The Fleet and transfer-helper results cited above are
+local validation; they do not imply a completed remote CI run for the new
+transfer commit.
 
 The migration must preserve one authoritative writer and the complete issuance
-history. Export and cutover tooling await the live inventory, including transport
-certificate SANs, current policy, source account names and database/ledger state.
+history. Ace now has a private age recipient key and transport CSR on its
+existing encrypted root; only their public request material is used by source
+preparation. The source's fleet transport leaf covers Malak, so a refreshed
+source request must authorize the new leaf under the retained CA before
+transfer. Source operator credentials and transport/management CA
+private keys remain on Malak. Operational issuer keys, Reader credentials,
+signed records and full database histories are part of the encrypted transfer.
 Source credential and record paths must be absolute; relative paths must not be
-silently relocated during import. The tested published implementation is
-[Fleet `8ac42e1`](https://github.com/PseudoDesign/kaiba-fleet/tree/8ac42e12aa4b9a1c0d0a7b80e03cbac3411ab672/nix/pilot-control-plane)
+silently relocated during import. The current published implementation is
+[Fleet `0bd55c5`](https://github.com/PseudoDesign/kaiba-fleet/tree/0bd55c576536c29825aada2f7ce6fa052a877402/nix/pilot-control-plane)
 and [DNS `67574bb`](https://github.com/pd-codex/nixos-kaiba-network/blob/67574bb1fe88a60118c680d823ac2ddb7656975b/docs/lan-two-host.md).
-The [migration protocol](https://github.com/PseudoDesign/kaiba-fleet/blob/8ac42e12aa4b9a1c0d0a7b80e03cbac3411ab672/deploy/pilot-migration/README.md)
-separates the implemented read-only inventory from the remaining export/import
-and cutover work.
+The [published migration protocol](https://github.com/PseudoDesign/kaiba-fleet/blob/0bd55c576536c29825aada2f7ce6fa052a877402/deploy/pilot-migration/README.md)
+records the implemented export/import, transport, target-policy and receipt
+boundaries in [Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30).
+
+After the recovery prerequisite below, the remaining owner operations are
+concrete and separate: refresh and inspect the source-bound transport request
+and signer; fence Malak persistently and export both databases
+and selected files into a recipient-encrypted archive; authenticate the source
+ciphertext/manifest digests before private handoff; import into Ace's unused
+isolated PG18 cluster and remap OS account ownership by name. The exporter uses
+native logical dumps with all writers stopped, verifies complete table-content
+and schema/sequence snapshots, and retains the source fence after errors.
+Neither export nor import activates destination authorities. Target policy and
+import receipt verification precede the separate activation, followed by native
+renewal/restart/DNS acceptance with Malak disconnected. An ambiguous operation
+requires readback of the same intent; it never justifies restarting both writers
+or initializing replacement issuer state.
+
+Native device preflight found a prerequisite before those source mutations:
+Ace successfully authenticated to the current `/pilot/self` endpoint and its
+credential remains valid until October 3. Mako's request failed with
+`invalid_certificate`; its installed operational certificate expired at
+`2026-09-28T08:03:32Z`, although the local enrollment phase still says `verified`.
+That phase is not proof of current credential validity. The supported recovery
+path must preserve the existing identity and reconcile current source authority
+state before export/cutover and the complete two-host acceptance. This requires
+an explicit Mako recovery packet, additive Fleet and issuer grants, and an
+updated source serving guard. After successful recovery and current `/pilot/self`
+readback, take a fresh protected inventory and regenerate the source-bound
+transport and target-policy packets. **The previously prepared owner transport
+signing command is superseded and must not run against the old inventory.** No
+replacement identity or re-enrollment is assumed. Malak's source authority
+remains running; no recovery grant, source fence or export has been applied by
+the migration helpers.
 
 ## First LAN trial: topology and boundary
 

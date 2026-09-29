@@ -42,9 +42,15 @@ The [accepted deployment target](docs/pilot-dns-rollout.md#accepted-acemako-depl
 uses Ace as the Kaiba server, Mako as an agent and DNS replica, and Malak as an
 operator workstation. Host staging keeps new services stopped; the two-host DNS
 and imported Fleet control-plane VMs passed. The protected source inventory is
-still awaited. Transferring Malak's complete pilot control plane, native
+now verified, and encrypted transfer preparation and source-fencing helpers
+are published with 76 passing local migration checks. Ace's recipient key and
+transport CSR are prepared; the source-bound request must be refreshed after
+Mako credential recovery. Transferring
+Malak's complete pilot control plane, native
 end-to-end LAN acceptance and offline boot/rollback qualification remain
-outstanding. No state export or cutover has occurred.
+outstanding. Native preflight found Mako's installed operational certificate
+expired; supported credential recovery is required before export/cutover. Malak
+continues serving, and no state export or cutover has occurred.
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime

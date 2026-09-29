@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Ace/Mako target accepted; staging keeps new services stopped | Disabled host closures unchanged; final two-host DNS and imported Fleet control-plane VMs passed; protected inventory awaited; no export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Ace/Mako target accepted; transfer preparation in progress | Disabled host closures unchanged; two-host DNS and imported Fleet control-plane VMs passed; protected inventory verified and transfer helpers tested locally; no live export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -119,9 +119,24 @@ and imported Fleet control-plane VMs each passed eight groups. Fleet also passed
 seven guard tests, six real PostgreSQL groups and module/all-system evaluation.
 Import must preserve the Reader paths and
 endpoints covered by the retained issuer scope, rather than rewriting scope rows
-to accept a mismatch. A frozen
-read-only migration inventory helper passed twelve tests, and the owner's
-protected source inventory is awaited. No state export or cutover has occurred. The
+to accept a mismatch. The owner ran the frozen read-only migration inventory
+helper, which passed twelve tests, and the private report's digest is verified.
+Ace's encryption recipient and transport CSR are prepared. The source fence
+and encrypted export helper passed seventeen synthetic tests; the importer passed
+a disposable PG18 dump/restore comparison. The complete migration Nix check
+passed 76 tests with zero skips; the changes are published at
+[Fleet `0bd55c5`](https://github.com/PseudoDesign/kaiba-fleet/tree/0bd55c576536c29825aada2f7ce6fa052a877402/deploy/pilot-migration).
+The reviewed issuer-only callback
+dial override preserves the canonical source URL, TLS name and all four scope
+pins while reaching Ace. Source signing, fenced export, verified import and
+separate target activation remain owner operations. No live state export or
+cutover has occurred. Native preflight authenticated Ace, but Mako's installed
+operational certificate expired on September 28 and `/pilot/self` denies it.
+Supported credential recovery preserving its existing identity is a prerequisite
+to export/cutover and full two-host acceptance. It needs additive Fleet/issuer
+grants and a matching source serving guard, followed by fresh protected inventory
+and refreshed transport/policy packets. The old owner signing command is
+superseded. Malak continues serving while that recovery is prepared. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
 public-delegation boundaries. Persistent identity service acceptance and physical
 offline qualification remain separate evidence tracks.
