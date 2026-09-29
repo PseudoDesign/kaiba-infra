@@ -66,8 +66,12 @@ The prepared source revisions are Fleet
 `/nix/store/ipk6rwq7h1rk4zpxyyym9s550f5i0ka7-nixos-system-ace-26.05.20260807.ee48b14`;
 active, booted and persistent systems remained at generation 10. The final
 published dependency lock evaluates to the same candidate closure, and disabled
-Ace and Mako evaluate unchanged. Final station registry/operator
-packages and all ten renderer tests also passed locally.
+Ace and Mako evaluate unchanged. Final station registry/operator packages
+passed locally. The station preparation refinement at Fleet
+`869a8184c8a773f7a4d811ac2f74a7ba0c4ef49b` passed fourteen renderer tests.
+It accepts an explicit maximum duration capped by current serving and credential
+deadlines, and transfers only the newly created private review packet to its
+named reviewer. Runtime package and host pins remain at `66ee0d6`.
 
 The owner ran the read-only station preflight at `2026-09-29T07:27:24Z`.
 It confirmed the expected active Ace enrollment, current pilot policy and
