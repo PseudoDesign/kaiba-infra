@@ -34,6 +34,11 @@ in pkgs.testers.runNixOSTest {
       oidcTrustBundle = certs.ca.cert;
       proxy.enable = false;
     };
+    systemd.services.kaiba-ssh-ca = {
+      after = [ "kaiba-human-identity-configure.service" ];
+      requires = [ "kaiba-human-identity-configure.service" ];
+      partOf = [ "kaiba-human-identity-configure.service" ];
+    };
     systemd.services.test-ca-init = {
       before = [ "nginx.service" "kaiba-ssh-ca.service" ];
       requiredBy = [ "nginx.service" "kaiba-ssh-ca.service" ];
@@ -93,6 +98,7 @@ in pkgs.testers.runNixOSTest {
     identity.succeed("python3 /tmp/assert_policy.py")
     identity.fail("runuser -u nobody -- cat /var/lib/kaiba-human-identity/bootstrap-admin-password")
     identity.succeed("systemctl restart kaiba-human-identity-configure")
+    identity.wait_for_unit("kaiba-ssh-ca.service")
     identity.succeed("kaiba-human-identity --password-file /var/lib/kaiba-human-identity/bootstrap-admin-password enroll-start --owner owner")
     identity.fail("kaiba-human-identity --password-file /var/lib/kaiba-human-identity/bootstrap-admin-password enroll-start --owner second-owner")
     identity.fail("kaiba-human-identity --password-file /var/lib/kaiba-human-identity/bootstrap-admin-password enroll-finalize")
@@ -111,7 +117,7 @@ in pkgs.testers.runNixOSTest {
         "url": identity.succeed("cat /var/lib/kaiba-human-identity/owner-enrollment-url").strip(),
         "password": identity.succeed("cat /var/lib/kaiba-human-identity/owner-enrollment-password").strip(),
     }
-    browser.succeed("cat > /tmp/enrollment.json <<'FIXTURE'\n" + json.dumps(fixture) + "\nFIXTURE")
+    assert browser.execute("umask 0077; cat > /tmp/enrollment.json <<'FIXTURE'\n" + json.dumps(fixture) + "\nFIXTURE")[0] == 0
     browser.succeed("cp ${./identity/browser_flow.py} /tmp/browser_flow.py")
     browser.succeed("cp ${./identity/client_flow.py} /tmp/client_flow.py")
     browser.succeed("python3 /tmp/browser_flow.py > /tmp/browser-flow.log 2>&1 &")
@@ -131,9 +137,12 @@ in pkgs.testers.runNixOSTest {
     browser.succeed("test ! -e /tmp/browser-flow-failed")
     identity.succeed("python3 /tmp/assert_policy.py --enrolled")
     identity.fail("kaiba-human-identity --password-file /var/lib/kaiba-human-identity/bootstrap-admin-password enroll-resume")
+    print("Keycloak enrollment cgroup peak bytes:", identity.succeed("systemctl show keycloak -p MemoryPeak --value").strip())
+    print("Keycloak Java resident KiB:", identity.succeed("ps -C java -o rss=").strip())
     identity.succeed("systemctl restart keycloak")
     identity.wait_for_unit("keycloak.service", timeout=300)
-    identity.succeed("systemctl restart kaiba-human-identity-configure")
+    identity.wait_for_unit("kaiba-human-identity-configure.service", timeout=300)
+    identity.wait_for_unit("kaiba-ssh-ca.service", timeout=300)
     identity.succeed("python3 /tmp/assert_policy.py --enrolled")
     identity.succeed("test $(systemctl show keycloak -p MemoryMax --value) = 1073741824")
     identity.succeed("test $(systemctl show keycloak -p MemorySwapMax --value) = 0")

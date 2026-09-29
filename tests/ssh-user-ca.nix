@@ -12,7 +12,7 @@ in pkgs.testers.runNixOSTest {
       enable = true;
       hostName = certs.domain;
       issuer = "https://oidc.test:9443";
-      oidcTrustBundle = "/run/fixture-oidc.crt";
+      oidcTrustBundle = "/run/oidc-trust.crt";
       proxy.enable = true;
     };
     networking.hosts."127.0.0.1" = [ "oidc.test" certs.domain ];
@@ -42,7 +42,21 @@ in pkgs.testers.runNixOSTest {
     machine.fail("kaiba-ssh-ca-init")
     assert fingerprint == machine.succeed("sha256sum /var/lib/kaiba-ssh-ca/root_ca.crt /var/lib/kaiba-ssh-ca/ssh_user_ca.pub")
     machine.succeed("test $(stat -c %a /var/lib/kaiba-ssh-ca) = 700; test $(stat -c %a /var/lib/kaiba-ssh-ca/password) = 600")
-    machine.succeed("systemctl start kaiba-ssh-ca.service")
+    # Discovery outages and initially untrusted TLS must prevent a running CA
+    # with OIDC disabled. Once issuer trust is ready, startup retries recover
+    # automatically; never manually restart the CA to make this test pass.
+    machine.succeed("cp /run/fixture-oidc.crt /run/oidc-trust.crt; systemctl stop oidc-fixture")
+    machine.fail("systemctl start kaiba-ssh-ca.service")
+    machine.fail("systemctl is-active --quiet kaiba-ssh-ca.service")
+    machine.fail("curl --cacert /var/lib/kaiba-ssh-ca/root_ca.crt -fsS https://localhost:8443/health")
+    machine.succeed("cp ${certs.ca.cert} /run/oidc-trust.crt; systemctl start oidc-fixture")
+    machine.wait_for_open_port(9443)
+    restarts = int(machine.succeed("systemctl show kaiba-ssh-ca -p NRestarts --value").strip())
+    machine.wait_until_succeeds(f"test $(systemctl show kaiba-ssh-ca -p NRestarts --value) -gt {restarts}", timeout=30)
+    machine.wait_until_succeeds("journalctl -u kaiba-ssh-ca --no-pager | grep -F CERTIFICATE_VERIFY_FAILED", timeout=30)
+    machine.fail("curl --cacert /var/lib/kaiba-ssh-ca/root_ca.crt -fsS https://localhost:8443/health")
+    machine.succeed("cp /run/fixture-oidc.crt /run/oidc-trust.crt")
+    machine.wait_for_unit("kaiba-ssh-ca.service")
     machine.wait_for_open_port(8443)
     machine.succeed("systemctl start nginx.service")
     machine.wait_for_unit("kaiba-ssh-ca-trust.service")

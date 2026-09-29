@@ -7,6 +7,7 @@ The caller must release its own listener on 127.0.0.1:8400 before calling this.
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import time
@@ -61,13 +62,23 @@ def exercise_client(driver, public_config):
 
             stdout = directory / "login.stdout"
             stderr = directory / "login.stderr"
+            def safe_login_error():
+                # Only surface the wrapper's bounded error lines. step's raw
+                # output includes browser URLs and may contain provider data.
+                errors = []
+                for line in stderr.read_text().splitlines():
+                    if line.startswith("kaiba: "):
+                        line = re.sub(r"https?://\S+", "<URL>", line)
+                        line = re.sub(r"[A-Za-z0-9_+/=-]{32,}", "<redacted>", line)
+                        errors.append(line[:250])
+                return " | ".join(errors[-3:]) or "no wrapper error recorded"
             with stdout.open("w") as out, stderr.open("w") as err:
                 login = subprocess.Popen(["kaiba", "--config", str(config), "login"],
                                          env=env, stdout=out, stderr=err, text=True)
                 deadline = time.monotonic() + 60
                 authorization_url = None
                 while authorization_url is None:
-                    assert login.poll() is None, "Kaiba login failed before browser authorization"
+                    assert login.poll() is None, "Kaiba login failed before browser authorization: " + safe_login_error()
                     assert time.monotonic() < deadline, "Kaiba did not produce a browser authorization URL"
                     for line in stderr.read_text().splitlines():
                         if line.startswith(public_config["issuer"] + "/protocol/openid-connect/auth?"):
@@ -83,7 +94,13 @@ def exercise_client(driver, public_config):
                 assert not driver.find_elements(By.CSS_SELECTOR, "input[type=password]")
                 for button in driver.find_elements(By.ID, "authenticateWebAuthnButton"):
                     button.click()
-                assert login.wait(timeout=90) == 0, "Real Kaiba/step passkey login failed"
+                login_result = login.wait(timeout=90)
+                if login_result:
+                    assert run("ssh-add", "-L") == before, "failed issuance changed another agent identity"
+                    failed_state = directory / "state/kaiba"
+                    assert not (failed_state / "session.json").exists(), "failed issuance retained a session"
+                    assert not (failed_state / "certificate.pub").exists(), "failed issuance retained a certificate"
+                assert login_result == 0, "Real Kaiba/step passkey login failed: " + safe_login_error()
 
             result = json.loads(run("kaiba", "--config", str(config), "status"))
             assert result["active"] and result["principal"] == public_config["principal"]

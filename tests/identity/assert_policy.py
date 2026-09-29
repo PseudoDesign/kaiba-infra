@@ -8,6 +8,10 @@ import urllib.request
 
 from keycloak_admin import Admin
 
+with urllib.request.urlopen("https://acme.test/realms/kaiba/kaiba-enrollment-complete") as completion:
+    assert completion.headers["Referrer-Policy"] == "no-referrer"
+    assert completion.headers["Cache-Control"] == "no-store"
+
 for path in [
     "/admin/", "/realms/master/", "/realms/master/protocol/openid-connect/token",
     "/realms/kaiba/../master/", "/realms/kaiba/%2e%2e/master/",

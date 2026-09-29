@@ -232,8 +232,11 @@ def login(config, state_path, agent):
             bundle = directory / "trust.pem"
             bundle.write_bytes(Path(system_roots).read_bytes() + b"\n" + root.read_bytes())
             verify_provisioner(config, bundle)
+            # Let the CA apply its bounded default duration. step fixes the
+            # start before browser authentication; a relative --not-after
+            # would be evaluated later and inflate the requested lifetime.
             run(["step", "ssh", "login", "--force", "--comment", comment,
-                 "--provisioner", "kaiba-human", "--not-after", "8h",
+                 "--provisioner", "kaiba-human",
                  "--ca-url", config["caURL"], "--root", str(bundle)], interactive=True, env=env)
             if agent_identity() != agent:
                 raise LoginError("The SSH agent changed during login; start a new login in your local agent")

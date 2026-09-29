@@ -124,7 +124,6 @@ in {
       "use.refresh.tokens" = "false";
       "oauth2.device.authorization.grant.enabled" = if enableDeviceAuthorization then "true" else "false";
       "backchannel.logout.session.required" = "true";
-      "post.logout.redirect.uris" = "";
     };
     protocolMappers = [{
       name = "kaiba-groups";
@@ -150,7 +149,7 @@ in {
     implicitFlowEnabled = false;
     serviceAccountsEnabled = false;
     fullScopeAllowed = false;
-    redirectUris = [ "https://${domain}/realms/${realm}/account/" ];
+    redirectUris = [ "https://${domain}/realms/${realm}/kaiba-enrollment-complete" ];
     webOrigins = [ ];
     defaultClientScopes = [ "basic" "profile" ];
     optionalClientScopes = [ ];

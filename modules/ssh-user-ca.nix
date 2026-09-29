@@ -39,6 +39,12 @@ let
     tls = { minVersion = 1.2; maxVersion = 1.3; renegotiation = false; };
   };
   configFile = (pkgs.formats.json {}).generate "kaiba-ssh-ca.json" settings;
+  oidcReady = pkgs.writeShellScript "kaiba-ssh-ca-oidc-ready" ''
+    exec ${pkgs.python3}/bin/python3 ${../identity/ssh-oidc-ready.py} \
+      --issuer ${lib.escapeShellArg cfg.issuer} \
+      --trust-bundle ${lib.escapeShellArg (if cfg.oidcTrustBundle != null
+        then toString cfg.oidcTrustBundle else "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt")}
+  '';
   run = pkgs.writeShellScript "kaiba-ssh-ca-start" ''
     set -eu
     umask 077
@@ -95,13 +101,20 @@ in {
       wantedBy = [ "multi-user.target" ];
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
-      unitConfig.ConditionPathExists = "${state}/initialized";
+      unitConfig = {
+        ConditionPathExists = "${state}/initialized";
+        StartLimitIntervalSec = 0;
+      };
       environment = lib.optionalAttrs (cfg.oidcTrustBundle != null) {
         SSL_CERT_FILE = toString cfg.oidcTrustBundle;
       };
       serviceConfig = {
         Type = "simple";
+        # step-ca otherwise keeps running with OIDC disabled if discovery fails
+        # once during initialization (for example before ACME replaces a cert).
+        ExecStartPre = oidcReady;
         ExecStart = run;
+        TimeoutStartSec = "30s";
         DynamicUser = true;
         User = "kaiba-ssh-ca";
         StateDirectory = "kaiba-ssh-ca-db";

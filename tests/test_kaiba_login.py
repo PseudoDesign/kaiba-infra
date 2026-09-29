@@ -164,6 +164,27 @@ class LoginTests(unittest.TestCase):
                 kaiba.login(self.config, self.state_path, self.agent)
         self.assertFalse(self.state_path.exists())
 
+    def test_denied_issuance_clears_public_state_and_preserves_unrelated_keys(self):
+        commands = []
+        public_roots = self.directory / "system-roots.pem"
+        public_roots.write_text("test-only public roots")
+        def fake_run(command, **kwargs):
+            commands.append(command)
+            if command[1:3] == ["ca", "root"]:
+                Path(command[3]).write_text("test-only public CA root")
+                return ""
+            if command[1:3] == ["ssh", "login"]:
+                self.assertTrue(self.state_path.exists())
+                raise kaiba.LoginError("step failed (exit 1)")
+            self.fail("Denied issuance must not remove an unrelated agent identity")
+        with patch.object(kaiba, "run", side_effect=fake_run), patch.object(kaiba, "agent_keys", return_value=["ssh-ed25519 b3duZXI= owner"]), patch.object(kaiba, "verify_provisioner"), patch.object(kaiba.ssl, "get_default_verify_paths", return_value=SimpleNamespace(cafile=str(public_roots))):
+            with self.assertRaisesRegex(kaiba.LoginError, "step failed"):
+                kaiba.login(self.config, self.state_path, self.agent)
+        self.assertEqual(len(commands), 2)
+        self.assertFalse(self.state_path.exists())
+        self.assertFalse((self.directory / "certificate.pub").exists())
+        self.assertEqual(list(self.directory.glob("login-*")), [])
+
     def test_successful_login_verifies_before_reporting_and_saves_public_material_only(self):
         commands = []
         public_roots = self.directory / "system-roots.pem"
@@ -183,6 +204,8 @@ class LoginTests(unittest.TestCase):
         self.assertNotIn("--principal", login)
         self.assertNotIn("--token", login)
         self.assertNotIn("--console", login)
+        self.assertNotIn("--not-after", login)
+        self.assertNotIn("--not-before", login)
         self.assertEqual(set(json.loads(self.state_path.read_text())), {"agent", "comment", "certificate"})
         self.assertEqual(list(self.directory.glob("login-*")), [])
 

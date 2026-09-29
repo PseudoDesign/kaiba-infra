@@ -82,6 +82,13 @@ in {
             '';
           };
         in {
+          "= /realms/${cfg.realm}/kaiba-enrollment-complete".extraConfig = ''
+            default_type text/html;
+            access_log off;
+            add_header Referrer-Policy no-referrer always;
+            add_header Cache-Control no-store always;
+            return 200 '<!doctype html><html lang="en"><meta charset="utf-8"><title>Continue Kaiba setup</title><h1>Continue Kaiba setup</h1><p>Open your account and add a second passkey on a different authenticator before finishing setup.</p><p><a href="/realms/${cfg.realm}/account/">Open your account</a></p></html>';
+          '';
           "/realms/${cfg.realm}/" = frontend;
           "/resources/" = frontend;
           "/".return = "404";
@@ -110,6 +117,7 @@ in {
         health-enabled = true;
         metrics-enabled = false;
         http-management-host = "127.0.0.1";
+        http-management-port = 9000;
       };
     };
     services.postgresql.settings = {
@@ -173,6 +181,7 @@ in {
       description = "Reconcile and verify Kaiba's managed realm and SSH client policy";
       after = [ "keycloak.service" ];
       requires = [ "keycloak.service" ];
+      partOf = [ "keycloak.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
@@ -184,11 +193,11 @@ in {
         ProtectHome = true;
         NoNewPrivileges = true;
         RestrictAddressFamilies = [ "AF_INET" "AF_INET6" ];
-        TimeoutStartSec = "5min";
+        TimeoutStartSec = "8min";
         # Keycloak 26.7 signals systemd READY before asynchronous first-boot
-        # realm/database initialization ends. Only start policy writes after
-        # the bootstrap filter serves ordinary requests instead of HTTP 503.
-        ExecStartPre = "${pkgs.curl}/bin/curl --fail --silent --output /dev/null --retry 90 --retry-delay 2 --retry-all-errors --retry-max-time 180 --max-time 5 --header X-Forwarded-Proto:https http://127.0.0.1:${toString cfg.httpPort}/realms/master/.well-known/openid-configuration";
+        # realm/database initialization ends. Discovery can also appear before
+        # admin routes are ready, so wait on its actual readiness endpoint.
+        ExecStartPre = "${pkgs.curl}/bin/curl --fail --silent --output /dev/null --retry 150 --retry-delay 2 --retry-all-errors --retry-max-time 300 --max-time 5 http://127.0.0.1:9000/health/ready";
         ExecStart = "${helper}/bin/kaiba-human-identity reconcile";
       };
     };

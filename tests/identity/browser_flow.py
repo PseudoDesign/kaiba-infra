@@ -27,8 +27,12 @@ callback = {}
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        callback.clear()
-        callback.update(urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query))
+        params = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+        # Chromium also requests /favicon.ico after the redirect. It must
+        # not erase the code captured from the real OAuth callback.
+        if "state" in params:
+            callback.clear()
+            callback.update(params)
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"Kaiba test callback")
@@ -132,6 +136,10 @@ try:
     # Registration submission and its persistence finish before the test asks
     # the server to evaluate the single-key rejection.
     wait.until(lambda _: not driver.find_elements(By.ID, "registerWebAuthn"))
+    # The enrollment code belongs to the temporary client. A dedicated static
+    # landing page keeps it out of account-console's OAuth callback handling.
+    wait.until(lambda _: urllib.parse.urlsplit(driver.current_url).path == "/realms/kaiba/kaiba-enrollment-complete")
+    assert driver.find_elements(By.CSS_SELECTOR, 'a[href="/realms/kaiba/account/"]')
     Path("/tmp/first-passkey-ready").touch()
     wait_file("/tmp/register-second")
     pre_verifier, pre_state = authorize("webauthn-register-passwordless")
@@ -185,10 +193,10 @@ try:
     Path("/tmp/passkey-login-success").touch()
     print("Two virtual passkeys registered; fresh passkey login, S256 code exchange and real SSH certificate issuance succeeded.")
 except Exception:
-    Path("/tmp/browser-flow-failed").touch()
-    print("Last page URL path:", urllib.parse.urlsplit(driver.current_url).path)
-    print(driver.page_source)
+    print("Last page URL path:", urllib.parse.urlsplit(driver.current_url).path, flush=True)
+    print(driver.page_source, flush=True)
     traceback.print_exc()
+    Path("/tmp/browser-flow-failed").touch()
     raise
 finally:
     driver.quit()
