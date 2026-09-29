@@ -22,6 +22,14 @@ python3 ci/setup_hydra.py  # preview; provisioning starts disabled
 derivations to Hydra. Hydra evaluates each repository's `main` directly; GitHub
 Actions remains the PR gate during rollout.
 
+## Human passkey access
+
+The flake also exports Keycloak, SSH certificate issuer, host trust, and encrypted
+backup modules, plus the Linux `kaiba-login` package. See the
+[human access runbook](docs/human-access.md) for deployment, initial owner
+enrollment, workstation login, revocation, and recovery. Human credentials remain
+separate from pilot device identities and automation credentials.
+
 ## Selector prototype
 
 `ci/select_jobs.py` compares **evaluated derivation paths** for a fixed job inventory at the base
@@ -49,7 +57,7 @@ order, and prerequisites before using selection in a required check.
 | Repository | Owns |
 | --- | --- |
 | Kaiba project repos | Flake outputs, tests, application packages and modules |
-| `kaiba-infra` | CI policy, job inventory, scheduling, builder and cache configuration |
+| `kaiba-infra` | CI policy, job inventory, builders, caches, and human access infrastructure |
 | `nix-pseudo-design` | Existing personal host configurations until deliberately migrated |
 | `kaiba-contracts` | Product and device state contracts |
 

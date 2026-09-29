@@ -1,0 +1,2 @@
+# Unified-diff context prefixes precede Go's tab indentation.
+identity/*.patch whitespace=-space-before-tab

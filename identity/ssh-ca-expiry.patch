@@ -1,0 +1,49 @@
+--- a/authority/provisioner/sign_ssh_options.go
++++ b/authority/provisioner/sign_ssh_options.go
+@@ -309,6 +309,10 @@
+ 		return errs.Forbidden("requested duration of %s is less than minimum accepted duration for selected provisioner of %s", dur, minDur)
+ 	case dur > maxDur+opts.Backdate:
+ 		return errs.Forbidden("requested duration of %s is greater than maximum accepted duration for selected provisioner of %s", dur, maxDur+opts.Backdate)
++	// Kaiba human access expires within the maximum from issuance. Duration
++	// alone otherwise allows stockpiling certificates for future windows.
++	case cert.CertType == ssh.UserCert && cert.ValidBefore > cast.Uint64(now().Add(maxDur).Unix()):
++		return errs.Forbidden("ssh user certificate expiration exceeds maximum duration from issuance")
+ 	default:
+ 		return nil
+ 	}
+--- a/authority/provisioner/sign_ssh_options_test.go
++++ b/authority/provisioner/sign_ssh_options_test.go
+@@ -500,11 +500,31 @@
+ 			"ok/duration-exactly-max",
+ 			&ssh.Certificate{
+ 				CertType:    1,
+-				ValidAfter:  uint64(n.Unix()),
+-				ValidBefore: uint64(n.Add(24*time.Hour + time.Second).Unix()),
++				ValidAfter:  uint64(n.Add(-time.Second).Unix()),
++				ValidBefore: uint64(n.Add(24 * time.Hour).Unix()),
+ 			},
+ 			SignSSHOptions{Backdate: time.Second},
+ 			nil,
++		},
++		{
++			"fail/future-eight-hour-window",
++			&ssh.Certificate{
++				CertType:    ssh.UserCert,
++				ValidAfter:  uint64(n.Add(720 * time.Hour).Unix()),
++				ValidBefore: uint64(n.Add(728 * time.Hour).Unix()),
++			},
++			SignSSHOptions{},
++			errors.New("ssh user certificate expiration exceeds maximum duration from issuance"),
++		},
++		{
++			"fail/backdate-cannot-extend-expiry",
++			&ssh.Certificate{
++				CertType:    ssh.UserCert,
++				ValidAfter:  uint64(n.Unix()),
++				ValidBefore: uint64(n.Add(24*time.Hour + time.Minute).Unix()),
++			},
++			SignSSHOptions{Backdate: time.Minute},
++			errors.New("ssh user certificate expiration exceeds maximum duration from issuance"),
+ 		},
+ 		{
+ 			"ok",
