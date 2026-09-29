@@ -38,12 +38,13 @@ contract and opt-in identity foundation are implemented and passed local unit,
 module, and four-machine VM checks on 2026-09-29. Real DNS and fleet inventory
 integration has passed software checks. Ace's first bounded LAN trial passed
 pre-station checks, expired, and was restored to its retained baseline.
-The [proposed next arrangement](docs/pilot-dns-rollout.md#proposed-acemako-deployment)
+The [accepted deployment target](docs/pilot-dns-rollout.md#accepted-acemako-deployment-target)
 uses Ace as the Kaiba server, Mako as an agent and DNS replica, and Malak as an
-operator workstation. It requires transferring Malak's complete existing pilot
-control plane before runtime services can become independent of the workstation.
-Migration, native end-to-end LAN acceptance and offline boot/rollback
-qualification remain outstanding; the changes are under draft review.
+operator workstation. Host staging keeps new services stopped; the two-host DNS
+and imported Fleet control-plane VMs passed. The protected source inventory is
+still awaited. Transferring Malak's complete pilot control plane, native
+end-to-end LAN acceptance and offline boot/rollback qualification remain
+outstanding. No state export or cutover has occurred.
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime

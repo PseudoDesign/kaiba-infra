@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | First trial expired; Ace baseline restored; Ace/Mako migration proposed | Native pre-station checks passed; no station/end-to-end acceptance; tested installer and VMs retained as software evidence; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Ace/Mako target accepted; staging keeps new services stopped | Disabled host closures unchanged; final two-host DNS and imported Fleet control-plane VMs passed; protected inventory awaited; no export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -109,10 +109,19 @@ the registry unavailable, and the real updater was restored. The trial expired
 at `08:52:37Z` without an accepted station installation receipt or native
 end-to-end result. Its seven new DNS units stopped, and guarded restoration of
 Ace's retained baseline passed at `14:26:10Z` with identity, enrollment and
-existing services preserved. The proposed next arrangement is Ace as Kaiba
+existing services preserved. The owner accepted Ace as Kaiba
 server, Mako as agent and a real LAN replica, and Malak as operator only. It
 requires transferring the complete pilot control plane and qualifying normal
-operation with Malak disconnected; no migration has been performed. The
+operation with Malak disconnected. Disabled host profiles are authored and their
+disabled closures match the current Ace/Mako baselines; enabled staging selects
+an immutable deny guard and leaves new services stopped. The final two-host DNS
+and imported Fleet control-plane VMs each passed eight groups. Fleet also passed
+seven guard tests, six real PostgreSQL groups and module/all-system evaluation.
+Import must preserve the Reader paths and
+endpoints covered by the retained issuer scope, rather than rewriting scope rows
+to accept a mismatch. A frozen
+read-only migration inventory helper passed twelve tests, and the owner's
+protected source inventory is awaited. No state export or cutover has occurred. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
 public-delegation boundaries. Persistent identity service acceptance and physical
 offline qualification remain separate evidence tracks.

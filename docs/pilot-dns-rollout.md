@@ -1,22 +1,24 @@
 # Pilot DNS rollout readiness
 
-Status as of 2026-09-29 14:26 UTC: **The first LAN trial expired; Ace's retained
-baseline is restored. An Ace/Mako deployment is proposed; no migration has been
-performed and native end-to-end acceptance remains open.**
+Status, 2026-09-29: **The owner accepted the Ace/Mako deployment target.
+Software and host-composition validation passed, and the changes are published
+in draft PRs. The protected source inventory is awaited; no state export, cutover
+or native end-to-end acceptance has occurred. Ace remains on its restored
+baseline after the expired first trial.**
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
 DNS zone, an update endpoint, or permission to publish a device address. The
 bounded LAN trial changed no public records, parent delegation or router resolver.
 Public DNS deployment remains deferred.
 
-## Proposed Ace/Mako deployment
+## Accepted Ace/Mako deployment target
 
 Malak is not a required product server. It was part of the first trial because
 it currently holds the authoritative pilot database, admission services and
-authenticated evidence. The proposed target puts runtime services on the two
+authenticated evidence. The accepted target puts runtime services on the two
 existing Raspberry Pi hosts:
 
-| Host | Proposed role | Runtime responsibility |
+| Host | Target role | Runtime responsibility |
 | --- | --- | --- |
 | Ace (`192.168.8.214`) | Kaiba server | Existing SPIRE authority and local agent; fleet control plane and enrollment inventory; workload registry; DNS controller/publisher and writable primary |
 | Mako (`192.168.8.247`) | Kaiba agent and DNS replica | Agent admitted to Ace's owner fleet, local workloads and a read-only replica with separate state and transfer credentials |
@@ -30,15 +32,70 @@ would leave Malak in the authorization path. Preserve device/instance identities
 credential lineage and Ace's trust domain. Use an isolated PostgreSQL database
 and roles on Ace while preserving Hydra. Prepare backup, destination readback,
 one authoritative cutover and recovery checks; stale evidence and unavailable
-authority must continue to deny authorization. The station's current storage
-and serving-window assumptions also need an explicit host implementation.
+authority must continue to deny authorization. The target policy verifier must
+preserve the station's current storage and serving-window requirements.
 
-Mako needs a new host composition and replica module: the tested qualification
-profile runs both replica processes on Ace. Native acceptance must exercise
+The retained issuer scope hashes Reader configuration, including endpoint URLs,
+file paths and certificate references. Before import, compare the source and
+destination Reader values exactly and preserve the paths and endpoints covered
+by that scope. A host move does not permit rewriting retained issuer scope rows
+to accept a changed configuration. Resolve any mismatch through the existing
+contract and explicit migration design before enabling issuance; keep the
+original ledger and scope evidence intact.
+
+Separate host compositions and a two-host replica module are now authored;
+the first trial's profile ran both replica processes on Ace. Native acceptance must exercise
 authorization, credential renewal, restart and signed DNS publication with Malak
 disconnected, plus queries and outage recovery on Mako's actual replica. No
 migration or Mako activation has been performed. Two hosts on one LAN do not
 establish high availability or qualify offline boot/rollback protection.
+
+The new host profiles are disabled by default. Their disabled evaluations match
+Ace's restored generation 10 and Mako's existing closure exactly. Staging with
+`enable = true` and `activate = false` selects an immutable deny guard and does
+not autostart the new services. Active configuration requires the reviewed
+policy guard and verified imported state. Ace's prepared
+configuration keeps the imported issuer on loopback `18443`, places the DNS
+controller on `18447` to avoid a collision, and uses separate registry `18446`,
+fleet `18444` and private PostgreSQL socket `18445` interfaces.
+The [host guide at `d97d72e`](https://github.com/PseudoDesign/nix-pseudo-design/blob/d97d72e03180d2ebf041e133bf9e4f380111023e/docs/ace-mako-pilot.md)
+records the staged and active interfaces. Its
+[composition receipt](https://github.com/PseudoDesign/nix-pseudo-design/blob/d97d72e03180d2ebf041e133bf9e4f380111023e/docs/observations/2026-09-29-ace-mako-composition.json)
+records passing checks against the published dependency pins, including exact
+disabled closure preservation. This is evaluation evidence, not host activation.
+
+Current validation is software evidence only:
+
+- The final two-host DNS VM passed eight groups: real cross-host AXFR/NOTIFY,
+  credential-role separation, source restrictions, outage and journal restart,
+  retained-key checks, and refusal to regenerate lost credentials beside
+  surviving DNS state. This transport test does not exercise the SPIFFE
+  application authorization path or qualify hardware.
+- The imported Fleet control-plane VM passed eight groups using the four actual
+  authority units and private PostgreSQL: missing-import denial, preserved active
+  memberships and unrelated PostgreSQL, peer-role isolation, policy withdrawal,
+  reviewed restart and deadline shutdown. Seven guard tests, six real PostgreSQL
+  groups, module evaluation and all-system flake evaluation also passed. These
+  fixtures contain synthetic state; no real device was migrated.
+- Migration preparation has a read-only inventory helper with twelve passing
+  tests. The exact helper was frozen in the Nix store and its owner command
+  requested; the protected live inventory is still awaited. This is not an
+  export, backup, source fence or authorization to initialize replacement state.
+
+DNS CI also passed formatting/module checks, ARM package builds and VM topology
+checks at `67574bb`. Fleet CI at `8ac42e1` is still running; the Fleet results
+above are local validation.
+
+The migration must preserve one authoritative writer and the complete issuance
+history. Export and cutover tooling await the live inventory, including transport
+certificate SANs, current policy, source account names and database/ledger state.
+Source credential and record paths must be absolute; relative paths must not be
+silently relocated during import. The tested published implementation is
+[Fleet `8ac42e1`](https://github.com/PseudoDesign/kaiba-fleet/tree/8ac42e12aa4b9a1c0d0a7b80e03cbac3411ab672/nix/pilot-control-plane)
+and [DNS `67574bb`](https://github.com/pd-codex/nixos-kaiba-network/blob/67574bb1fe88a60118c680d823ac2ddb7656975b/docs/lan-two-host.md).
+The [migration protocol](https://github.com/PseudoDesign/kaiba-fleet/blob/8ac42e12aa4b9a1c0d0a7b80e03cbac3411ab672/deploy/pilot-migration/README.md)
+separates the implemented read-only inventory from the remaining export/import
+and cutover work.
 
 ## First LAN trial: topology and boundary
 
@@ -67,7 +124,7 @@ was built, checked and test-activated. No owner installation receipt was availab
 when the trial expired, so station installation and end-to-end acceptance have
 not been established.
 
-## Prepared LAN implementation and evidence
+## First-trial implementation and evidence
 
 The software slice is published in draft PRs. Ace ran its candidate under test
 activation; this did not establish a qualified or persistent LAN deployment. Its
@@ -123,8 +180,8 @@ passed locally. The station preparation refinement at Fleet
 It accepts an explicit maximum duration capped by current serving and credential
 deadlines, and transfers only the newly created private review packet to its
 named reviewer. The subsequent installer is pinned to published Fleet
-`17b5a8ca7124a9eb6e5aa31c8fad91dba17818da`; runtime package and host pins remain
-at `66ee0d6`.
+`17b5a8ca7124a9eb6e5aa31c8fad91dba17818da`; that trial's runtime package and host
+pins were `66ee0d6`. The new Ace/Mako preparation is a subsequent slice.
 
 Native pre-station observation passed at `2026-09-29T08:22:35Z`: all fifteen
 expected services were active, including Hydra, PostgreSQL and SSH; the identity
@@ -203,7 +260,7 @@ end-to-end connection, such as a direct LAN route or reviewed TCP forwarding.
 ## Acceptance deferred from the first trial
 
 These checks remain outstanding. The expired station packet and its topology
-are historical preparation; the proposed Ace/Mako deployment needs a fresh
+are historical preparation; the accepted Ace/Mako deployment needs a fresh
 composition and current-admission checks.
 
 1. **Activate current pilot admission.** The previously installed
@@ -218,7 +275,7 @@ composition and current-admission checks.
 2. **Accept the target host composition.** The first trial pinned tested DNS
    packages/modules and exact identities. A future persistent switch requires
    complete native acceptance. Preserve the authority and probe, retain isolated
-   desired state and runtime credentials, and complete the proposed control-plane
+   desired state and runtime credentials, and complete the control-plane
    transfer before removing Malak from the runtime path.
 3. **Qualify a fresh LAN arrangement.** The first trial used Ace's loopback primary
    at port `15352`, LAN replicas at `15353`/`15354`, local controller at `18443`,
