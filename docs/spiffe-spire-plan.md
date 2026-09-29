@@ -31,8 +31,8 @@ passed both fleet and isolated identity Go tests, all 104 companion contract
 tests, Nix unit/module checks, and the four-machine VM topology. The VM result
 is synthetic and explicitly marks hardware as unqualified. This slice has no
 real DNS integration, authenticated production registry, or complete fleet
-installer. The linked branches and draft commit are prepared locally and await
-publication; no remote CI result is claimed.
+installer. The linked branches and contract draft are under review; no remote
+CI result is claimed here.
 
 Shared interfaces belong in
 [`kaiba-contracts`](https://github.com/pd-codex/kaiba-contracts). Extend the existing
