@@ -57,9 +57,12 @@ passed their post-boot checks. Mako's admitted-state guard started its retained 
 without a new grant. During Ace's reboot, nine DNS query rounds on Mako passed
 with fresh Ace-unavailable observations before and after each round; Mako's boot,
 profiles and seven service identities stayed unchanged. This is bounded sampled
-continuity, not continuous availability proof. Disconnection collectors and their
-connected rehearsal are being prepared; no disconnected result is claimed.
-Cold/offline boot, power loss and rollback qualification remain open.
+continuity, not continuous availability proof. The subsequent read-only
+[connected sampler rehearsal](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-connected-collector-rehearsal.json) passed on both hosts with Malak
+connected and no updater timer armed. Ace recorded its unchanged kernel-global
+OOM-kill counter; Mako recorded unchanged per-cgroup OOM counters. No per-cgroup
+OOM claim is made for Ace. The attended 75-minute disconnection remains pending;
+cold/offline boot, power loss and rollback qualification remain open.
 
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
@@ -504,8 +507,9 @@ the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 3. **Operation without Malak.** Keep its source fenced and demonstrate device
    access, fresh workload identity and DNS operation through an attended
    disconnection spanning the longest workload TTL. Physical recovery access is
-   now available; independent host samplers and a connected rehearsal are being
-   prepared. One separately supervised updater restart will test a fresh update
+   now available, and both independent samplers passed a connected rehearsal.
+   The physical 75-minute interval is still pending. One separately supervised
+   updater restart will test a fresh update
    after that TTL; it is not ordinary six-hour periodic updater renewal. A loaded
    source fence alone does not prove workstation independence.
 
@@ -531,9 +535,11 @@ the separately authorized updater restart, unchanged applications/state and
 preserved source fences. A
 connected rehearsal or failed ping alone cannot establish workstation
 independence. Keep Ace, Mako and time services available; reconnect through an
-attended console. The bounded samplers and offline evidence verifier are prepared
-and tested locally; native connected-rehearsal and disconnected acceptance remain
-pending. No autonomous monitor is claimed.
+attended console. The bounded samplers and offline evidence verifier passed the
+native connected rehearsal after 68 focused software tests. Malak remained
+connected and no induced updater action ran. This validates collection and
+verification readiness, not operation beyond credential expiry while disconnected
+or an autonomous monitor.
 
 Outside the explicit LAN profile, the updater discovers publicly routable addresses on local interfaces; it does
 not discover a router's WAN address. Private `192.168.8.x` addresses alone will

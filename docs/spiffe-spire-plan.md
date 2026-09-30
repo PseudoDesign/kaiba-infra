@@ -34,8 +34,12 @@ retained admitted identity and no new grant. Post-boot checks include fresh exac
 private state and existing applications; Mako also retained DNS answers
 in bounded samples during Ace's reboot. The [persistence record](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/ace-mako-persistence.md)
 separates the earlier boot installation from these later startup observations.
-Attended workstation-disconnection acceptance is prepared but remains pending;
-cold/offline boot, power loss and hardware qualification remain unproven.
+Both host samplers subsequently passed a read-only connected rehearsal with
+Malak connected and no updater timer armed. Ace's unchanged kernel-global
+OOM-kill counter and Mako's unchanged per-cgroup counters are distinct evidence;
+no per-cgroup OOM claim is made for Ace. Attended 75-minute workstation-disconnection
+acceptance remains pending. Cold/offline boot, power loss and hardware
+qualification remain unproven.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload
