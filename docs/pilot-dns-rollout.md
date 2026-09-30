@@ -28,6 +28,12 @@ open. The later attended workstation-power-off check passed within its recorded
 bounds. Hardware/offline boot and rollback
 qualification and public DNS deployment are separate tracks.
 Full qualification remains false. The
+later [Ace clean PoE cold-start](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-cold-start-ordering-failure.json)
+failed automatic startup because the imported-state mount preflight formed a
+boot ordering cycle. Identity and state survived; affected services were
+restored explicitly. Mako passed all 40 DNS samples, including 12 while Ace was
+unavailable. Deploy the reviewed ordering fix and repeat the attended test;
+the fixed source has not replaced Ace's installed generation 12. The
 [initial native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json),
 [grant quarantine observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-workload-quarantine.json)
 and [bounded service-outage observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-service-outages.json)
@@ -511,16 +517,21 @@ passive sampling confirmed node renewal under its retained SPIFFE identity. The 
 station packet is historical evidence, not the next deployment step. Complete
 the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
-1. **Credential lifecycle and remaining authorization boundaries.** Exercise
+1. **Repair and repeat Ace cold-start acceptance.** Deploy the early-mount
+   preflight ordering fix as a new persistent generation. Repeat the attended
+   clean PoE power cycle with LAN available; require every expected service to
+   start automatically and no PID1 ordering-cycle job deletion. Manual recovery
+   from the failed generation-12 attempt is recorded separately.
+2. **Credential lifecycle and remaining authorization boundaries.** Exercise
    membership revocation, instance replacement and renewal on the native
    deployment while preserving issuer scopes, identities and retained history.
    The completed workload-grant quarantine/restoration check does not substitute
    for these distinct lifecycle observations.
-2. **Remaining outage and replication scenarios.** Exercise SPIRE and database
+3. **Remaining outage and replication scenarios.** Exercise SPIRE and database
    outages and timed catch-up from new publication with keys, state and existing
    applications preserved. Registry pause/resume, primary stop/restart and replica
    restart while the primary is absent are complete within their recorded bounds.
-3. **Longer unattended operation.** The owner-attested 75-minute Malak
+4. **Longer unattended operation.** The owner-attested 75-minute Malak
    power-off, fresh workload identities beyond the longest TTL, installed-device
    access, DNS and one induced fresh update passed. Longer-duration operation
    and ordinary six-hour updater renewal remain separate observations; preserve

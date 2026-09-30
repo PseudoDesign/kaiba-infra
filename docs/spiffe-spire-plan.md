@@ -46,7 +46,14 @@ updater restart produced a fresh lease; this is not ordinary six-hour renewal
 or same-process certificate rotation. Malak returned on a new boot; a separate
 verification supplement checks retained source fences, absent listeners and
 unset PID1 execution metadata, with journal-history visibility unavailable.
-Cold/offline Pi boot, power loss and hardware qualification remain unproven.
+The later [Ace clean PoE cold-start](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-cold-start-ordering-failure.json)
+failed automatic-startup acceptance: an early mount-preflight ordering cycle
+caused PID1 to discard startup jobs. Identity and protected state survived;
+explicit service starts restored operation, and Mako passed all 40 DNS samples.
+The immediate next step is deployment of the corrected early-preflight ordering
+as a new persistent generation, followed by another attended cold-start test.
+Generation 12 remains installed. Offline boot, abrupt power loss and full
+hardware qualification remain unproven.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload
