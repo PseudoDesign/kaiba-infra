@@ -55,7 +55,11 @@ The corrected preflight is now installed as Ace generation 13. The
 all 17 protected services started automatically with retained identity and state,
 a fresh exact-unit probe and no ordering-cycle job deletion. Mako passed all
 73 DNS samples, including 55 bracketed by Ace unavailability. The separate
-tmpfiles missing-`sudo`-group warning remains recorded for cleanup. Remaining
+tmpfiles missing-`sudo`-group warning was subsequently [fixed](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-tmpfiles-cleanup.json)
+in active/persistent Ace generation 14 without restarting applications. The
+completed cold-start result still belongs to generation 13. No spare storage
+is available for crash testing; physical offline refusal testing awaits a
+console and data-isolation setup that retains PoE. Remaining
 native lifecycle, outage/replication and ordinary updater renewal checks are
 next; offline boot, abrupt power loss and full hardware qualification remain
 unproven.

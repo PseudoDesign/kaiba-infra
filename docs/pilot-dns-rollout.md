@@ -37,8 +37,10 @@ unavailable. The fix is now installed as generation 13, and the
 startup without manual service starts. All 17 protected services, retained
 identity/state, fresh exact-unit identity and DNS passed; PID1 reported no
 ordering-cycle job deletion. Mako passed 73 DNS samples, including 55 while Ace
-was unavailable. A separate tmpfiles missing-`sudo`-group warning remains;
-its exit 65 is accepted by the installed unit. The
+was unavailable. The separate tmpfiles missing-`sudo`-group warning was
+[fixed](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-tmpfiles-cleanup.json) in active/persistent generation 14 without
+restarting applications. Its native dry-run and resetup now exit zero. No
+generation-14 reboot is claimed; the cold-start result remains generation 13. The
 [initial native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json),
 [grant quarantine observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-workload-quarantine.json)
 and [bounded service-outage observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-service-outages.json)
@@ -522,11 +524,12 @@ passive sampling confirmed node renewal under its retained SPIFFE identity. The 
 station packet is historical evidence, not the next deployment step. Complete
 the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
-1. **Clean up the separate tmpfiles warning.** Generation 13 passed the repeat
-   attended clean PoE test with LAN available, automatic service startup and no
-   ordering-cycle job deletion. Resolve the missing `sudo` group referenced by
-   `/etc/tmpfiles.d/sys-kernel-debug.conf`; retain the successful test and its
-   accepted exit-65 warning separately from the failed generation-12 attempt.
+1. **Prepare the remaining physical campaign.** The tmpfiles warning is fixed
+   in active/persistent generation 14; the clean cold-start result belongs to
+   generation 13. Offline refusal/recovery needs independent console access and
+   data isolation while retaining PoE. Abrupt interrupted-write tests require
+   disposable storage and a verified restoration route; no spare is available.
+   Follow the [physical-test procedure](offline-qualification.md#current-pilot-remaining-physical-tests).
 2. **Credential lifecycle and remaining authorization boundaries.** Exercise
    membership revocation, instance replacement and renewal on the native
    deployment while preserving issuer scopes, identities and retained history.

@@ -108,3 +108,58 @@ TPM**, or **not qualified**, with references to every matrix result. Unknowns
 keep the outcome not qualified. This matrix authorizes no OTP programming,
 TPM clearing, signing, disk writes, or physical provisioning; those actions use
 the provisioning repository's concrete reviewed campaign procedures.
+
+## Current pilot: remaining physical tests
+
+On 2026-09-30, Ace generation 13 passed one attended clean 30-second PoE
+power cycle with LAN available. Its root, retained identities, all 17 protected
+services and DNS returned automatically. This is evidence for that pilot
+configuration, not closure of OFF-01 or abrupt power-loss recovery.
+
+The owner currently has no spare storage device. Keep Ace's live authority disk
+out of interrupted-write and corruption experiments. A boot-file backup is not
+an independently restored copy of the authority database, device state and
+storage metadata. Do not reinterpret the clean shutdown result as crash safety.
+
+Ace has no RTC backup battery. The installed pilot requires synchronized time:
+the storage guard orders after `systemd-time-wait-sync.service`, whose observed
+start timeout is unlimited, and the SPIRE pilot guard independently waits up to
+60 seconds for `NTPSynchronized=yes` before refusing startup. Neither persisted
+clock timestamps nor reconnecting NTP establish trusted offline time.
+Do not disable these gates or certificate validity checks to obtain an offline
+success. A production offline profile still needs a reviewed time policy and
+boot/rollback/state-continuity implementation.
+
+The next bounded physical observation can test **offline startup refusal and
+online recovery**, with these prerequisites:
+
+1. Confirm an independent local console and a way to keep PoE power while
+   isolating every Ethernet, Wi-Fi and USB network/time path. Disconnecting Ace's
+   sole PoE cable alone is a power test, not sustained offline operation.
+2. Pin the installed generation and fresh boot/service/identity baseline. Retain
+   the current backup and rollback route, and verify credential lifetime covers
+   the isolation and recovery window. Keep Malak fenced and Mako running.
+3. Cleanly shut down, isolate data paths, and cold start. At the console, retain
+   UTC and monotonic time, boot identity, `NTPSynchronized`, clock-wait job state,
+   protected service execution metadata and relevant guard diagnostics. Bound
+   observation to five minutes. No new enrollment, replacement keys, manual
+   clock changes or authority initialization is part of this test.
+4. With unsynchronized time, require that protected authority operations do not
+   start; distinguish waiting jobs from explicit guard refusal. An unexplained
+   hang or missing log is inconclusive. A successful offline authority start
+   despite an unsatisfied time gate is a failure requiring investigation.
+5. Restore networking, then collect fresh identity/device/DNS and protected-state
+   checks. Record automatic versus manual recovery separately; preserve any
+   failed attempt before intervention. Do not claim autonomous offline service.
+
+Abrupt power-loss testing remains blocked on suitable disposable media and a
+verified restoration route. Prepare the exact disk identity and nonproduction
+state, independent complete backups, a demonstrated restore, console evidence,
+and the durable transaction boundaries to interrupt. Each boundary needs a
+pristine control, interrupted attempt and post-recovery state comparison;
+acknowledged revocations must not return. A random unplug of the live pilot is
+not this campaign. Synthetic crash/recovery results must stay separate from
+physical device and storage evidence.
+
+The original pilot deadline remains `2026-10-03T02:06:35Z`. No physical isolation
+or abrupt power-loss attempt has been performed for these remaining cases.
