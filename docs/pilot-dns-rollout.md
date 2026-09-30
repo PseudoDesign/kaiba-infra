@@ -23,8 +23,9 @@ guarded generation 15. Device and admitted identities, retained private state, f
 existing applications and DNS passed post-boot checks. The pilot policy and
 temporary workload registrations retain the original deadline,
 `2026-10-03T02:06:35Z`; no extension is authorized or implemented. Broader native
-credential-lifecycle checks, remaining outage/replication scenarios and operation
-with Malak disconnected remain open. Hardware/offline boot and rollback
+credential-lifecycle checks and remaining outage/replication scenarios remain
+open. The later attended workstation-power-off check passed within its recorded
+bounds. Hardware/offline boot and rollback
 qualification and public DNS deployment are separate tracks.
 Full qualification remains false. The
 [initial native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json),
@@ -61,8 +62,22 @@ continuity, not continuous availability proof. The subsequent read-only
 [connected sampler rehearsal](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-connected-collector-rehearsal.json) passed on both hosts with Malak
 connected and no updater timer armed. Ace recorded its unchanged kernel-global
 OOM-kill counter; Mako recorded unchanged per-cgroup OOM counters. No per-cgroup
-OOM claim is made for Ace. The attended 75-minute disconnection remains pending;
-cold/offline boot, power loss and rollback qualification remain open.
+OOM claim is made for Ace. The later
+[attended workstation-power-off observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-attended-workstation-poweroff.json)
+records the owner-reported 16:45–18:00Z power-off interval and network return
+about two minutes after power-on. Both Pi samplers passed: installed-device
+access, DNS and fresh exact-unit credentials beyond the longest prior workload
+TTL remained available. A separately supervised updater restart produced a fresh
+accepted lease after that TTL. This is an induced fresh update, not ordinary
+six-hour renewal or same-process certificate rotation.
+
+Malak returned on a new boot. Separate reconciliation verified its six retained
+source fences, absent authority listeners and unset PID1 main-process execution
+metadata. Root journal visibility was unavailable, so empty journals were not
+used as proof. The original unchanged-workstation-boot verifier was preserved;
+a separate supplement handles the owner-attested power-off and bounded network
+return. The Pis stayed powered: this does not qualify Pi cold/offline boot, power
+loss or rollback, and full qualification remains false.
 
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
@@ -109,8 +124,8 @@ Separate host compositions now run the replica on Mako; the first trial ran both
 replica processes on Ace. Mako's admission, exact-unit identity, grant-free Agent
 restart and actual replica queries passed after temporary activation. Native
 grant quarantine/restoration also passed. Remaining acceptance covers membership
-and credential lifecycle, remaining outage scenarios, and normal operation with
-Malak disconnected. Two hosts on one LAN do not establish high availability or
+and credential lifecycle and remaining outage scenarios. The bounded attended
+workstation-power-off check is complete. Two hosts on one LAN do not establish high availability or
 qualify offline boot/rollback protection.
 
 The new host profiles are disabled by default. Their disabled evaluations match
@@ -222,8 +237,8 @@ Neither export nor import activates destination authorities. Finalization and
 separate temporary activation and both device endpoint transfers have passed.
 The explicit DNS grant, publication and queries on the primary and actual Mako
 replica have also passed, together with Mako admission and grant-free Agent
-restart. Remaining steps include broader native lifecycle and outage acceptance,
-and normal device, renewal and DNS operation with Malak disconnected. An ambiguous operation
+restart. The later attended workstation-power-off check also passed. Remaining
+steps include broader native lifecycle and outage acceptance. An ambiguous operation
 requires readback of the same intent; it never justifies restarting both writers
 or initializing replacement issuer state.
 
@@ -288,8 +303,9 @@ timed out after 5.057 seconds with no identity. This was a bounded
 no-identity observation, not an explicit denial response. Its existing
 applications, operational device state, current candidate, persistent baseline
 and source fences were preserved, and its probe timer resumed. The native
-positive path and member restart are accepted; broader lifecycle/outage and
-workstation-disconnection checks remain open. Startup from the subsequently
+positive path and member restart were accepted at that stage; later sections
+record workstation-power-off acceptance. Broader lifecycle and outage checks
+remain open. Startup from the subsequently
 installed profiles passed in the later controlled warm-reboot observations.
 Temporary activation does not establish full LAN or hardware/offline boot/rollback
 qualification.
@@ -504,14 +520,11 @@ the following within the unchanged `2026-10-03T02:06:35Z` deadline:
    outages and timed catch-up from new publication with keys, state and existing
    applications preserved. Registry pause/resume, primary stop/restart and replica
    restart while the primary is absent are complete within their recorded bounds.
-3. **Operation without Malak.** Keep its source fenced and demonstrate device
-   access, fresh workload identity and DNS operation through an attended
-   disconnection spanning the longest workload TTL. Physical recovery access is
-   now available, and both independent samplers passed a connected rehearsal.
-   The physical 75-minute interval is still pending. One separately supervised
-   updater restart will test a fresh update
-   after that TTL; it is not ordinary six-hour periodic updater renewal. A loaded
-   source fence alone does not prove workstation independence.
+3. **Longer unattended operation.** The owner-attested 75-minute Malak
+   power-off, fresh workload identities beyond the longest TTL, installed-device
+   access, DNS and one induced fresh update passed. Longer-duration operation
+   and ordinary six-hour updater renewal remain separate observations; preserve
+   source fences and the original policy deadline.
 
 Controlled warm-reboot acceptance is complete for Ace generation 12 and Mako
 generation 15, including admitted identity, retained state, automatic service
@@ -525,21 +538,15 @@ before checking independent recursive resolution and outside-LAN reachability.
 No public records, parent delegation or router resolver changes are implied by
 LAN acceptance.
 
-For the later attended Malak-disconnection check, prepare bounded read-only
-samplers on both Pis before disconnecting the workstation. The interval must
-span the freshly verified maximum workload lifetime: current probe settings
-suggest about 75 minutes, with a 90-minute sampler limit and adequate margin
-before policy expiry. Require fresh exact-unit credentials after prior expiry,
-successful installed-client access, cross-host UDP/TCP DNS, a fresh lease after
-the separately authorized updater restart, unchanged applications/state and
-preserved source fences. A
-connected rehearsal or failed ping alone cannot establish workstation
-independence. Keep Ace, Mako and time services available; reconnect through an
-attended console. The bounded samplers and offline evidence verifier passed the
-native connected rehearsal after 68 focused software tests. Malak remained
-connected and no induced updater action ran. This validates collection and
-verification readiness, not operation beyond credential expiry while disconnected
-or an autonomous monitor.
+The completed attended check used independent bounded samplers staged on
+both Pis before Malak was powered off. The packet had first passed 68 focused
+software tests and a connected rehearsal. The later traces retain credential,
+installed-client, UDP/TCP DNS, lease and protected-state observations spanning
+the owner-attested power-off interval. A separately scheduled one-use updater
+restart supplied the post-TTL update. The changed workstation boot and delayed
+network return were verified explicitly, with process-start metadata supporting
+continued source fencing. These sampled results and the owner attestation do
+not establish continuous availability at every instant or an autonomous monitor.
 
 Outside the explicit LAN profile, the updater discovers publicly routable addresses on local interfaces; it does
 not discover a router's WAN address. Private `192.168.8.x` addresses alone will

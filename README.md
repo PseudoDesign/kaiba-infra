@@ -45,18 +45,17 @@ restoration, plus bounded registry/primary-DNS outage checks, passed. Mako also 
 served retained records while the primary was stopped. Passive identity checks
 observed Mako node renewal and a fresh workload certificate after prior expiry.
 
-The verified running profiles are now installed persistently as Ace generation
-11 and Mako generation 15, with boot files checked against encrypted rehearsals
-and prior recovery entries retained. Mako's admitted startup guard also passed
-native activation. Neither host was rebooted; existing applications and device
-state remain intact. The original pilot deadline is unchanged at
-`2026-10-03T02:06:35Z`. Software validation includes 135 migration tests with zero
-skips and the identity, control-plane and DNS VMs. Remaining native work covers
-broader credential lifecycle, SPIRE/database outages, publication catch-up and
-operation with Malak disconnected. Reboot and disconnection checks wait for
-physical recovery access. Hardware/offline boot and rollback qualification,
-product installation/UI, and public DNS remain separate. See the
-[LAN rollout](docs/pilot-dns-rollout.md) for evidence and next steps.
+Both controlled warm reboots passed: Ace runs persistent generation 12 with
+ordered clock-dependent startup, and Mako runs guarded generation 15. The later
+owner-attested 75-minute Malak power-off passed bounded device-access, DNS and
+post-TTL identity checks, plus one induced fresh update. Changed workstation boot
+and network return were verified separately; source authorities remain fenced.
+The original deadline is `2026-10-03T02:06:35Z`. Software validation includes 135
+migration tests with zero skips and the identity, control-plane and DNS VMs.
+Broader credential lifecycle, SPIRE/database outages, publication catch-up and
+longer unattended operation remain open. Hardware/offline boot and rollback
+qualification, product installation/UI and public DNS remain separate; full
+qualification remains false. See the [LAN rollout](docs/pilot-dns-rollout.md).
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime
