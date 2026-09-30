@@ -45,15 +45,21 @@ existing services and device state preserved; their persistent boot profiles
 remain unchanged and the new pilot units remain stopped. The two-host DNS
 and imported Fleet control-plane VMs passed. The refreshed source inventory
 was verified, and recovery-aware transfer preparation and source-fencing helpers
-pass 130 local migration checks, including device endpoint
+pass 135 local migration checks with zero skips, including device endpoint
 transfer; a separate real bind-mount regression also passes. Mako's same-key
 credential recovery passed on September 29 local time: revision 2, exactly one
 successor, installed-key proof, fresh-process access and access after authority
 restart. This is pilot recovery evidence, not full qualification. Malak remains
-the serving authority. Ace's preparation now binds the fresh inventory while
-preserving its original keys and receipt. Next, attest the recovered source
-policy and prepare Ace's transport certificate before transferring the complete control
-plane to Ace. Mako's SPIRE admission, native end-to-end LAN acceptance and offline
+the serving authority. Ace's preparation binds the fresh inventory while
+preserving its original keys and receipt. Source preparation passed on September
+29 local time: the completed recovery guard passed, policy continuity was
+recorded, and Ace's transport certificate was signed with the existing deadline
+and source services preserved. Ace's immutable target guard and active system
+closure are now built as artifacts only. Native host checks passed, including
+denial without imported state; current/persistent profiles and existing service
+processes remain unchanged. Next, perform bounded fenced export, verified import,
+finalization and separate activation.
+Mako's SPIRE admission, native end-to-end LAN acceptance and offline
 boot/rollback qualification remain outstanding; no state export or cutover has
 occurred.
 

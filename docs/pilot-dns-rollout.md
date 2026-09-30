@@ -7,8 +7,12 @@ hosts passed temporary dormant staging; their persistent boot profiles remain
 unchanged. Mako's same-key credential recovery passed on September 29 local
 time; the refreshed protected inventory is verified, and Ace's existing
 preparation is rebound without replacing keys. Recovery-aware migration helpers
-pass 130 local checks. Source policy attestation and transport signing are next.
-Malak remains the serving authority. No state export, cutover
+pass 135 local checks with zero skips. Source preparation passed on September 29 local time:
+policy continuity is recorded and Ace's transport certificate is signed with
+the existing deadline preserved. Ace's immutable target guard and active system
+closure are built as artifacts only; native checks passed without changing
+current/persistent profiles or existing service processes. Bounded fenced export is next.
+Malak remains the serving authority with its services preserved. No state export, cutover
 or native end-to-end acceptance has occurred; full qualification remains false.**
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
@@ -131,9 +135,9 @@ transfer commit.
 The migration must preserve one authoritative writer and the complete issuance
 history. Ace now has a private age recipient key and transport CSR on its
 existing encrypted root; only their public request material is used by source
-preparation. The source's fleet transport leaf covers Malak, so a refreshed
-source request must authorize the new leaf under the retained CA before
-transfer. Source operator credentials and transport/management CA
+preparation. The refreshed source request authorized Ace's new transport leaf
+under the retained CA and unchanged deadline. The source's serving leaf and
+services remain unchanged. Source operator credentials and transport/management CA
 private keys remain on Malak. Operational issuer keys, Reader credentials,
 signed records and full database histories are part of the encrypted transfer.
 Source credential and record paths must be absolute; relative paths must not be
@@ -154,18 +158,16 @@ separate isolated user/mount-namespace regression passes against the real mount
 boundary. This helper has not run on either device. Recovery and authority
 activation precede its use, followed by a fresh installed-client identity check.
 
-Following the completed recovery and inventory refresh below, the remaining
-owner operations are concrete and separate: attest the recovered source policy
-and sign Ace's prepared transport CSR; build the immutable target policy guard;
-fence Malak
-persistently and export both databases
+Following the completed source preparation and target build below, the remaining
+owner operations are concrete and separate: perform the bounded export by
+fencing Malak persistently and exporting both databases
 and selected files into a recipient-encrypted archive; authenticate the source
 ciphertext/manifest digests before private handoff; import into Ace's unused
 isolated PG18 cluster and remap OS account ownership by name. The exporter uses
 native logical dumps with all writers stopped, verifies complete table-content
 and schema/sequence snapshots, and retains the source fence after errors.
 Neither export nor import activates destination authorities. Target policy and
-import receipt verification precede the separate activation, followed by native
+import receipt verification and finalization precede separate activation, followed by native
 renewal/restart/DNS acceptance with Malak disconnected. An ambiguous operation
 requires readback of the same intent; it never justifies restarting both writers
 or initializing replacement issuer state.
@@ -181,17 +183,24 @@ Malak remains the supervised serving authority. The owner supplied a fresh
 protected inventory, and its checksum and expected recovery changes were
 verified. Recovery-aware export/import and target-policy verification now retain
 the original policy, explicitly pin a completed-recovery proof, and reject
-mismatched proof/schema before fencing or finalization writes. The complete
-migration suite passes **130 tests with zero skips**, including real age and
+mismatched proof/schema before fencing or finalization writes. Before fencing,
+the exporter also verifies the exact Ace/Mako memberships and compares all four
+issuer scope pins with the recovery proof. The complete migration suite passes **135 tests with
+zero skips**, including real age and
 disposable PG18 checks. Ace's append-only preparation rebind passed nine native
 fixture tests and actual host/key/storage checks, preserving its original keys
 and receipt. No authority state was imported.
 
-The prepared next owner command verifies the completed source guard, records
-private policy continuity, and signs Ace's existing transport CSR. Its eleven
-synthetic tests cover policy rejection, actual signing/readback, private output
-and retained intent after failure; it has not executed on the live source.
-The immutable target guard follows that source result. **The previously prepared
+Source preparation completed on September 29 local time, and its result was
+verified. The completed recovery guard passed, private policy continuity was
+recorded, and Ace's existing transport CSR was signed under the retained CA
+without extending the deadline or changing source services. Its eleven synthetic
+tests cover policy rejection, actual signing/readback, private output and
+retained intent after failure. Ace's immutable target guard and active system
+closure have since been built natively as artifacts only. Host checks passed,
+including the expected denial when imported state is absent. Current and
+persistent system profiles and existing service processes remain unchanged;
+the active closure has not been activated. **The previously prepared
 owner transport signing command is superseded and must not run against the old
 inventory.** No source fence, state export or cutover has occurred. The next
 deployment steps remain transfer to Ace, Mako's SPIRE admission and actual LAN
