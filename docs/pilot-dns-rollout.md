@@ -1,19 +1,26 @@
 # Pilot DNS rollout readiness
 
-Status, 2026-09-29: **The owner accepted the Ace/Mako deployment target.
-Software and host-composition validation passed, and the changes are published
-in draft PRs. Transfer helpers are published with passing local checks. Both
-hosts passed temporary dormant staging; their persistent boot profiles remain
-unchanged. Mako's same-key credential recovery passed on September 29 local
-time; the refreshed protected inventory is verified, and Ace's existing
-preparation is rebound without replacing keys. Recovery-aware migration helpers
-pass 135 local checks with zero skips. Source preparation passed on September 29 local time:
-policy continuity is recorded and Ace's transport certificate is signed with
-the existing deadline preserved. Ace's immutable target guard and active system
-closure are built as artifacts only; native checks passed without changing
-current/persistent profiles or existing service processes. Bounded fenced export is next.
-Malak remains the serving authority with its services preserved. No state export, cutover
-or native end-to-end acceptance has occurred; full qualification remains false.**
+Status, 2026-09-30: **The native Ace/Mako positive path and member restart passed.**
+The authority moved from fenced Malak to Ace with verified database and issuer
+continuity; both installed clients authenticate to Ace with their retained
+identities. Explicit DNS authorization, primary publication and matching
+UDP/TCP queries on both hosts passed. Mako is admitted and retained its node and
+key through Agent restart after grant removal. Exact-unit probes bracketed a
+bounded wrong-unit no-identity observation. Existing applications, device state
+and persistent boot baselines were preserved. Software validation includes
+135 migration tests with zero skips and the control-plane/DNS VMs.
+
+Both active profiles are temporary test activations. The pilot policy and
+temporary workload registrations retain the original deadline,
+`2026-10-03T02:06:35Z`; no extension is authorized or implemented. Native
+authorization-denial and credential-lifecycle checks, outages, operation with
+Malak disconnected and persistent profiles/reboot remain open. Hardware/offline
+boot and rollback qualification and public DNS deployment are separate tracks.
+Full qualification remains false. The
+[sanitized native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json)
+records the dated results; [remaining native acceptance](#remaining-native-acceptance)
+lists the unfinished work. Detailed preparation evidence follows.
+
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
 DNS zone, an update endpoint, or permission to publish a device address. The
@@ -23,8 +30,9 @@ Public DNS deployment remains deferred.
 ## Accepted Ace/Mako deployment target
 
 Malak is not a required product server. It was part of the first trial because
-it currently holds the authoritative pilot database, admission services and
-authenticated evidence. The accepted target puts runtime services on the two
+it held the authoritative pilot database, admission services and authenticated
+evidence. Its retained source state is now fenced. The accepted target puts
+runtime services on the two
 existing Raspberry Pi hosts:
 
 | Host | Target role | Runtime responsibility |
@@ -33,7 +41,7 @@ existing Raspberry Pi hosts:
 | Mako (`192.168.8.247`) | Kaiba agent and DNS replica | Agent admitted to Ace's owner fleet, local workloads and a read-only replica with separate state and transfer credentials |
 | Malak (`192.168.8.249`) | Operator workstation | Administration, provisioning and recovery; no dependency for ordinary fleet identity or DNS service |
 
-This requires transferring the complete pilot control plane: its authoritative
+The transfer includes the complete pilot control plane: its authoritative
 database, signed records and evidence, issuer ledger and authority state,
 trust/policy configuration, private runtime credentials and authenticated
 service endpoints. Moving only the workload registry or station SPIRE Agent
@@ -54,12 +62,13 @@ key stays on Ace. Original configuration bytes and all original, active,
 renewal-source and recovery-source scope rows remain preserved. Import must
 verify scope equality; it must not rewrite scope rows to accept a host move.
 
-Separate host compositions and a two-host replica module are now authored;
-the first trial's profile ran both replica processes on Ace. Native acceptance must exercise
-authorization, credential renewal, restart and signed DNS publication with Malak
-disconnected, plus queries and outage recovery on Mako's actual replica. No
-migration or Mako agent startup/admission has been performed. Two hosts on one
-LAN do not establish high availability or qualify offline boot/rollback protection.
+Separate host compositions now run the replica on Mako; the first trial ran both
+replica processes on Ace. Mako's admission, exact-unit identity, grant-free Agent
+restart and actual replica queries passed after temporary activation. Native
+acceptance still must exercise authorization denial, credential lifecycle and
+outage recovery, including normal operation with Malak disconnected. Two hosts
+on one LAN do not establish high availability or qualify offline boot/rollback
+protection.
 
 The new host profiles are disabled by default. Their disabled evaluations match
 Ace's retained generation 10 and Mako's persistent closure exactly. Staging with
@@ -114,7 +123,7 @@ The application and migration qualification checks remain software evidence:
   full row-content drift detection and real age encryption/decryption with
   generated test keys. The importer passed a disposable PG18 logical
   dump/restore comparison using the same snapshot normalization. These are
-  software checks; neither helper has exported or imported live pilot state.
+  software checks; the subsequent native export/import result is recorded below.
 - Transport signing passed sixteen focused tests; target-policy preparation
   passed eleven. They retain the source policy deadline and trust pins, verify the
   requested transport identity, and permit only the reviewed callback dial
@@ -136,8 +145,8 @@ The migration must preserve one authoritative writer and the complete issuance
 history. Ace now has a private age recipient key and transport CSR on its
 existing encrypted root; only their public request material is used by source
 preparation. The refreshed source request authorized Ace's new transport leaf
-under the retained CA and unchanged deadline. The source's serving leaf and
-services remain unchanged. Source operator credentials and transport/management CA
+under the retained CA and unchanged deadline. Source preparation preserved the
+serving leaf and services before the later export fence. Source operator credentials and transport/management CA
 private keys remain on Malak. Operational issuer keys, Reader credentials,
 signed records and full database histories are part of the encrypted transfer.
 Source credential and record paths must be absolute; relative paths must not be
@@ -155,20 +164,23 @@ and publishes the replacement within the device's actual bind mount. Interrupted
 writes retain evidence for read-only reconciliation. That change expanded the
 migration check to **92 tests with zero skips**, including 16 endpoint cases; a
 separate isolated user/mount-namespace regression passes against the real mount
-boundary. This helper has not run on either device. Recovery and authority
-activation precede its use, followed by a fresh installed-client identity check.
+boundary. Both native endpoint transfers subsequently passed on September 30
+local time, after recovery and authority activation. Fresh installed Go client
+`self` calls authenticated to Ace with the exact retained bindings and false
+full-qualification status. Comparison against each private state backup
+confirmed that only `config.fleet_url` changed.
 
-Following the completed source preparation and target build below, the remaining
-owner operations are concrete and separate: perform the bounded export by
-fencing Malak persistently and exporting both databases
-and selected files into a recipient-encrypted archive; authenticate the source
-ciphertext/manifest digests before private handoff; import into Ace's unused
-isolated PG18 cluster and remap OS account ownership by name. The exporter uses
+The source export fenced Malak and encrypted both databases and selected files
+for Ace. Verified import restored them into Ace's isolated PG18 cluster with OS
+account ownership mapped by name. The exporter uses
 native logical dumps with all writers stopped, verifies complete table-content
 and schema/sequence snapshots, and retains the source fence after errors.
-Neither export nor import activates destination authorities. Target policy and
-import receipt verification and finalization precede separate activation, followed by native
-renewal/restart/DNS acceptance with Malak disconnected. An ambiguous operation
+Neither export nor import activates destination authorities. Finalization and
+separate temporary activation and both device endpoint transfers have passed.
+The explicit DNS grant, publication and queries on the primary and actual Mako
+replica have also passed, together with Mako admission and grant-free Agent
+restart. Remaining steps include native lifecycle/outage acceptance and normal
+device, renewal and DNS operation with Malak disconnected. An ambiguous operation
 requires readback of the same intent; it never justifies restarting both writers
 or initializing replacement issuer state.
 
@@ -179,7 +191,7 @@ one successor issuance; the original identity, key and history are preserved.
 Installed-key proof, fresh-process access and access after authority restart
 passed. The result explicitly records full qualification as false.
 
-Malak remains the supervised serving authority. The owner supplied a fresh
+Before export, the owner supplied a fresh
 protected inventory, and its checksum and expected recovery changes were
 verified. Recovery-aware export/import and target-policy verification now retain
 the original policy, explicitly pin a completed-recovery proof, and reject
@@ -189,7 +201,7 @@ issuer scope pins with the recovery proof. The complete migration suite passes *
 zero skips**, including real age and
 disposable PG18 checks. Ace's append-only preparation rebind passed nine native
 fixture tests and actual host/key/storage checks, preserving its original keys
-and receipt. No authority state was imported.
+and receipt. That preparation did not import authority state.
 
 Source preparation completed on September 29 local time, and its result was
 verified. The completed recovery guard passed, private policy continuity was
@@ -197,15 +209,45 @@ recorded, and Ace's existing transport CSR was signed under the retained CA
 without extending the deadline or changing source services. Its eleven synthetic
 tests cover policy rejection, actual signing/readback, private output and
 retained intent after failure. Ace's immutable target guard and active system
-closure have since been built natively as artifacts only. Host checks passed,
+closure were then built natively. Build-time host checks passed,
 including the expected denial when imported state is absent. Current and
-persistent system profiles and existing service processes remain unchanged;
-the active closure has not been activated. **The previously prepared
+persistent system profiles and existing service processes were preserved during
+those checks. **The previously prepared
 owner transport signing command is superseded and must not run against the old
-inventory.** No source fence, state export or cutover has occurred. The next
-deployment steps remain transfer to Ace, Mako's SPIRE admission and actual LAN
-replica acceptance; hardware and offline boot/rollback qualification are still
-pending.
+inventory.**
+
+On September 30 local time, the fenced encrypted source export succeeded and
+the verified import on Ace established complete content, schema and sequence
+equivalence for both databases. Finalization and subsequent temporary activation
+passed. Ace's current profile is active on the same boot; its persistent baseline
+and existing Hydra, regular PostgreSQL and SSH processes are unchanged. The
+promoted SPIRE server and agent are healthy. The target/import guards, isolated
+PostgreSQL, four imported authority services, workload registry, DNS controller,
+primary and publisher are active. Four Ace workload registrations bind exact
+systemd units and users with the original deadline.
+
+Authenticated native Reader resolution passed for both retained device records
+with stable service invocations; independent active-binding checks matched the
+devices. Malak's source fences remain loaded and match the sealed archive.
+Both device endpoint cutovers are accepted following fresh installed-client
+access to Ace and complete backup comparison proving only the Fleet URL changed.
+The single reviewed DNS grant is accepted; authenticated readback confirms an
+active revision-1 binding with `dns:update` permission. Ace's updater is healthy,
+and its assigned address record is authoritative on both hosts. Twelve native
+UDP/TCP queries matched, including matching serials; unsigned AXFR received an
+explicit rejection. Desired, origin and observed publication generations agree.
+
+Mako's native identity acceptance passed at `2026-09-30T05:17:27Z`: its admitted
+node and key survived Agent restart after removal of the consumed grant. The
+exact-unit probe succeeded before and after a same-user wrong-unit request
+timed out after 5.057 seconds with no identity. This was a bounded
+no-identity observation, not an explicit denial response. Its existing
+applications, operational device state, current candidate, persistent baseline
+and source fences were preserved, and its probe timer resumed. The native
+positive path and member restart are accepted; broader lifecycle/outage,
+workstation-disconnection and persistence checks remain open. Temporary
+activation does not establish full LAN or hardware/offline boot/rollback
+qualification.
 
 ## First LAN trial: topology and boundary
 
@@ -367,39 +409,36 @@ own reviewed LAN route or split-DNS entry. Existing Mako HTTP reverse proxies
 terminate TLS; updater-to-controller SPIFFE authentication instead needs an
 end-to-end connection, such as a direct LAN route or reviewed TCP forwarding.
 
-## Acceptance deferred from the first trial
+## Remaining native acceptance
 
-These checks remain outstanding. The expired station packet and its topology
-are historical preparation; the accepted Ace/Mako deployment needs a fresh
-composition and current-admission checks.
+Authority transfer, both device endpoint moves, the explicit DNS grant,
+Mako admission with grant-free Agent restart and authoritative replica queries
+are complete. The expired station packet is
+historical evidence, not the next deployment step. Complete the following within
+the unchanged `2026-10-03T02:06:35Z` deadline:
 
-1. **Activate current pilot admission.** The previously installed
-   [workload registry](https://github.com/PseudoDesign/kaiba-fleet/blob/c7d13f8ecd3e8d98108a2c6eb4787c550405e7c2/docs/spiffe-live-dns.md)
-   reads the original `enrollments` lifecycle, while Ace's real pilot membership
-   uses `pilot_enrollments`. The prepared explicit adapter verifies current
-   pilot policy, immutable evidence, active credential and instance, including
-   expiry, recovery and authority outages. Do not manufacture rehearsal
-   `enrollments` rows. Bind the DNS workload to the actual enrollment through an
-   operator-reviewed mapping; `ace-pilot-20260929` is presently the identity
-   probe's instance, not an existing DNS admission decision.
-2. **Accept the target host composition.** The first trial pinned tested DNS
-   packages/modules and exact identities. A future persistent switch requires
-   complete native acceptance. Preserve the authority and probe, retain isolated
-   desired state and runtime credentials, and complete the control-plane
-   transfer before removing Malak from the runtime path.
-3. **Qualify a fresh LAN arrangement.** The first trial used Ace's loopback primary
-   at port `15352`, LAN replicas at `15353`/`15354`, local controller at `18443`,
-   and a planned Malak registry at `18446`; Mako's replica was not deployed.
-   Review the proposed numeric DNS assignment
-   `001` against current admission. Generate dedicated credentials through runtime
-   provisioning; integration-test TSIG fixtures are not deployment credentials.
-4. **Validate before considering delegation.** Query the prepared authorities directly,
-   verify current-admission denial and outage behavior, restart persistence,
-   publisher updates and both observers. Public rollout is a later decision;
-   once selected, review the exact parent-zone
-   record change. After publication, verify through an independent recursive
-   resolver and an outside-LAN client; LAN success alone does not prove public
-   reachability.
+1. **Denial and credential lifecycle.** Exercise current-pilot authorization
+   denial, revocation/replacement and renewal on the native deployment while
+   preserving issuer scopes, identities and retained history. Software fixtures
+   do not substitute for these native observations.
+2. **Outage and recovery.** Verify authority and replica outage behavior,
+   fail-closed updates, replication catch-up and service restart with preserved
+   keys and state. Preserve existing applications while exercising the new
+   services.
+3. **Operation without Malak.** Keep its source fenced and demonstrate ordinary
+   device access, identity renewal and DNS operation with the workstation
+   disconnected. A loaded source fence alone does not prove this independence.
+4. **Persistent profile and reboot.** After native acceptance, verify persistent
+   configuration and a controlled warm reboot separately. Current test
+   activations retain the earlier persistent baselines; they are not boot
+   persistence evidence.
+
+Hardware qualification remains a separate campaign covering cold/offline boot,
+clock continuity, rollback prevention and recovery. Public DNS deployment is
+also separate: select real public authority endpoints and reviewed delegation
+before checking independent recursive resolution and outside-LAN reachability.
+No public records, parent delegation or router resolver changes are implied by
+LAN acceptance.
 
 Outside the explicit LAN profile, the updater discovers publicly routable addresses on local interfaces; it does
 not discover a router's WAN address. Private `192.168.8.x` addresses alone will

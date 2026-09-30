@@ -31,37 +31,25 @@ order, and prerequisites before using selection in a required check.
 
 ## Next steps: owner-controlled identity and deployment roles
 
-The accepted [SPIFFE/SPIRE integration plan](docs/spiffe-spire-plan.md) defines
-standalone, server, and agent installations, with optional `kaiba.network`
-enrollment kept separate from the owner's local fleet. The additive workload
-contract and opt-in identity foundation are implemented and passed local unit,
-module, and four-machine VM checks on 2026-09-29. Real DNS and fleet inventory
-integration has passed software checks. Ace's first bounded LAN trial passed
-pre-station checks, expired, and was restored to its retained baseline.
-The [accepted deployment target](docs/pilot-dns-rollout.md#accepted-acemako-deployment-target)
-uses Ace as the Kaiba server, Mako as an agent and DNS replica, and Malak as an
-operator workstation. Both hosts passed temporary dormant staging with selected
-existing services and device state preserved; their persistent boot profiles
-remain unchanged and the new pilot units remain stopped. The two-host DNS
-and imported Fleet control-plane VMs passed. The refreshed source inventory
-was verified, and recovery-aware transfer preparation and source-fencing helpers
-pass 135 local migration checks with zero skips, including device endpoint
-transfer; a separate real bind-mount regression also passes. Mako's same-key
-credential recovery passed on September 29 local time: revision 2, exactly one
-successor, installed-key proof, fresh-process access and access after authority
-restart. This is pilot recovery evidence, not full qualification. Malak remains
-the serving authority. Ace's preparation binds the fresh inventory while
-preserving its original keys and receipt. Source preparation passed on September
-29 local time: the completed recovery guard passed, policy continuity was
-recorded, and Ace's transport certificate was signed with the existing deadline
-and source services preserved. Ace's immutable target guard and active system
-closure are now built as artifacts only. Native host checks passed, including
-denial without imported state; current/persistent profiles and existing service
-processes remain unchanged. Next, perform bounded fenced export, verified import,
-finalization and separate activation.
-Mako's SPIRE admission, native end-to-end LAN acceptance and offline
-boot/rollback qualification remain outstanding; no state export or cutover has
-occurred.
+The accepted [SPIFFE/SPIRE plan](docs/spiffe-spire-plan.md) defines standalone,
+server and agent roles with separate optional provider enrollment. The native
+Ace/Mako pilot now runs its authority and DNS primary on Ace, with Mako admitted
+as an agent and read-only replica. Malak's source is fenced. Verified migration
+preserved both databases, issuer history and device identities; both installed
+clients now authenticate to Ace. Explicit DNS authorization, publication and
+matching queries on both hosts passed. Mako retained its node and key through
+Agent restart after grant removal; exact-unit probes bracketed a bounded
+wrong-unit no-identity observation. Existing applications and persistent boot
+baselines were preserved.
+
+These are temporary test activations, with the original pilot deadline
+`2026-10-03T02:06:35Z` unchanged. Software validation includes 135 migration tests
+with zero skips and the identity, control-plane and DNS VMs. Remaining native
+work covers denial and credential lifecycle, outages, operation with Malak
+disconnected, and persistent profiles with reboot acceptance. Hardware/offline
+boot and rollback qualification, product installation/UI, and public DNS
+remain separate. See the [LAN rollout](docs/pilot-dns-rollout.md) for evidence
+and next steps.
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime

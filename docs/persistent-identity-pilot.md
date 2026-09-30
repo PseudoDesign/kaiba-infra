@@ -1,5 +1,11 @@
 # Persistent identity pilot on Ace
 
+Update, 2026-09-30: the standalone installation below remains Ace's persistent
+baseline. A later two-host profile temporarily promotes that same authority
+for the LAN pilot, preserving its identity and state. See the
+[current LAN rollout](pilot-dns-rollout.md) for the latest deployment status;
+the loopback-only scope and observations below describe the original phase.
+
 Status: installed persistently on Ace and verified at
 `2026-09-29T06:09:10Z`, using the owner-selected SPIFFE trust domain
 `pilot.kaiba.pseudo.design`. Guarded test activation, explicit initialization,

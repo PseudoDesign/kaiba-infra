@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Source preparation and native target build passed; migration pending | Persistent boot profiles unchanged; new pilot units stopped; 135 migration checks pass with zero skips; Ace guard and active closure built as artifacts only; bounded fenced export next; no live export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Native positive path and member restart passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; temporary activations retain persistent baselines; Malak fenced; 135 migration checks pass; lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -22,6 +22,10 @@ qualification evidence.
 VM success demonstrates software behavior. It cannot qualify physical rollback
 protection, hardware key isolation, or autonomous production boot. Record
 prototype results separately from hardware evidence as work advances.
+
+The current LAN pilot policy and temporary workload registrations retain the
+original deadline, `2026-10-03T02:06:35Z`. No extension is authorized or
+implemented; temporary activation has not changed either persistent boot baseline.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload
@@ -136,30 +140,48 @@ passed 76 tests with zero skips; the changes are published at
 The subsequent [device endpoint helper](https://github.com/PseudoDesign/kaiba-fleet/blob/797a9e2b7de9f94ad5bd29ebe21420434cff2b7b/deploy/pilot-migration/device-endpoint.md)
 extends that suite to 92 passing checks and has a separate passing real
 bind-mount regression. It preserves credentials and history while changing only
-the Fleet URL after authenticated target admission; it has not run on the devices.
+the Fleet URL after authenticated target admission. Both native endpoint moves
+were subsequently accepted on September 30 local time, with fresh installed-client
+access to Ace and complete private backup comparison confirming only that URL changed.
 The reviewed issuer-only callback
 dial override preserves the canonical source URL, TLS name and all four scope
-pins while reaching Ace. Fenced export, verified import, finalization and
-separate target activation remain owner operations. No live state export or
-cutover has occurred. Following the expired-credential finding, Mako's same-key
+pins while reaching Ace. Following the expired-credential finding, Mako's same-key
 recovery passed on September 29 local time: credential revision 2 with exactly
 one successor issuance, preserved identity/key/history, installed-key proof,
 fresh-process access and access after authority restart. Full qualification
-remains false. Malak remains the supervised serving authority. The refreshed
+remains false. The refreshed
 source inventory is verified, and Ace's preparation is rebound while preserving
 its original keys and receipt. Recovery-aware migration helpers pass 135 checks
 with zero skips, including exact membership and issuer-scope continuity before fencing.
 Source preparation passed on September 29 local time: the completed recovery
 guard passed, policy continuity was recorded, and Ace's transport certificate
 was signed with the existing deadline and source services preserved. Ace's
-immutable target guard and active system closure are now built as artifacts only.
+immutable target guard and active system closure passed native build checks.
 Native host checks passed, including denial without imported state; current and
-persistent profiles and existing service processes remain unchanged. Next,
-perform bounded fenced export, verified import, finalization and separate
-activation. The old owner signing command
-remains superseded.
-Mako's SPIRE admission, native two-host acceptance and hardware qualification
-remain pending. The
+persistent profiles and existing service processes were preserved during these
+build checks. On September 30 local time, Malak's fenced encrypted export
+succeeded. Import on Ace verified complete content, schema and sequence
+equivalence for both databases, and finalization passed. Ace then passed temporary
+activation on the same boot while preserving its persistent baseline and existing
+Hydra, regular PostgreSQL and SSH processes. Promoted SPIRE and imported
+authorities are healthy; the DNS controller, primary and publisher are active.
+Four workload registrations bind exact units
+and users with the original deadline. Authenticated Reader resolution and
+independent active-binding checks passed for both retained devices. Malak's
+source fences remain verified. Both device endpoint cutovers to Ace are accepted
+with their exact retained bindings and false full-qualification status. The
+explicit DNS grant is accepted; Ace's updater is healthy and its assigned record
+is authoritative on both hosts. Mako's SPIRE admission and restart after consumed
+grant removal passed with its node and key preserved. Exact-unit probes succeeded
+before and after a bounded same-user wrong-unit no-identity
+observation; that observation was not an explicit denial response. Matching
+UDP/TCP queries, unsigned AXFR rejection and agreement of desired/origin/observed
+publication state passed. Existing applications, device state and persistent
+baselines remain preserved. The
+[sanitized native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json)
+records this bounded acceptance. The old owner signing command remains superseded.
+Native lifecycle/outage checks, operation with Malak disconnected, persistent
+profiles/reboot and hardware qualification remain pending. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
 public-delegation boundaries. Persistent identity service acceptance and physical
 offline qualification remain separate evidence tracks.
