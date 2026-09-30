@@ -163,6 +163,15 @@ Fleet/SPIRE identities. Malak retains the image, backups and independent
 acknowledgement receipts. Its software-isolated offline case tests time-gate
 refusal, not a physical air gap or autonomous issuance.
 
+The [2026-09-30 preparation result](https://github.com/PseudoDesign/kaiba-provisioning/blob/codex/offline-qualification-evidence/docs/observations/2026-09-30-nvme-qualification-preparation.json)
+records the built 8,549,040,128-byte image, its checksum, clean root-owned test
+filesystem, matching firmware/kernel/initrd, and a successful ARM64 QEMU NVMe
+boot with unsynchronized-time initialization refusal. Real Fleet/PostgreSQL
+software rehearsals passed both revocation commit boundaries, retained-key
+checks, current-backup restoration and detection of an obsolete backup through
+independent expectations. QEMU bypasses the Pi EEPROM; no spare has been written
+or physically booted, and no physical abrupt-loss result is claimed.
+
 Abrupt power-loss testing still requires the specific spare's write/readback
 receipt, successful initial boot and a demonstrated restore. Prepare its exact disk identity and nonproduction
 state, independent complete backups, a demonstrated restore, console evidence,
