@@ -41,13 +41,18 @@ matching queries on both hosts passed. Mako retained its node and key through
 Agent restart after grant removal; exact-unit probes bracketed a bounded
 wrong-unit no-identity observation. Existing applications and persistent boot
 baselines were preserved. Native grant quarantine/restoration and bounded
-registry/primary-DNS outage checks passed.
+registry/primary-DNS outage checks passed. Mako also restarted its replica and
+served retained records while the primary was stopped. Passive identity checks
+observed Mako node renewal and a fresh workload certificate after prior expiry.
 
 These are temporary test activations, with the original pilot deadline
 `2026-10-03T02:06:35Z` unchanged. Software validation includes 135 migration tests
 with zero skips and the identity, control-plane and DNS VMs. Remaining native
 work covers broader credential lifecycle, remaining outages, operation with Malak
-disconnected, and persistent profiles with reboot acceptance. Hardware/offline
+disconnected, and persistent profiles with reboot acceptance. Persistent-profile
+preparation includes an admitted-member startup guard and encrypted boot-file
+rehearsals. Reboot and disconnection checks wait for physical recovery access.
+Hardware/offline
 boot and rollback qualification, product installation/UI, and public DNS
 remain separate. See the [LAN rollout](docs/pilot-dns-rollout.md) for evidence
 and next steps.

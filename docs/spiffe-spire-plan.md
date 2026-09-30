@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Native positive path, member restart, grant quarantine/restoration and bounded service outages passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; fresh updater denied while quarantined, same binding restored; registry pause/resume and primary stop/restart pass; temporary activations retain persistent baselines; Malak fenced; 135 migration checks pass; broader lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Native positive path, member restart, grant quarantine/restoration, bounded outages and retained-replica restart passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; fresh updater denied while quarantined, same binding restored; registry pause/resume, primary stop/restart and replica restart during primary absence pass; passive Mako node renewal observed; Malak fenced; broader lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -26,6 +26,10 @@ prototype results separately from hardware evidence as work advances.
 The current LAN pilot policy and temporary workload registrations retain the
 original deadline, `2026-10-03T02:06:35Z`. No extension is authorized or
 implemented; temporary activation has not changed either persistent boot baseline.
+The explicit persistent-profile constructor and admitted-Mako startup guard are
+prepared. Ace's exact boot builder passed an encrypted staging rehearsal while
+preserving actual firmware and profile selection. Reboot and physical-disconnection
+acceptance wait for console/recovery access, which is currently unavailable.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload

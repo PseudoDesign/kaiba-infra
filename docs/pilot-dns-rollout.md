@@ -2,7 +2,8 @@
 
 Status, 2026-09-30: **The native Ace/Mako positive path, member restart and
 workload-grant quarantine/restoration passed, plus bounded registry and primary-DNS
-outage checks.**
+outage checks, replica restart with the primary absent, and passive Mako identity
+renewal observations.**
 The authority moved from fenced Malak to Ace with verified database and issuer
 continuity; both installed clients authenticate to Ace with their retained
 identities. Explicit DNS authorization, primary publication and matching
@@ -28,6 +29,26 @@ Full qualification remains false. The
 and [bounded service-outage observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-service-outages.json)
 record the dated results; [remaining native acceptance](#remaining-native-acceptance)
 lists the unfinished work. Detailed preparation evidence follows.
+
+The subsequent [replica restart observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-replica-restart.json)
+records a new Mako DNS process serving its retained A/AAAA/SOA answers over UDP
+and TCP while Ace's primary was stopped. Both hosts had independent restoration
+guards, and both services recovered with unchanged credentials, applications,
+device state and active revision-3 grant. This did not publish a new DNS update.
+The [passive identity observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-identity-observations.json)
+also confirms Mako's node renewed beyond its earlier expiry under the same
+identity, with current cached trust and a fresh workload certificate after the
+earlier one expired. Ace's exact-unit fresh fetch passed; that sampling interval
+did not demonstrate Ace certificate rotation. Neither observation is Fleet
+operational-credential renewal or a disconnected-workstation test.
+
+There is currently no physical console/recovery access. Remote service checks
+and [persistent-profile preparation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/ace-mako-persistence.md)
+can proceed; reboots, power-loss tests and physical disconnection wait for that
+access. Ace's exact boot builder passed an encrypted staging rehearsal with a
+verified private backup; its actual firmware and persistent selection were
+unchanged. The admitted Mako profile adds a read-only startup guard before
+SPIRE can replace missing or unusable cached identity state.
 
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
@@ -452,7 +473,9 @@ end-to-end connection, such as a direct LAN route or reviewed TCP forwarding.
 Authority transfer, both device endpoint moves, the explicit DNS grant,
 Mako admission with grant-free Agent restart and authoritative replica queries
 are complete. Native workload-grant quarantine denial and exact restoration
-and the bounded registry/primary-DNS outage checks also passed. The expired
+and the bounded registry/primary-DNS outage checks also passed. Mako additionally
+restarted its replica from retained state while the primary was stopped, and
+passive sampling confirmed node renewal under its retained SPIFFE identity. The expired
 station packet is historical evidence, not the next deployment step. Complete
 the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
@@ -462,17 +485,20 @@ the following within the unchanged `2026-10-03T02:06:35Z` deadline:
    The completed workload-grant quarantine/restoration check does not substitute
    for these distinct lifecycle observations.
 2. **Remaining outage and replication scenarios.** Exercise SPIRE and database
-   outages, replica restart while the primary is absent, and timed catch-up from
-   new publication with keys, state and existing applications preserved. The
-   completed registry pause/resume and primary stop/restart cover only their
-   recorded boundaries.
+   outages and timed catch-up from new publication with keys, state and existing
+   applications preserved. Registry pause/resume, primary stop/restart and replica
+   restart while the primary is absent are complete within their recorded bounds.
 3. **Operation without Malak.** Keep its source fenced and demonstrate ordinary
    device access, identity renewal and DNS operation with the workstation
    disconnected. A loaded source fence alone does not prove this independence.
+   Prepare independent host samplers, then schedule this with physical recovery
+   access; none is currently available.
 4. **Persistent profile and reboot.** After native acceptance, verify persistent
    configuration and a controlled warm reboot separately. Current test
    activations retain the earlier persistent baselines; they are not boot
-   persistence evidence.
+   persistence evidence. The exact active-profile constructor, admitted-Mako
+   startup guard and protected boot-file rehearsals prepare that transition.
+   Reboot acceptance waits for physical recovery access.
 
 Hardware qualification remains a separate campaign covering cold/offline boot,
 clock continuity, rollback prevention and recovery. Public DNS deployment is
