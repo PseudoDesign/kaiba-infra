@@ -17,13 +17,15 @@ services recovered. Existing applications, device state
 and the then-current boot selections were preserved through those earlier checks.
 Software validation includes 135 migration tests with zero skips and the control-plane/DNS VMs.
 
-The tested profiles are now installed persistently as Ace generation 11 and Mako
-generation 15, with verified boot files and retained recovery entries. Neither
-host was rebooted. The pilot policy and temporary workload registrations retain
-the original deadline, `2026-10-03T02:06:35Z`; no extension is authorized or implemented. Broader native
-credential-lifecycle checks, remaining outage/replication scenarios, operation with
-Malak disconnected and startup from the new boot entries remain open. Hardware/offline
-boot and rollback qualification and public DNS deployment are separate tracks.
+Both controlled warm reboots now passed: Ace runs its persistent generation 12
+with an explicit clock-wait unit and ordered authority startup; Mako runs its
+guarded generation 15. Device and admitted identities, retained private state, fresh exact-unit probes,
+existing applications and DNS passed post-boot checks. The pilot policy and
+temporary workload registrations retain the original deadline,
+`2026-10-03T02:06:35Z`; no extension is authorized or implemented. Broader native
+credential-lifecycle checks, remaining outage/replication scenarios and operation
+with Malak disconnected remain open. Hardware/offline boot and rollback
+qualification and public DNS deployment are separate tracks.
 Full qualification remains false. The
 [initial native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json),
 [grant quarantine observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-workload-quarantine.json)
@@ -43,17 +45,21 @@ earlier one expired. Ace's exact-unit fresh fetch passed; that sampling interval
 did not demonstrate Ace certificate rotation. Neither observation is Fleet
 operational-credential renewal or a disconnected-workstation test.
 
-There is currently no physical console/recovery access. Both hosts completed
-[boot-only installation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/ace-mako-persistence.md)
-after encrypted staging rehearsals and verified private backups. Ace retains
-firmware entries 11/10/9/8; Mako retains 15/14/13/12. Their prior persistent and
-actually booted entries remain available, and no Nix generations were deleted.
-Mako's private appended initrd material was verified on the host. Its admitted
-startup guard passed native activation before persistence, preserving both
-admission receipts. Post-installation checks confirmed healthy existing
-applications, unchanged device state, matching LAN DNS and fenced Malak services.
-Reboots, power-loss tests and physical disconnection wait for recovery access;
-full qualification remains false.
+The owner confirmed physical recovery access before the attended warm reboots.
+The [persistence record](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/ace-mako-persistence.md)
+separates the earlier encrypted rehearsals and boot-only installations from the
+later [Mako](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-mako-warm-reboot.json)
+and [Ace](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-warm-reboot.json)
+startup observations. Ace's generation 12 includes the upstream clock waiter;
+actual monotonic timestamps verify its ordering before storage validation,
+private PostgreSQL, import validation and Fleet startup. All four authority APIs
+passed their post-boot checks. Mako's admitted-state guard started its retained Agent
+without a new grant. During Ace's reboot, nine DNS query rounds on Mako passed
+with fresh Ace-unavailable observations before and after each round; Mako's boot,
+profiles and seven service identities stayed unchanged. This is bounded sampled
+continuity, not continuous availability proof. Disconnection collectors and their
+connected rehearsal are being prepared; no disconnected result is claimed.
+Cold/offline boot, power loss and rollback qualification remain open.
 
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
@@ -279,8 +285,9 @@ timed out after 5.057 seconds with no identity. This was a bounded
 no-identity observation, not an explicit denial response. Its existing
 applications, operational device state, current candidate, persistent baseline
 and source fences were preserved, and its probe timer resumed. The native
-positive path and member restart are accepted; broader lifecycle/outage,
-workstation-disconnection and startup from the installed profiles remain open.
+positive path and member restart are accepted; broader lifecycle/outage and
+workstation-disconnection checks remain open. Startup from the subsequently
+installed profiles passed in the later controlled warm-reboot observations.
 Temporary activation does not establish full LAN or hardware/offline boot/rollback
 qualification.
 
@@ -494,17 +501,18 @@ the following within the unchanged `2026-10-03T02:06:35Z` deadline:
    outages and timed catch-up from new publication with keys, state and existing
    applications preserved. Registry pause/resume, primary stop/restart and replica
    restart while the primary is absent are complete within their recorded bounds.
-3. **Operation without Malak.** Keep its source fenced and demonstrate ordinary
-   device access, identity renewal and DNS operation with the workstation
-   disconnected. A loaded source fence alone does not prove this independence.
-   Prepare independent host samplers, then schedule this with physical recovery
-   access; none is currently available.
-4. **Startup from the installed persistent profiles.** Boot-only installation
-   and readback passed for Ace generation 11 and Mako generation 15. Verify a
-   controlled warm reboot separately once physical recovery access is available,
-   including encrypted-storage unlock, admitted identity, authority continuity,
-   existing applications and DNS. The installed boot files alone do not establish
-   startup or power-loss acceptance.
+3. **Operation without Malak.** Keep its source fenced and demonstrate device
+   access, fresh workload identity and DNS operation through an attended
+   disconnection spanning the longest workload TTL. Physical recovery access is
+   now available; independent host samplers and a connected rehearsal are being
+   prepared. One separately supervised updater restart will test a fresh update
+   after that TTL; it is not ordinary six-hour periodic updater renewal. A loaded
+   source fence alone does not prove workstation independence.
+
+Controlled warm-reboot acceptance is complete for Ace generation 12 and Mako
+generation 15, including admitted identity, retained state, automatic service
+startup and DNS. These results do not establish cold/offline boot or power-loss
+safety.
 
 Hardware qualification remains a separate campaign covering cold/offline boot,
 clock continuity, rollback prevention and recovery. Public DNS deployment is
@@ -518,11 +526,14 @@ samplers on both Pis before disconnecting the workstation. The interval must
 span the freshly verified maximum workload lifetime: current probe settings
 suggest about 75 minutes, with a 90-minute sampler limit and adequate margin
 before policy expiry. Require fresh exact-unit credentials after prior expiry,
-successful installed-client access, cross-host UDP/TCP DNS, actual updater lease
-advancement, unchanged applications/state and preserved source fences. A
+successful installed-client access, cross-host UDP/TCP DNS, a fresh lease after
+the separately authorized updater restart, unchanged applications/state and
+preserved source fences. A
 connected rehearsal or failed ping alone cannot establish workstation
 independence. Keep Ace, Mako and time services available; reconnect through an
-attended console. This sampler is a design to implement, not a deployed monitor.
+attended console. The bounded samplers and offline evidence verifier are prepared
+and tested locally; native connected-rehearsal and disconnected acceptance remain
+pending. No autonomous monitor is claimed.
 
 Outside the explicit LAN profile, the updater discovers publicly routable addresses on local interfaces; it does
 not discover a router's WAN address. Private `192.168.8.x` addresses alone will
