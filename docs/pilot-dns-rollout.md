@@ -17,7 +17,7 @@ services recovered. Existing applications, device state
 and the then-current boot selections were preserved through those earlier checks.
 Software validation includes 135 migration tests with zero skips and the control-plane/DNS VMs.
 
-Both controlled warm reboots now passed: Ace runs its persistent generation 12
+Both controlled warm reboots passed: Ace then ran its persistent generation 12
 with an explicit clock-wait unit and ordered authority startup; Mako runs its
 guarded generation 15. Device and admitted identities, retained private state, fresh exact-unit probes,
 existing applications and DNS passed post-boot checks. The pilot policy and
@@ -32,8 +32,13 @@ later [Ace clean PoE cold-start](https://github.com/PseudoDesign/nix-pseudo-desi
 failed automatic startup because the imported-state mount preflight formed a
 boot ordering cycle. Identity and state survived; affected services were
 restored explicitly. Mako passed all 40 DNS samples, including 12 while Ace was
-unavailable. Deploy the reviewed ordering fix and repeat the attended test;
-the fixed source has not replaced Ace's installed generation 12. The
+unavailable. The fix is now installed as generation 13, and the
+[repeat attended clean PoE test](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-clean-cold-start.json) passed automatic
+startup without manual service starts. All 17 protected services, retained
+identity/state, fresh exact-unit identity and DNS passed; PID1 reported no
+ordering-cycle job deletion. Mako passed 73 DNS samples, including 55 while Ace
+was unavailable. A separate tmpfiles missing-`sudo`-group warning remains;
+its exit 65 is accepted by the installed unit. The
 [initial native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json),
 [grant quarantine observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-workload-quarantine.json)
 and [bounded service-outage observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-service-outages.json)
@@ -517,11 +522,11 @@ passive sampling confirmed node renewal under its retained SPIFFE identity. The 
 station packet is historical evidence, not the next deployment step. Complete
 the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
-1. **Repair and repeat Ace cold-start acceptance.** Deploy the early-mount
-   preflight ordering fix as a new persistent generation. Repeat the attended
-   clean PoE power cycle with LAN available; require every expected service to
-   start automatically and no PID1 ordering-cycle job deletion. Manual recovery
-   from the failed generation-12 attempt is recorded separately.
+1. **Clean up the separate tmpfiles warning.** Generation 13 passed the repeat
+   attended clean PoE test with LAN available, automatic service startup and no
+   ordering-cycle job deletion. Resolve the missing `sudo` group referenced by
+   `/etc/tmpfiles.d/sys-kernel-debug.conf`; retain the successful test and its
+   accepted exit-65 warning separately from the failed generation-12 attempt.
 2. **Credential lifecycle and remaining authorization boundaries.** Exercise
    membership revocation, instance replacement and renewal on the native
    deployment while preserving issuer scopes, identities and retained history.
@@ -539,8 +544,8 @@ the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
 Controlled warm-reboot acceptance is complete for Ace generation 12 and Mako
 generation 15, including admitted identity, retained state, automatic service
-startup and DNS. These results do not establish cold/offline boot or power-loss
-safety.
+startup and DNS. Ace generation 13 additionally passed an attended clean
+LAN-assisted cold-start. Offline boot and abrupt power-loss safety remain open.
 
 Hardware qualification remains a separate campaign covering cold/offline boot,
 clock continuity, rollback prevention and recovery. Public DNS deployment is

@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Native positive path, member restart, grant quarantine/restoration, bounded outages, retained-replica restart, both warm reboots and attended workstation power-off passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; fresh updater denied while quarantined, same binding restored; registry pause/resume, primary stop/restart and replica restart during primary absence pass; passive Mako node renewal observed; Malak fenced; broader lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Native positive path, member restart, grant quarantine/restoration, bounded outages, retained-replica restart, both warm reboots, attended workstation power-off and Ace clean LAN-assisted cold-start passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; fresh updater denied while quarantined, same binding restored; registry pause/resume, primary stop/restart and replica restart during primary absence pass; passive Mako node renewal observed; Malak fenced; broader lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -27,7 +27,7 @@ The current LAN pilot policy and temporary workload registrations retain the
 original deadline, `2026-10-03T02:06:35Z`. No extension is authorized or
 implemented. After native test activation and encrypted boot rehearsals, the
 reviewed profiles were installed persistently. Both controlled warm reboots now
-passed with physical recovery access available: Ace runs generation 12 and Mako
+passed with physical recovery access available: Ace then ran generation 12 and Mako
 generation 15. Ace explicitly includes the upstream clock waiter before storage,
 private PostgreSQL, import validation and authority startup. Mako starts with its
 retained admitted identity and no new grant. Post-boot checks include fresh exact-unit probes and preserve device identities,
@@ -50,10 +50,15 @@ The later [Ace clean PoE cold-start](https://github.com/PseudoDesign/nix-pseudo-
 failed automatic-startup acceptance: an early mount-preflight ordering cycle
 caused PID1 to discard startup jobs. Identity and protected state survived;
 explicit service starts restored operation, and Mako passed all 40 DNS samples.
-The immediate next step is deployment of the corrected early-preflight ordering
-as a new persistent generation, followed by another attended cold-start test.
-Generation 12 remains installed. Offline boot, abrupt power loss and full
-hardware qualification remain unproven.
+The corrected preflight is now installed as Ace generation 13. The
+[repeat clean PoE cold-start](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-clean-cold-start.json) passed:
+all 17 protected services started automatically with retained identity and state,
+a fresh exact-unit probe and no ordering-cycle job deletion. Mako passed all
+73 DNS samples, including 55 bracketed by Ace unavailability. The separate
+tmpfiles missing-`sudo`-group warning remains recorded for cleanup. Remaining
+native lifecycle, outage/replication and ordinary updater renewal checks are
+next; offline boot, abrupt power loss and full hardware qualification remain
+unproven.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload
