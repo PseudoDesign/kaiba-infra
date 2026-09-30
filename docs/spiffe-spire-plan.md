@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Native positive path and member restart passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; temporary activations retain persistent baselines; Malak fenced; 135 migration checks pass; lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Native positive path, member restart, grant quarantine/restoration and bounded service outages passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; fresh updater denied while quarantined, same binding restored; registry pause/resume and primary stop/restart pass; temporary activations retain persistent baselines; Malak fenced; 135 migration checks pass; broader lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -95,7 +95,7 @@ pre-change system; the previous generation is retained, and Mako's evaluated
 configuration is unchanged. Ace subsequently passed a controlled online warm
 reboot at `2026-09-29T06:44:11Z`, preserving its authority, exact probe identity
 and existing public enrollment. Cold/offline boot remains unqualified. This
-phase does not yet connect real fleet admission or DNS publication. Future separate
+initial phase did not connect real fleet admission or DNS publication. Separate
 `spire.pilot.kaiba.pseudo.design` and `updates.pilot.kaiba.pseudo.design` endpoint
 names are design choices; this phase creates no corresponding DNS records.
 The owner selected LAN qualification first. The prepared software slice adds an
@@ -180,8 +180,23 @@ publication state passed. Existing applications, device state and persistent
 baselines remain preserved. The
 [sanitized native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json)
 records this bounded acceptance. The old owner signing command remains superseded.
-Native lifecycle/outage checks, operation with Malak disconnected, persistent
-profiles/reboot and hardware qualification remain pending. The
+A subsequent native grant check denied a fresh actual updater request with
+HTTP 403 while quarantined and left its complete intent tuple unchanged.
+Restoration of the same binding allowed a fresh lease; its current state is
+active revision 3. DNS endpoints, source fencing and existing applications were
+preserved. The [additive grant observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-workload-quarantine.json)
+records this check; it does not claim enforcement on a reused TLS connection.
+The [bounded service-outage observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-service-outages.json)
+adds registry pause/resume and primary stop/restart acceptance. The actual updater
+received HTTP 503 while the registry was paused without changing intent state;
+the same process recovered with authenticated authorization and a newer lease.
+Mako retained DNS answers while the primary was stopped, and endpoints and intent
+converged after restart. Active grant revision 3, source fences, applications and
+profiles were preserved. SPIRE/database outages, replica restart without a
+primary, and timed catch-up from new publication remain untested natively.
+Broader native lifecycle checks, remaining outages, operation with Malak
+disconnected, persistent profiles/reboot and hardware qualification remain
+pending. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
 public-delegation boundaries. Persistent identity service acceptance and physical
 offline qualification remain separate evidence tracks.

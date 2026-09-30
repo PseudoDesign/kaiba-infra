@@ -1,24 +1,32 @@
 # Pilot DNS rollout readiness
 
-Status, 2026-09-30: **The native Ace/Mako positive path and member restart passed.**
+Status, 2026-09-30: **The native Ace/Mako positive path, member restart and
+workload-grant quarantine/restoration passed, plus bounded registry and primary-DNS
+outage checks.**
 The authority moved from fenced Malak to Ace with verified database and issuer
 continuity; both installed clients authenticate to Ace with their retained
 identities. Explicit DNS authorization, primary publication and matching
 UDP/TCP queries on both hosts passed. Mako is admitted and retained its node and
 key through Agent restart after grant removal. Exact-unit probes bracketed a
-bounded wrong-unit no-identity observation. Existing applications, device state
+bounded wrong-unit no-identity observation. Native grant quarantine denied a
+fresh updater request without changing intent state; restoring the same binding
+allowed a fresh lease. Registry unavailability denied updates without changing
+intent state; Mako retained DNS answers during the primary stop, and both
+services recovered. Existing applications, device state
 and persistent boot baselines were preserved. Software validation includes
 135 migration tests with zero skips and the control-plane/DNS VMs.
 
 Both active profiles are temporary test activations. The pilot policy and
 temporary workload registrations retain the original deadline,
-`2026-10-03T02:06:35Z`; no extension is authorized or implemented. Native
-authorization-denial and credential-lifecycle checks, outages, operation with
+`2026-10-03T02:06:35Z`; no extension is authorized or implemented. Broader native
+credential-lifecycle checks, remaining outage/replication scenarios, operation with
 Malak disconnected and persistent profiles/reboot remain open. Hardware/offline
 boot and rollback qualification and public DNS deployment are separate tracks.
 Full qualification remains false. The
-[sanitized native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json)
-records the dated results; [remaining native acceptance](#remaining-native-acceptance)
+[initial native observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-mako-lan-acceptance.json),
+[grant quarantine observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-workload-quarantine.json)
+and [bounded service-outage observation](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-native-service-outages.json)
+record the dated results; [remaining native acceptance](#remaining-native-acceptance)
 lists the unfinished work. Detailed preparation evidence follows.
 
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
@@ -65,10 +73,10 @@ verify scope equality; it must not rewrite scope rows to accept a host move.
 Separate host compositions now run the replica on Mako; the first trial ran both
 replica processes on Ace. Mako's admission, exact-unit identity, grant-free Agent
 restart and actual replica queries passed after temporary activation. Native
-acceptance still must exercise authorization denial, credential lifecycle and
-outage recovery, including normal operation with Malak disconnected. Two hosts
-on one LAN do not establish high availability or qualify offline boot/rollback
-protection.
+grant quarantine/restoration also passed. Remaining acceptance covers membership
+and credential lifecycle, remaining outage scenarios, and normal operation with
+Malak disconnected. Two hosts on one LAN do not establish high availability or
+qualify offline boot/rollback protection.
 
 The new host profiles are disabled by default. Their disabled evaluations match
 Ace's retained generation 10 and Mako's persistent closure exactly. Staging with
@@ -179,8 +187,8 @@ Neither export nor import activates destination authorities. Finalization and
 separate temporary activation and both device endpoint transfers have passed.
 The explicit DNS grant, publication and queries on the primary and actual Mako
 replica have also passed, together with Mako admission and grant-free Agent
-restart. Remaining steps include native lifecycle/outage acceptance and normal
-device, renewal and DNS operation with Malak disconnected. An ambiguous operation
+restart. Remaining steps include broader native lifecycle and outage acceptance,
+and normal device, renewal and DNS operation with Malak disconnected. An ambiguous operation
 requires readback of the same intent; it never justifies restarting both writers
 or initializing replacement issuer state.
 
@@ -231,7 +239,7 @@ with stable service invocations; independent active-binding checks matched the
 devices. Malak's source fences remain loaded and match the sealed archive.
 Both device endpoint cutovers are accepted following fresh installed-client
 access to Ace and complete backup comparison proving only the Fleet URL changed.
-The single reviewed DNS grant is accepted; authenticated readback confirms an
+The initial reviewed DNS grant was accepted; authenticated readback confirmed an
 active revision-1 binding with `dns:update` permission. Ace's updater is healthy,
 and its assigned address record is authoritative on both hosts. Twelve native
 UDP/TCP queries matched, including matching serials; unsigned AXFR received an
@@ -248,6 +256,28 @@ positive path and member restart are accepted; broader lifecycle/outage,
 workstation-disconnection and persistence checks remain open. Temporary
 activation does not establish full LAN or hardware/offline boot/rollback
 qualification.
+
+The subsequent native workload-grant check passed: the same binding moved from
+active revision 1 to quarantined revision 2, then back to active revision 3.
+A fresh request from the actual updater received HTTP 403 while the complete
+intent tuple, including lease and `updated_at`, remained unchanged. Restoration
+of the same binding allowed a fresh accepted lease. Both authoritative DNS
+endpoints, Malak's source fence and original applications were preserved.
+The current binding is active revision 3. This verifies fresh-request quarantine
+enforcement and restoration; it does not establish reused-connection enforcement
+or complete the broader credential lifecycle and outage campaign.
+
+Two bounded native outage checks then passed and restored service. Pausing the
+existing registry process caused a fresh actual updater request to receive
+HTTP 503 `authorization_unavailable`, with all nine intent fields unchanged.
+Resuming that same process produced a fresh authenticated registry response and
+a newer accepted lease. Separately, stopping only `kaiba-lan-primary` left Mako
+answering authoritative A, AAAA and SOA queries over UDP and TCP. After primary
+restart, both endpoints matched and controller intent converged. The supervised
+check units finished inactive with successful status; the binding remained
+active revision 3, and source fencing, original applications and profiles were
+preserved. These checks did not exercise SPIRE/database outages, a replica
+restart while the primary was absent, or timed catch-up from a new publication.
 
 ## First LAN trial: topology and boundary
 
@@ -278,15 +308,22 @@ not been established.
 
 ## First-trial implementation and evidence
 
-The software slice is published in draft PRs. Ace ran its candidate under test
-activation; this did not establish a qualified or persistent LAN deployment. Its
-review boundaries are:
+The initial software slice was published in draft PRs. Ace ran its candidate
+under test activation; this did not establish a qualified or persistent LAN
+deployment. The table preserves that first-trial scope and evidence; it is not
+the complete current scope of the linked PRs.
 
 | Repository and branch | Prepared change | Local validation |
 | --- | --- | --- |
 | [Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30) | Explicit current-pilot inventory adapter; schema-qualified parent reads; separate workload tables and operator grant/readback client; identity-preserving server promotion; additive Ubuntu station review-packet renderer and bounded installer | Go race tests and real PostgreSQL role/mTLS checks; combined SPIRE/DNS application VM; 14-check persistence/promotion VM; 23 station preparation/installer tests and isolated PostgreSQL 18 validation |
 | [DNS PR 4](https://github.com/pd-codex/nixos-kaiba-network/pull/4) | Opt-in isolated primary and two replica processes, runtime-generated persistent TSIG keys, narrow source firewall and explicit private-address allowance | 15-check DNS VM, module evaluation, formatting and workflow checks |
 | [Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) | Disabled-by-default Ace composition with exact peer addresses and SPIFFE identities | Native enabled candidate built and test-activated on Ace; protected boot/storage/existing service comparisons passed; booted and persistent generation 10 unchanged; disabled Ace and Mako closures unchanged |
+
+Host PR 15 now also includes the Ace server and Mako member profiles, isolated
+imported authority composition and real two-host DNS replica. Both hosts have
+passed temporary active-profile acceptance as recorded in the
+[current deployment status](#accepted-acemako-deployment-target) and subsequent
+native observations above.
 
 The station registry reads the existing `public.pilot_enrollments` through
 `SELECT(id, data)` and `REFERENCES(id)` grants; it owns only a separate workload
@@ -396,7 +433,8 @@ records the baseline for two existing deployment targets, before the LAN trial:
 | Mako, reserved LAN address `192.168.8.247` | Public HTTP entry point, human identity, SSH CA, backups and existing applications | Read-only hidden origin P1 after service/resource review |
 
 That inspected baseline has no authoritative DNS, publisher TSIG provisioning or
-managed-secondary configuration; the new Ace composition is tracked above.
+managed-secondary configuration; the current Ace/Mako composition is tracked
+above.
 Existing PostgreSQL for Hydra or human identity is not fleet enrollment
 inventory. Ace and Mako share a
 LAN and public entry point; using them together does not establish independent
@@ -413,18 +451,21 @@ end-to-end connection, such as a direct LAN route or reviewed TCP forwarding.
 
 Authority transfer, both device endpoint moves, the explicit DNS grant,
 Mako admission with grant-free Agent restart and authoritative replica queries
-are complete. The expired station packet is
-historical evidence, not the next deployment step. Complete the following within
-the unchanged `2026-10-03T02:06:35Z` deadline:
+are complete. Native workload-grant quarantine denial and exact restoration
+and the bounded registry/primary-DNS outage checks also passed. The expired
+station packet is historical evidence, not the next deployment step. Complete
+the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
-1. **Denial and credential lifecycle.** Exercise current-pilot authorization
-   denial, revocation/replacement and renewal on the native deployment while
-   preserving issuer scopes, identities and retained history. Software fixtures
-   do not substitute for these native observations.
-2. **Outage and recovery.** Verify authority and replica outage behavior,
-   fail-closed updates, replication catch-up and service restart with preserved
-   keys and state. Preserve existing applications while exercising the new
-   services.
+1. **Credential lifecycle and remaining authorization boundaries.** Exercise
+   membership revocation, instance replacement and renewal on the native
+   deployment while preserving issuer scopes, identities and retained history.
+   The completed workload-grant quarantine/restoration check does not substitute
+   for these distinct lifecycle observations.
+2. **Remaining outage and replication scenarios.** Exercise SPIRE and database
+   outages, replica restart while the primary is absent, and timed catch-up from
+   new publication with keys, state and existing applications preserved. The
+   completed registry pause/resume and primary stop/restart cover only their
+   recorded boundaries.
 3. **Operation without Malak.** Keep its source fenced and demonstrate ordinary
    device access, identity renewal and DNS operation with the workstation
    disconnected. A loaded source fence alone does not prove this independence.
