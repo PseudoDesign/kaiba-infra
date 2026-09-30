@@ -43,15 +43,16 @@ uses Ace as the Kaiba server, Mako as an agent and DNS replica, and Malak as an
 operator workstation. Both hosts passed temporary dormant staging with selected
 existing services and device state preserved; their persistent boot profiles
 remain unchanged and the new pilot units remain stopped. The two-host DNS
-and imported Fleet control-plane VMs passed. The pre-recovery source inventory
-was verified, and encrypted transfer preparation and source-fencing helpers
-are published with 92 passing local migration checks, including device endpoint
+and imported Fleet control-plane VMs passed. The refreshed source inventory
+was verified, and recovery-aware transfer preparation and source-fencing helpers
+pass 130 local migration checks, including device endpoint
 transfer; a separate real bind-mount regression also passes. Mako's same-key
 credential recovery passed on September 29 local time: revision 2, exactly one
 successor, installed-key proof, fresh-process access and access after authority
 restart. This is pilot recovery evidence, not full qualification. Malak remains
-the serving authority. Next, refresh the protected source inventory and
-source-bound transport/policy packets before transferring the complete control
+the serving authority. Ace's preparation now binds the fresh inventory while
+preserving its original keys and receipt. Next, attest the recovered source
+policy and prepare Ace's transport certificate before transferring the complete control
 plane to Ace. Mako's SPIRE admission, native end-to-end LAN acceptance and offline
 boot/rollback qualification remain outstanding; no state export or cutover has
 occurred.

@@ -14,7 +14,7 @@ qualification evidence.
 | Opt-in SPIRE identity foundation | Software prototype verified locally | Fleet module and synthetic mTLS service; unit/module and four-machine VM checks pass on 2026-09-29 |
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
-| Current-pilot LAN integration | Dormant native staging and Mako credential recovery passed; migration pending | Persistent boot profiles unchanged; new pilot units stopped; two-host DNS and imported Fleet control-plane VMs passed; transfer helpers tested locally; fresh source inventory required after recovery; no live export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
+| Current-pilot LAN integration | Recovery, fresh inventory and Ace preparation rebind passed; migration pending | Persistent boot profiles unchanged; new pilot units stopped; 130 migration checks pass; source attestation/signing next; no live export/cutover or native end-to-end acceptance; [LAN rollout record](pilot-dns-rollout.md) |
 | Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
@@ -145,9 +145,12 @@ cutover has occurred. Following the expired-credential finding, Mako's same-key
 recovery passed on September 29 local time: credential revision 2 with exactly
 one successor issuance, preserved identity/key/history, installed-key proof,
 fresh-process access and access after authority restart. Full qualification
-remains false. Malak remains the supervised serving authority. Next, refresh
-the protected source inventory and transport/policy packets before migrating
-the complete control plane to Ace; the old owner signing command is superseded.
+remains false. Malak remains the supervised serving authority. The refreshed
+source inventory is verified, and Ace's preparation is rebound while preserving
+its original keys and receipt. Recovery-aware migration helpers pass 130 checks.
+Next, attest the recovered source policy, sign Ace's prepared transport CSR and
+build the target guard before migrating the complete control plane to Ace;
+the old owner signing command is superseded.
 Mako's SPIRE admission, native two-host acceptance and hardware qualification
 remain pending. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and

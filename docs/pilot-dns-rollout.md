@@ -5,8 +5,10 @@ Software and host-composition validation passed, and the changes are published
 in draft PRs. Transfer helpers are published with passing local checks. Both
 hosts passed temporary dormant staging; their persistent boot profiles remain
 unchanged. Mako's same-key credential recovery passed on September 29 local
-time; the protected source inventory and source-bound migration packets must
-now be refreshed. Malak remains the serving authority. No state export, cutover
+time; the refreshed protected inventory is verified, and Ace's existing
+preparation is rebound without replacing keys. Recovery-aware migration helpers
+pass 130 local checks. Source policy attestation and transport signing are next.
+Malak remains the serving authority. No state export, cutover
 or native end-to-end acceptance has occurred; full qualification remains false.**
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
@@ -146,15 +148,16 @@ The subsequent [device endpoint helper](https://github.com/PseudoDesign/kaiba-fl
 changes only the retained Fleet URL after current authenticated admission on Ace.
 It preserves credentials and history, keeps private backups on encrypted storage,
 and publishes the replacement within the device's actual bind mount. Interrupted
-writes retain evidence for read-only reconciliation. The complete migration
-check now passes **92 tests with zero skips**, including 16 endpoint cases; a
+writes retain evidence for read-only reconciliation. That change expanded the
+migration check to **92 tests with zero skips**, including 16 endpoint cases; a
 separate isolated user/mount-namespace regression passes against the real mount
 boundary. This helper has not run on either device. Recovery and authority
 activation precede its use, followed by a fresh installed-client identity check.
 
-Following the completed recovery below, the remaining owner operations are
-concrete and separate: take a fresh protected source inventory; regenerate and
-inspect the source-bound transport and target-policy packets; fence Malak
+Following the completed recovery and inventory refresh below, the remaining
+owner operations are concrete and separate: attest the recovered source policy
+and sign Ace's prepared transport CSR; build the immutable target policy guard;
+fence Malak
 persistently and export both databases
 and selected files into a recipient-encrypted archive; authenticate the source
 ciphertext/manifest digests before private handoff; import into Ace's unused
@@ -174,14 +177,21 @@ one successor issuance; the original identity, key and history are preserved.
 Installed-key proof, fresh-process access and access after authority restart
 passed. The result explicitly records full qualification as false.
 
-Malak remains the supervised serving authority. Recovery changed the source
-state, so take a fresh protected inventory and regenerate the source-bound
-transport and target-policy packets before migration. The migration helpers
-must first verify the completed recovery's configuration and policy continuity,
-and bind Ace's existing preparation to the fresh inventory while retaining the
-original policy and preparation receipts. The existing helper checks cover the
-pre-recovery profile; these continuity changes still need implementation and
-validation. **The previously prepared
+Malak remains the supervised serving authority. The owner supplied a fresh
+protected inventory, and its checksum and expected recovery changes were
+verified. Recovery-aware export/import and target-policy verification now retain
+the original policy, explicitly pin a completed-recovery proof, and reject
+mismatched proof/schema before fencing or finalization writes. The complete
+migration suite passes **130 tests with zero skips**, including real age and
+disposable PG18 checks. Ace's append-only preparation rebind passed nine native
+fixture tests and actual host/key/storage checks, preserving its original keys
+and receipt. No authority state was imported.
+
+The prepared next owner command verifies the completed source guard, records
+private policy continuity, and signs Ace's existing transport CSR. Its eleven
+synthetic tests cover policy rejection, actual signing/readback, private output
+and retained intent after failure; it has not executed on the live source.
+The immutable target guard follows that source result. **The previously prepared
 owner transport signing command is superseded and must not run against the old
 inventory.** No source fence, state export or cutover has occurred. The next
 deployment steps remain transfer to Ace, Mako's SPIRE admission and actual LAN
