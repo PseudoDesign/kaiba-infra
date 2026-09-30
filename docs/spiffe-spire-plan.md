@@ -25,11 +25,14 @@ prototype results separately from hardware evidence as work advances.
 
 The current LAN pilot policy and temporary workload registrations retain the
 original deadline, `2026-10-03T02:06:35Z`. No extension is authorized or
-implemented; temporary activation has not changed either persistent boot baseline.
-The explicit persistent-profile constructor and admitted-Mako startup guard are
-prepared. Ace's exact boot builder passed an encrypted staging rehearsal while
-preserving actual firmware and profile selection. Reboot and physical-disconnection
-acceptance wait for console/recovery access, which is currently unavailable.
+implemented. After native test activation and encrypted boot rehearsals, the
+reviewed profiles were installed persistently as Ace generation 11 and Mako
+generation 15. The boot files and retained recovery entries were verified, with
+running applications, admission and device state preserved. Mako's admitted
+startup guard passed native activation. Neither host was rebooted. Reboot and
+physical-disconnection acceptance wait for console/recovery access, which is
+currently unavailable. The [persistence record](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/ace-mako-persistence.md)
+separates installed boot state from pending startup acceptance.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload
@@ -196,11 +199,12 @@ received HTTP 503 while the registry was paused without changing intent state;
 the same process recovered with authenticated authorization and a newer lease.
 Mako retained DNS answers while the primary was stopped, and endpoints and intent
 converged after restart. Active grant revision 3, source fences, applications and
-profiles were preserved. SPIRE/database outages, replica restart without a
-primary, and timed catch-up from new publication remain untested natively.
+profiles were preserved during those checks. A later retained-replica restart
+passed while the primary was absent. SPIRE/database outages and timed catch-up
+from new publication remain untested natively.
 Broader native lifecycle checks, remaining outages, operation with Malak
-disconnected, persistent profiles/reboot and hardware qualification remain
-pending. The
+disconnected, startup from the new persistent profiles and hardware qualification
+remain pending. The
 [DNS rollout record](pilot-dns-rollout.md) describes the selected topology and
 public-delegation boundaries. Persistent identity service acceptance and physical
 offline qualification remain separate evidence tracks.
