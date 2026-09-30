@@ -116,8 +116,11 @@ power cycle with LAN available. Its root, retained identities, all 17 protected
 services and DNS returned automatically. This is evidence for that pilot
 configuration, not closure of OFF-01 or abrupt power-loss recovery.
 
-The owner currently has no spare storage device. Keep Ace's live authority disk
-out of interrupted-write and corruption experiments. A boot-file backup is not
+The owner selected an alternate preparation route: program a spare NVMe on
+Malak, then install it on Ace for one attended campaign. USB boot is excluded.
+Keep Ace's original NVMe disconnected and intact throughout interrupted-write
+and corruption experiments. Plan two swaps (install test media, restore pilot);
+an unbootable test disk requires an additional reflash round trip. A boot-file backup is not
 an independently restored copy of the authority database, device state and
 storage metadata. Do not reinterpret the clean shutdown result as crash safety.
 
@@ -152,8 +155,16 @@ online recovery**, with these prerequisites:
    checks. Record automatic versus manual recovery separately; preserve any
    failed attempt before intervention. Do not claim autonomous offline service.
 
-Abrupt power-loss testing remains blocked on suitable disposable media and a
-verified restoration route. Prepare the exact disk identity and nonproduction
+The disposable-image operations and runbook live in
+[`kaiba-provisioning/deploy/nvme-qualification`](https://github.com/PseudoDesign/kaiba-provisioning/tree/codex/offline-qualification-evidence/deploy/nvme-qualification).
+The image uses the pinned Pi 5 kernel, a read-only recovery root with a temporary
+RAM overlay, a separate writable test partition and synthetic loopback-only
+Fleet/SPIRE identities. Malak retains the image, backups and independent
+acknowledgement receipts. Its software-isolated offline case tests time-gate
+refusal, not a physical air gap or autonomous issuance.
+
+Abrupt power-loss testing still requires the specific spare's write/readback
+receipt, successful initial boot and a demonstrated restore. Prepare its exact disk identity and nonproduction
 state, independent complete backups, a demonstrated restore, console evidence,
 and the durable transaction boundaries to interrupt. Each boundary needs a
 pristine control, interrupted attempt and post-recovery state comparison;
