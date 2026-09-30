@@ -2,12 +2,12 @@
 
 Status, 2026-09-29: **The owner accepted the Ace/Mako deployment target.
 Software and host-composition validation passed, and the changes are published
-in draft PRs. The protected source inventory is now verified and transfer
-helpers are published with passing local checks. Both hosts passed temporary
-dormant staging; their persistent boot profiles remain unchanged. No state
-export, cutover or native end-to-end acceptance has occurred. Mako's expired
-operational credential requires supported recovery before export/cutover;
-Malak continues serving.**
+in draft PRs. Transfer helpers are published with passing local checks. Both
+hosts passed temporary dormant staging; their persistent boot profiles remain
+unchanged. Mako's same-key credential recovery passed on September 29 local
+time; the protected source inventory and source-bound migration packets must
+now be refreshed. Malak remains the serving authority. No state export, cutover
+or native end-to-end acceptance has occurred; full qualification remains false.**
 Ace's [persistent identity pilot](persistent-identity-pilot.md) is installed in
 `pilot.kaiba.pseudo.design`. That identity namespace does not itself establish a
 DNS zone, an update endpoint, or permission to publish a device address. The
@@ -152,9 +152,10 @@ separate isolated user/mount-namespace regression passes against the real mount
 boundary. This helper has not run on either device. Recovery and authority
 activation precede its use, followed by a fresh installed-client identity check.
 
-After the recovery prerequisite below, the remaining owner operations are
-concrete and separate: refresh and inspect the source-bound transport request
-and signer; fence Malak persistently and export both databases
+Following the completed recovery below, the remaining owner operations are
+concrete and separate: take a fresh protected source inventory; regenerate and
+inspect the source-bound transport and target-policy packets; fence Malak
+persistently and export both databases
 and selected files into a recipient-encrypted archive; authenticate the source
 ciphertext/manifest digests before private handoff; import into Ace's unused
 isolated PG18 cluster and remap OS account ownership by name. The exporter uses
@@ -166,22 +167,26 @@ renewal/restart/DNS acceptance with Malak disconnected. An ambiguous operation
 requires readback of the same intent; it never justifies restarting both writers
 or initializing replacement issuer state.
 
-Native device preflight found a prerequisite before those source mutations:
-Ace successfully authenticated to the current `/pilot/self` endpoint and its
-credential remains valid until October 3. Mako's request failed with
-`invalid_certificate`; its installed operational certificate expired at
-`2026-09-28T08:03:32Z`, although the local enrollment phase still says `verified`.
-That phase is not proof of current credential validity. The supported recovery
-path must preserve the existing identity and reconcile current source authority
-state before export/cutover and the complete two-host acceptance. This requires
-an explicit Mako recovery packet, additive Fleet and issuer grants, and an
-updated source serving guard. After successful recovery and current `/pilot/self`
-readback, take a fresh protected inventory and regenerate the source-bound
-transport and target-policy packets. **The previously prepared owner transport
-signing command is superseded and must not run against the old inventory.** No
-replacement identity or re-enrollment is assumed. Malak's source authority
-remains running; no recovery grant, source fence or export has been applied by
-the migration helpers.
+Native preflight authenticated Ace but found Mako's installed operational
+certificate expired. Mako's supported same-key recovery subsequently passed on
+September 29 local time. The recovered credential is revision 2 with exactly
+one successor issuance; the original identity, key and history are preserved.
+Installed-key proof, fresh-process access and access after authority restart
+passed. The result explicitly records full qualification as false.
+
+Malak remains the supervised serving authority. Recovery changed the source
+state, so take a fresh protected inventory and regenerate the source-bound
+transport and target-policy packets before migration. The migration helpers
+must first verify the completed recovery's configuration and policy continuity,
+and bind Ace's existing preparation to the fresh inventory while retaining the
+original policy and preparation receipts. The existing helper checks cover the
+pre-recovery profile; these continuity changes still need implementation and
+validation. **The previously prepared
+owner transport signing command is superseded and must not run against the old
+inventory.** No source fence, state export or cutover has occurred. The next
+deployment steps remain transfer to Ace, Mako's SPIRE admission and actual LAN
+replica acceptance; hardware and offline boot/rollback qualification are still
+pending.
 
 ## First LAN trial: topology and boundary
 

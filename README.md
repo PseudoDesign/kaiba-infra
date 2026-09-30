@@ -43,17 +43,18 @@ uses Ace as the Kaiba server, Mako as an agent and DNS replica, and Malak as an
 operator workstation. Both hosts passed temporary dormant staging with selected
 existing services and device state preserved; their persistent boot profiles
 remain unchanged and the new pilot units remain stopped. The two-host DNS
-and imported Fleet control-plane VMs passed. The protected source inventory is
-now verified, and encrypted transfer preparation and source-fencing helpers
+and imported Fleet control-plane VMs passed. The pre-recovery source inventory
+was verified, and encrypted transfer preparation and source-fencing helpers
 are published with 92 passing local migration checks, including device endpoint
-transfer; a separate real bind-mount regression also passes. Ace's recipient key and
-transport CSR are prepared; the source-bound request must be refreshed after
-Mako credential recovery. Transferring
-Malak's complete pilot control plane, native
-end-to-end LAN acceptance and offline boot/rollback qualification remain
-outstanding. Native preflight found Mako's installed operational certificate
-expired; supported credential recovery is required before export/cutover. Malak
-continues serving, and no state export or cutover has occurred.
+transfer; a separate real bind-mount regression also passes. Mako's same-key
+credential recovery passed on September 29 local time: revision 2, exactly one
+successor, installed-key proof, fresh-process access and access after authority
+restart. This is pilot recovery evidence, not full qualification. Malak remains
+the serving authority. Next, refresh the protected source inventory and
+source-bound transport/policy packets before transferring the complete control
+plane to Ace. Mako's SPIRE admission, native end-to-end LAN acceptance and offline
+boot/rollback qualification remain outstanding; no state export or cutover has
+occurred.
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime
