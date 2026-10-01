@@ -50,7 +50,7 @@ certificate files, and denies issuance after actual expiry. JWT issuance is
 explicitly disabled in this fixture. Registration expiry alone is not a signing
 cap; this result does not qualify the live registration or bundle transition.
 
-[Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) at `9ee9bba`
+[Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) at `dbbcc3f`
 and [provisioning PR 98](https://github.com/PseudoDesign/kaiba-provisioning/pull/98)
 at `9ed2f75` remain drafts. They add root-owned observation consumption,
 optional measured refresh before a controller tick, and authenticated inspection
@@ -62,11 +62,30 @@ verified trust reads before/after renewal and restart, wrong-principal denial,
 and denial after membership/delegation revocation. Current CI is still pending;
 the new optional native trust mode awaits a merged provisioning deployment pin.
 
+PR 35 also adds the explicit native publication-store integration. The import
+guard permits exactly the observation/admission publication directory under a
+validated continuation, checks matching term/member scope and numeric ownership,
+and preserves all other immutable file checks. Only the publisher writes; the
+two record services gain group read access. Four boundary-test groups, the nine
+original import tests, eleven continuation tests, Nix module evaluation and a
+VM with actual root/publisher/reader ownership pass. No publication directory or
+batch is initialized by enabling this option.
+
 A separate read-only custody inventory is prepared for the owner/station
 management certificates retained on fenced Malak. Five public-metadata tests and
 thirteen existing read-only mapping/cleanup tests pass. The local recovery-slot
 inspection still needs owner authentication. Service candidate certificates do
 not establish the lifetime of owner administration or term reapproval access.
+
+Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
+seven expected services and all twelve primary/replica DNS queries. Ace's
+retained state, membership, workload and all twelve DNS queries also pass their
+targeted checks. Its full host baseline does **not** pass: Hydra's queue runner
+is inactive after a clean stop at 17:05 UTC. The source of that stop has not been
+established; owner clarification is pending before restoration. No service was
+changed during these checks. Malak's six source services remain fenced and
+inactive, its authority listeners are absent, and its source mapping is closed.
+The failed Ace baseline and an earlier inconclusive Mako sample are retained.
 
 [Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) at
 `7fa6d53` now selects the merged Fleet packages and merged DNS interface
@@ -85,8 +104,9 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4`.
-Its predecessor is
+`fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`.
+Its predecessors are
+`b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4` and
 `d75e52741fe90dd7d2c84229dea64d84ec4eefb82484f978df967db576e1ed7d`.
 Failed local fixture and unauthenticated-fetch attempts are retained with their
 corrections; none changed a live host.
