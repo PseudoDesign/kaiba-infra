@@ -105,8 +105,9 @@ must all be inventoried, signature-verified and valid for the full term at the
 real current time. Fourteen boundary/guard integration tests, eleven continuation
 and nine staging regressions, plus Nix guard/module checks pass. The isolated
 imported-control-plane VM passed thirteen regression scenarios with the optional
-verifier disabled; that is not acceptance of a new live continuation. Selected CI
-for the updated branch is pending. This does not
+verifier disabled; that is not acceptance of a new live continuation. All six
+selected CI jobs passed on the reviewed head, and PR 37 merged at
+`4e738b7e561fa979f803cf3fa1eca424c6a25c71`. This does not
 replace the host-policy executable or fresh database guard, and remains disabled
 on the live pilot.
 
@@ -122,12 +123,20 @@ No key contents or database rows were read and no host was changed.
 Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
 seven expected services and all twelve primary/replica DNS queries. Ace's
 retained state, membership, workload and all twelve DNS queries also pass their
-targeted checks. Its full host baseline does **not** pass: Hydra's queue runner
-is inactive after a clean stop at 17:05 UTC. The source of that stop has not been
-established; owner clarification is pending before restoration. A fresh status
-read at **19:32 UTC** still found the queue runner inactive and the named pilot,
-SPIRE, DNS, regular PostgreSQL, Hydra web and evaluator services running. No service was
-changed during these checks. Malak's six source services remain fenced and
+targeted checks. Its full host baseline failed because Hydra's queue runner
+was inactive after a clean stop at 17:05 UTC. A fresh status read at **19:32 UTC**
+still found it inactive and the named pilot, SPIRE, DNS, regular PostgreSQL,
+Hydra web and evaluator services running. The owner confirmed the stop was
+unintentional, started the existing runner at Ace's console, and reported
+`active`. The remote start attempt did not execute: Ace rejected the workspace
+SSH key. A new full host baseline remains outstanding.
+
+At **20:29 UTC**, TLS-verified reads through Hydra's Mako LAN proxy confirmed the
+exact provisioning PR 98 evaluation had nine successful builds and one unfinished
+build, `stable-campaign-provisioner-unsigned-artifacts` (239), with no evaluation
+error. The selected GitHub Hydra gate remains pending. These reads do not prove
+the unfinished build has started or that the full host baseline passes.
+Malak's six source services remain fenced and
 inactive, its authority listeners are absent, and its source mapping is closed.
 The failed Ace baseline and an earlier inconclusive Mako sample are retained.
 
@@ -149,8 +158,9 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`.
+`6b49166cec12d69ef2f476dc35115f33ad536953b3b6ff32abf7f8e411da6f04`.
 Its predecessors are
+`eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`,
 `032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`,
 `fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`,
 `b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4` and
