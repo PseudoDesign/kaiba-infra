@@ -53,7 +53,11 @@ cap; this result does not qualify the live registration or bundle transition.
 [Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) merged at
 `0927ce792f3f63c12a74d4a7b46458ab52e32368` after review and all six selected CI
 jobs passed on `dbbcc3f`. [Provisioning PR 98](https://github.com/PseudoDesign/kaiba-provisioning/pull/98)
-at `9ed2f75` remains a draft with its Hydra lane pending. These changes add root-owned observation consumption,
+merged at `30c35edd336bd61dda87993c92de742c01fa37c2`, from reviewed head
+`9ed2f7566516dd7d1512c9a038077d58f588a943`, after all seven selected CI checks
+passed, including all ten Hydra builds. The planner excluded two optional
+expensive matrices; Pages deployment was skipped for the pull request. These
+skips are not test passes. These changes add root-owned observation consumption,
 optional measured refresh before a controller tick, and authenticated inspection
 of the protected client's effective installed trust. Existing status responses
 and historical fixture pins remain unchanged. The root file boundary passed a
@@ -61,7 +65,7 @@ NixOS VM check as an unprivileged reader; Go race and module checks passed.
 Seven local cross-process scenarios with actual mTLS and disposable PostgreSQL
 verified trust reads before/after renewal and restart, wrong-principal denial,
 and denial after membership/delegation revocation. The new optional native trust
-mode awaits a merged provisioning deployment pin; its candidate native rehearsal
+mode awaits an updated provisioning deployment pin; its candidate native rehearsal
 does not substitute for that deployment check.
 
 PR 35 also adds the explicit native publication-store integration. The import
@@ -137,17 +141,27 @@ also rejected the workspace key; owner recovery was requested.
 
 The repeat Hydra stop is now explained: `hydra-check-space.service` runs every
 five minutes and stops the queue runner below **20 GiB** available. At 20:54 UTC,
-Ace had about **14.7 GiB** free. A second authorized start passed, but does not
-resolve this storage guard. A read-only inventory found 1,704 unrooted Nix store
-paths occupying about 110 GiB. No paths have been deleted; retained qualification
-tools and runtime references must be protected before selecting cleanup. Keep
-the space guard enabled. The pilot and regular database services remain active.
+Ace had about **14.7 GiB** free. The owner authorized cleanup. Before collection,
+387 explicit Nix roots protected store paths referenced by project records,
+runtime configuration and active processes. Collection removed 254 unrooted
+store paths and recovered **20.1 GiB of actual available space**, leaving
+**34.8 GiB** free. Nix reported 30.7 GiB of deleted path sizes; the filesystem
+availability measurement is the capacity recovered. Every retained path remains
+valid, all system-profile links are unchanged, and no backups were removed.
 
-At **20:29 UTC**, TLS-verified reads through Hydra's Mako LAN proxy confirmed the
-exact provisioning PR 98 evaluation had nine successful builds and one unfinished
-build, `stable-campaign-provisioner-unsigned-artifacts` (239), with no evaluation
-error. The selected GitHub Hydra gate remains pending. These reads do not prove
-the unfinished build has started or that the full host baseline passes.
+Hydra restarted at **21:08 UTC** and remained in the same invocation through
+the ordinary space-guard check at **21:10:08 UTC**. The guard and its timer are
+unchanged. Ace's fresh post-cleanup baseline passed its retained membership,
+seventeen expected services and all twelve primary/replica DNS queries.
+Private receipts and the collection log are on Ace under
+`/var/lib/kaiba-store-maintenance/ace-store-cleanup-20261001`; the retention roots
+are under `/nix/var/nix/gcroots/kaiba-lan-closeout-20261001`. Keep these roots until
+their retained runtime and qualification references receive an explicit review.
+
+At **21:10 UTC**, TLS-verified reads through Hydra's Mako LAN proxy confirmed all
+ten builds passed for the exact provisioning PR 98 evaluation, including the
+previously pending `stable-campaign-provisioner-unsigned-artifacts` (239).
+The GitHub Hydra gate also passed, allowing the reviewed PR to merge.
 Malak's six source services remain fenced and
 inactive, its authority listeners are absent, and its source mapping is closed.
 The failed Ace baseline and an earlier inconclusive Mako sample are retained.
@@ -170,8 +184,9 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`80d4b4c26042eae5310f750ea32a1c539d1d4085171af17ce101f3b549e26dcf`.
+`fb4d7d4e9f26ea8542453594e09c2c82ca516a23f4602912029e2d97af12b118`.
 Its predecessors are
+`80d4b4c26042eae5310f750ea32a1c539d1d4085171af17ce101f3b549e26dcf`,
 `6b49166cec12d69ef2f476dc35115f33ad536953b3b6ff32abf7f8e411da6f04`,
 `eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`,
 `032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`,
