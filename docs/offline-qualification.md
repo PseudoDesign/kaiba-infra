@@ -198,9 +198,19 @@ both retained Fleet cases still passed. Offline wall-clock timestamps were
 untrusted; boot identity separates the observations. This does not establish
 trusted offline time or autonomous offline operation.
 
-The bounded disposable-media campaign has passed. The second drive swap and
-startup acceptance of Ace's original pilot remain pending. The original pilot
-deadline remains `2026-10-03T02:06:35Z`. Full qualification and every production
-matrix row remain open: these synthetic observations do not qualify the original
-NVMe's durability, encrypted-storage enforcement, secure boot, protected keys,
-hardware monotonic state or rollback prevention.
+The bounded disposable-media campaign and both drive swaps are complete; no
+reflash round trip was needed. Ace returned to its original encrypted NVMe and
+booted generation 14. All 17 protected services, unchanged device/admission state
+and service definitions, retained admitted node, current workload credential,
+authenticated device access, healthy updater/lease, boot ordering and tmpfiles
+checks passed. All 12 DNS queries across Ace and Mako passed. Mako's first
+snapshot still showed its failed scheduled workload probe from the authority
+outage; its node renewed automatically and the next scheduled probe passed,
+without a restart or re-enrollment. Mako's boot, profile and protected state
+remained unchanged. Malak's six former authority units remain stopped with their
+migration fences present.
+
+The original pilot deadline remains `2026-10-03T02:06:35Z`. Full qualification
+and every production matrix row remain open: these synthetic observations do
+not qualify the original NVMe's durability, encrypted-storage enforcement,
+secure boot, protected keys, hardware monotonic state or rollback prevention.
