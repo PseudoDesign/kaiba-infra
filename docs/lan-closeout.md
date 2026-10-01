@@ -88,14 +88,37 @@ Keep `full_qualification: false` throughout this LAN milestone.
 
 ## Implementation checkpoint, 2026-10-01
 
-The additive contract is published in [contracts PR 15](https://github.com/pd-codex/kaiba-contracts/pull/15),
-stacked on the existing DNS contract. Its 122 tests pass locally. Fleet now has
-local owner create/read/revoke APIs, restricted delegation routes, independent
-issuer checks, exact durable grants, a renewal coordinator and private journal.
-Packaged x86_64 checks pass for delegation/conformance, existing issuer and recovery
-paths, and PostgreSQL ledger preservation. HTTP workers/controller wiring, fresh
-records, host continuity, trust rollover and live acceptance remain open. This
-checkpoint does not activate a term or assert unattended renewal.
+The contracts stack is merged through
+[PR 15](https://github.com/pd-codex/kaiba-contracts/pull/15), revision
+`8bf0dc6822805b151ad29c459896f85119f87e0b`; 124 contract tests pass locally.
+The DNS stack is merged through
+[PR 4](https://github.com/pd-codex/nixos-kaiba-network/pull/4), revision
+`e1f18fbc355b70b2d87245288d4ebb837434cbdd`. Its exact PR head passed unit,
+module, native ARM64 package and DNS VM checks. These are reviewed dependency
+revisions, not a claim that the live deployment has changed.
+
+[Fleet PR 31](https://github.com/PseudoDesign/kaiba-fleet/pull/31) implements owner
+create/read/revoke APIs, restricted delegation routes, independent issuer checks,
+exact durable grants, a durable controller and protected workers. Same-key issuer
+CA continuation preserves original scope records and grants through an append-only
+transition. Revision `7b0ce6a510ec69be6700ab89397d9a5bf92c5403` passed native x86_64,
+ARM64, imported-control-plane and identity VM CI. The local authenticated fresh
+observation renderer and its unit/race tests are implemented; durable publication,
+host continuity, startup receipts and live activation remain open.
+
+[Provisioning PR 96](https://github.com/PseudoDesign/kaiba-provisioning/pull/96)
+adds explicit protected-client trust continuation without replacing device keys.
+Its native ARM64 checks passed. Its first x86 workflow failed fetching the private
+historical Fleet dependency. The full historical campaign check is being moved
+to Fleet's private CI without changing the physical campaign pins or giving
+public PRs a private-repository credential. Require that separate result; a green
+public workflow is not evidence that the private integration ran.
+
+Malak's retained CA container was locked after reboot. The first custody inventory
+stopped on the unavailable mount; the separate read-only inspection then stopped
+before unlock on a token-policy mismatch. Nonsecret token metadata diagnosis is
+pending. No source authority was activated, no live credential/deadline was
+changed, and no thirty-day term or unattended observation has started.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
