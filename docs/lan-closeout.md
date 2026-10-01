@@ -50,17 +50,19 @@ certificate files, and denies issuance after actual expiry. JWT issuance is
 explicitly disabled in this fixture. Registration expiry alone is not a signing
 cap; this result does not qualify the live registration or bundle transition.
 
-[Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) at `dbbcc3f`
-and [provisioning PR 98](https://github.com/PseudoDesign/kaiba-provisioning/pull/98)
-at `9ed2f75` remain drafts. They add root-owned observation consumption,
+[Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) merged at
+`0927ce792f3f63c12a74d4a7b46458ab52e32368` after review and all six selected CI
+jobs passed on `dbbcc3f`. [Provisioning PR 98](https://github.com/PseudoDesign/kaiba-provisioning/pull/98)
+at `9ed2f75` remains a draft with its Hydra lane pending. These changes add root-owned observation consumption,
 optional measured refresh before a controller tick, and authenticated inspection
 of the protected client's effective installed trust. Existing status responses
 and historical fixture pins remain unchanged. The root file boundary passed a
 NixOS VM check as an unprivileged reader; Go race and module checks passed.
 Seven local cross-process scenarios with actual mTLS and disposable PostgreSQL
 verified trust reads before/after renewal and restart, wrong-principal denial,
-and denial after membership/delegation revocation. Current CI is still pending;
-the new optional native trust mode awaits a merged provisioning deployment pin.
+and denial after membership/delegation revocation. The new optional native trust
+mode awaits a merged provisioning deployment pin; its candidate native rehearsal
+does not substitute for that deployment check.
 
 PR 35 also adds the explicit native publication-store integration. The import
 guard permits exactly the observation/admission publication directory under a
@@ -71,11 +73,23 @@ original import tests, eleven continuation tests, Nix module evaluation and a
 VM with actual root/publisher/reader ownership pass. No publication directory or
 batch is initialized by enabling this option.
 
-A separate read-only custody inventory is prepared for the owner/station
-management certificates retained on fenced Malak. Five public-metadata tests and
-thirteen existing read-only mapping/cleanup tests pass. The local recovery-slot
-inspection still needs owner authentication. Service candidate certificates do
-not establish the lifetime of owner administration or term reapproval access.
+The owner completed the read-only management custody inventory at **19:05 UTC**.
+Both retained operator/station certificates expire **October 9 at 10 p.m. EDT**,
+before the intended term ends. Their key metadata is verified; that inspection
+did not open keys or prove key/certificate correspondence. Source services stayed
+fenced and the temporary read-only mapping closed. The private owner-reported
+inventory evidence SHA-256 is
+`3c6f47ecd654276325f4ffdfcf4fa8e248b447ec35dd9bf18228d5ccc1500da6`.
+
+A separate owner-terminal packet now prepares one uninstalled operator candidate
+using the retained key and management CA, preserving its exact principal and
+signed scope. The station is excluded. Eight candidate tests, thirteen leaf
+tests and thirteen read-only mapping/cleanup tests pass. The ceremony is published
+in [Fleet PR 36](https://github.com/PseudoDesign/kaiba-fleet/pull/36) at
+`b6c2167c444c0dbf2a5d704420102b364f473ffd`; selected CI and local recovery-passphrase
+authentication are pending. This packet does not install owner access, extend the
+pilot deadline or activate a delegation; service candidates alone do not establish
+the lifetime of owner administration or term reapproval access.
 
 Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
 seven expected services and all twelve primary/replica DNS queries. Ace's
@@ -104,8 +118,9 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`.
+`032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`.
 Its predecessors are
+`fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`,
 `b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4` and
 `d75e52741fe90dd7d2c84229dea64d84ec4eefb82484f978df967db576e1ed7d`.
 Failed local fixture and unauthenticated-fetch attempts are retained with their
