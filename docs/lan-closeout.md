@@ -86,17 +86,47 @@ using the retained key and management CA, preserving its exact principal and
 signed scope. The station is excluded. Eight candidate tests, thirteen leaf
 tests and thirteen read-only mapping/cleanup tests pass. The ceremony is published
 in [Fleet PR 36](https://github.com/PseudoDesign/kaiba-fleet/pull/36) at
-`b6c2167c444c0dbf2a5d704420102b364f473ffd`; selected CI and local recovery-passphrase
-authentication are pending. This packet does not install owner access, extend the
-pilot deadline or activate a delegation; service candidates alone do not establish
-the lifetime of owner administration or term reapproval access.
+reviewed head `b6c2167c444c0dbf2a5d704420102b364f473ffd`. All six selected CI
+jobs passed, and it merged at `752c8ffdbfa01d7d70c11cb0561493d1e826ce6a`.
+The owner completed it at **19:20 UTC**. Independent public-handoff verification
+confirmed the retained key, exact planned signed scope, management CA signature
+and candidate expiry **2026-11-07T00:00:00Z**. The temporary source mapping closed;
+no private key was exported. Verification evidence SHA-256:
+`e92f4509ea84e4b8f6e46f6f7b637c3d8ea26a03978ad595e57c42cd9d702463`.
+The candidate remains uninstalled. This operation does not extend the pilot
+deadline or activate a delegation.
+
+[Fleet PR 37](https://github.com/PseudoDesign/kaiba-fleet/pull/37) at
+`f5622cefd5b4624e3df71454c12a0b53c849ec7e` adds the optional current certificate
+and configuration verifier. It permits only the exact reviewed renewal/publication
+additions and same-key trust references; other grants, callbacks, permissions and
+recovery settings retain their predecessor values. Active authority certificates
+must all be inventoried, signature-verified and valid for the full term at the
+real current time. Fourteen boundary/guard integration tests, eleven continuation
+and nine staging regressions, plus Nix guard/module checks pass. The isolated
+imported-control-plane VM passed thirteen regression scenarios with the optional
+verifier disabled; that is not acceptance of a new live continuation. Selected CI
+for the updated branch is pending. This does not
+replace the host-policy executable or fresh database guard, and remains disabled
+on the live pilot.
+
+The native public-certificate inventory found **sixteen files containing seventeen
+certificates**, including Fleet's intentional management-plus-issuer trust bundle.
+Two earlier inventory attempts assumed a single certificate and failed closed;
+both are retained. The verifier now explicitly preserves each bundle's root count,
+order, keys and signed scope, and requires an issuer reference for every member.
+The corrected inventory confirms all original certificate/configuration hashes,
+enabled existing approval/cutover paths, and absent delegation/publication config.
+No key contents or database rows were read and no host was changed.
 
 Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
 seven expected services and all twelve primary/replica DNS queries. Ace's
 retained state, membership, workload and all twelve DNS queries also pass their
 targeted checks. Its full host baseline does **not** pass: Hydra's queue runner
 is inactive after a clean stop at 17:05 UTC. The source of that stop has not been
-established; owner clarification is pending before restoration. No service was
+established; owner clarification is pending before restoration. A fresh status
+read at **19:32 UTC** still found the queue runner inactive and the named pilot,
+SPIRE, DNS, regular PostgreSQL, Hydra web and evaluator services running. No service was
 changed during these checks. Malak's six source services remain fenced and
 inactive, its authority listeners are absent, and its source mapping is closed.
 The failed Ace baseline and an earlier inconclusive Mako sample are retained.
@@ -110,16 +140,18 @@ been installed: Ace generation 14 and Mako generation 15 remain the recorded
 running deployment. No delegation, unattended timer or 24-hour observation is
 active, and the original deadline remains in force.
 
-Activation still requires the current certificate/configuration verifier and
-reviewed operation producer, confined validity observation, SPIRE signing limits,
+Activation still requires acceptance of the current certificate/configuration
+verifier, a successor host-policy executable and reviewed operation producer,
+confined validity observation, SPIRE signing limits,
 coordinated publication/trust installation and native restoration rehearsal.
 Then run the actual Mako/Ace canaries, remaining fault acceptance and 24-hour
 observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`.
+`eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`.
 Its predecessors are
+`032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`,
 `fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`,
 `b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4` and
 `d75e52741fe90dd7d2c84229dea64d84ec4eefb82484f978df967db576e1ed7d`.
