@@ -524,12 +524,11 @@ passive sampling confirmed node renewal under its retained SPIFFE identity. The 
 station packet is historical evidence, not the next deployment step. Complete
 the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 
-1. **Prepare the remaining physical campaign.** The tmpfiles warning is fixed
-   in active/persistent generation 14; the clean cold-start result belongs to
-   generation 13. Offline refusal/recovery needs independent console access and
-   data isolation while retaining PoE. Abrupt interrupted-write tests require
-   disposable storage and a verified restoration route; no spare is available.
-   Follow the [physical-test procedure](offline-qualification.md#current-pilot-remaining-physical-tests).
+1. **Implement bounded continuity.** The [physical campaign](offline-qualification.md)
+   is complete and original encrypted pilot storage is restored. Follow the
+   [approved closeout sequence](lan-closeout.md) for delegation, trust rollover,
+   actual same-key renewals and twenty-four-hour unattended observation. The
+   current deadline remains unchanged until a validated successor is activated.
 2. **Credential lifecycle and remaining authorization boundaries.** Exercise
    membership revocation, instance replacement and renewal on the native
    deployment while preserving issuer scopes, identities and retained history.
@@ -548,7 +547,9 @@ the following within the unchanged `2026-10-03T02:06:35Z` deadline:
 Controlled warm-reboot acceptance is complete for Ace generation 12 and Mako
 generation 15, including admitted identity, retained state, automatic service
 startup and DNS. Ace generation 13 additionally passed an attended clean
-LAN-assisted cold-start. Offline boot and abrupt power-loss safety remain open.
+LAN-assisted cold-start. The later bounded disposable-NVMe offline/refusal and
+interrupted-write campaign passed; autonomous offline boot and full hardware
+power-loss/rollback guarantees remain unqualified.
 
 Hardware qualification remains a separate campaign covering cold/offline boot,
 clock continuity, rollback prevention and recovery. Public DNS deployment is

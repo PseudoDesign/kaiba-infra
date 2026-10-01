@@ -45,7 +45,7 @@ restoration, plus bounded registry/primary-DNS outage checks, passed. Mako also 
 served retained records while the primary was stopped. Passive identity checks
 observed Mako node renewal and a fresh workload certificate after prior expiry.
 
-Both controlled warm reboots passed: Ace runs persistent generation 12 with
+Both controlled warm reboots passed: Ace then ran generation 12 with
 ordered clock-dependent startup, and Mako runs guarded generation 15. The later
 owner-attested 75-minute Malak power-off passed bounded device-access, DNS and
 post-TTL identity checks, plus one induced fresh update. Changed workstation boot
@@ -55,7 +55,9 @@ migration tests with zero skips and the identity, control-plane and DNS VMs.
 Broader credential lifecycle, SPIRE/database outages, publication catch-up and
 longer unattended operation remain open. Hardware/offline boot and rollback
 qualification, product installation/UI and public DNS remain separate; full
-qualification remains false. See the [LAN rollout](docs/pilot-dns-rollout.md).
+qualification remains false. The bounded physical campaign subsequently passed, and original encrypted
+storage was restored on Ace generation 14. See the [LAN closeout implementation](docs/lan-closeout.md)
+and [LAN rollout](docs/pilot-dns-rollout.md).
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime

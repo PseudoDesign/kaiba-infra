@@ -15,7 +15,7 @@ qualification evidence.
 | Real DNS and fleet inventory integration | Software integration verified locally | PostgreSQL-backed workload registry, explicit operator grants, and SPIFFE DNS updater/controller mode |
 | Persistent identity pilot on Ace | Installed and verified, 2026-09-29 | `pilot.kaiba.pseudo.design`; exact-unit identity, wrong-unit denial, consumed-grant restart, controlled warm reboot and existing-service preservation; [rollout record](persistent-identity-pilot.md) |
 | Current-pilot LAN integration | Native positive path, member restart, grant quarantine/restoration, bounded outages, retained-replica restart, both warm reboots, attended workstation power-off and Ace clean LAN-assisted cold-start passed | Authority migration and endpoint cutovers accepted; Mako admitted; grant-free Agent restart and both-host DNS queries pass; fresh updater denied while quarantined, same binding restored; registry pause/resume, primary stop/restart and replica restart during primary absence pass; passive Mako node renewal observed; Malak fenced; broader lifecycle/outage and full qualification remain open; [LAN rollout record](pilot-dns-rollout.md) |
-| Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; boot/rollback physical campaign remains open |
+| Offline hardware continuity | Unqualified; Ace identity smoke passed | Ace/Mako inventories and native ARM64 SPIRE behavior recorded; bounded disposable-storage physical campaign complete; production hardware guarantees remain unqualified |
 | Product installation and UI | Planned | Integrated enrollment, promotion, health, and recovery flows |
 | Production autonomous operation | Gated | Physical end-to-end acceptance on a qualified profile |
 
@@ -24,8 +24,8 @@ protection, hardware key isolation, or autonomous production boot. Record
 prototype results separately from hardware evidence as work advances.
 
 The current LAN pilot policy and temporary workload registrations retain the
-original deadline, `2026-10-03T02:06:35Z`. No extension is authorized or
-implemented. After native test activation and encrypted boot rehearsals, the
+original deadline, `2026-10-03T02:06:35Z`. The owner has approved a bounded thirty-day continuity term; implementation
+and trust rollover remain required before activation. No successor is active. After native test activation and encrypted boot rehearsals, the
 reviewed profiles were installed persistently. Both controlled warm reboots now
 passed with physical recovery access available: Ace then ran generation 12 and Mako
 generation 15. Ace explicitly includes the upstream clock waiter before storage,
@@ -57,12 +57,13 @@ a fresh exact-unit probe and no ordering-cycle job deletion. Mako passed all
 73 DNS samples, including 55 bracketed by Ace unavailability. The separate
 tmpfiles missing-`sudo`-group warning was subsequently [fixed](https://github.com/PseudoDesign/nix-pseudo-design/blob/codex/spiffe-lan-qualification/docs/observations/2026-09-30-ace-tmpfiles-cleanup.json)
 in active/persistent Ace generation 14 without restarting applications. The
-completed cold-start result still belongs to generation 13. No spare storage
-is available for crash testing; physical offline refusal testing awaits a
-console and data-isolation setup that retains PoE. Remaining
-native lifecycle, outage/replication and ordinary updater renewal checks are
-next; offline boot, abrupt power loss and full hardware qualification remain
-unproven.
+completed cold-start result still belongs to generation 13. The later
+[bounded physical campaign](offline-qualification.md) passed on disposable NVMe,
+including interrupted writes, backup restoration and offline clock refusal.
+Original encrypted pilot storage was restored and accepted on generation 14.
+The [LAN closeout implementation](lan-closeout.md) now covers bounded unattended
+renewal, remaining native acceptance, review/merge and deployment. Full hardware
+qualification and autonomous offline operation remain unproven.
 
 The first slice adds a separate Go identity module, a Workload API probe and
 synthetic mTLS service, owner/provider SPIRE isolation, and versioned workload
