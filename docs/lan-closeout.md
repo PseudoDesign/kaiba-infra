@@ -156,7 +156,7 @@ original public keys and expire **2026-11-08T00:00:00Z**. They remain uninstalle
 
 Candidate preparation does not activate a term, extend access, or replace private
 keys. Coordinated trust installation, leaf continuation, host continuity and the
-stopped-writer backup remain deployment prerequisites. The operator handoff copies
+stopped-writer backup were deployment prerequisites; the backup is now verified below. The operator handoff copies
 only the two public source CA certificates after checking these exact fingerprints;
 the signing keys remain on their custody hosts.
 
@@ -191,16 +191,70 @@ accessing any CA key. Ten signing/reconciliation tests passed both locally and
 natively on ARM64. The source signing packet requests uninstalled leaf candidates
 expiring `2026-11-07T00:00:00Z`, bounded by the continued CAs. Packet SHA-256:
 `3eb0a0a7a5a354caa4c11bfe892d5f7e90786f64df0d78a9aa1610b6a752f2f1`.
-Signing through the local recovery-passphrase ceremony is pending; preparation
-does not install certificates, replace keys, or activate renewal. Existing service
-certificates and private keys remain on Ace.
+The local recovery-passphrase ceremony completed at **2026-10-01T07:39:28Z**.
+All six receipts match the exact plans, retained keys and unchanged identity
+fields. The source mapping closed and source services stayed fenced. Its private
+result SHA-256 is
+`99b228c924c6d39b3a4af1f5305eec5eac05ca539b0cbc11445891efb224352b`.
+
+The owner completed a separate private handoff of only the public candidate
+certificates. Ace independently checked them against its live predecessors and
+staged them at **07:45:02Z**. All four authority services remained active and
+existing certificates/configurations were unchanged. No private keys were opened
+by handoff or staging. Thirteen local leaf-candidate tests now include incomplete
+handoff, changed-history, appended-content and expiry rejection. Candidate
+preparation and staging do not install certificates, replace keys, or activate
+renewal. Existing service certificates and private keys remain on Ace.
 
 These staging and candidate changes are pushed as Fleet revision
-`588cf5ad83e0c17bbe4f47ff9b0f4f4772a88f37`; its new CI run remains required.
+`588cf5ad83e0c17bbe4f47ff9b0f4f4772a88f37`; native x86_64/ARM64,
+imported-control-plane, identity, renderer and historical NVMe CI all passed.
 Packaged delegation/controller and certificate checks passed at
 `/nix/store/342j5fyc3y60ngnrhfcmqg0fwm2b5swn-kaiba-pilot-renewal-delegation`.
 The private checkpoint digest is
 `b0719e7e64a71a05265cc59a2e960af9816b8244cd625c29b2487cdc0486c515`.
+
+Fresh pre-continuity baselines at **07:55Z** passed on Ace and Mako: retained
+device-state and membership hashes, original encrypted storage, expected services,
+synchronized time, fresh workload credentials and all twelve DNS queries from
+each host. Malak's six loaded source fences still match the accepted post-reboot
+definitions, with no authority listeners. No live trust or deadline changed.
+
+The cold-backup helper covers `/srv/kaiba-pilot`, including the private
+Fleet/issuer PostgreSQL cluster and policy/issuance history. It uses the running
+pilot's PostgreSQL 18 tools, not the host-default PostgreSQL 17 tool. It encrypts
+to Ace's retained migration recipient and verifies full local decryption against
+file bytes, owners and permissions. Separate SPIRE state and Malak's fenced CA
+container are outside this backup operation and remain unchanged.
+
+The first isolated backup VM rehearsal passed decryption/readback, retained
+memberships, watchdog restoration and preservation of unrelated PostgreSQL. A
+later exact-wrapper rehearsal refused a guard unit that finished shutdown in
+`failed` state with no process; restoration succeeded and the failed attempt was
+retained. The corrected predicate accepts only inactive/failed units with PID
+zero, rejects running/transitional states, and passed its native ARM64 regression.
+The final wrapper VM passed in 375.67 seconds, including restoration of a service
+with DNS primary's guard dependency. Its immutable result is
+`/nix/store/ki864knwsck3407qax95km5dk7srz6pa-vm-test-run-kaiba-imported-pilot-control-plane`.
+Four cold-backup and six operation tests also passed natively on ARM64.
+
+The real stopped-writer backup completed at **2026-10-01T08:28:49Z**. All 1,864
+files passed full authenticated decryption and comparison of bytes, ownership and
+permissions. Cipher SHA-256:
+`37b98b25f4101052478ba186f3bec011c03aa933ae6ba8c24873634478243989`.
+The archive and retained age recovery key remain private on Ace; their exact
+locations are in the private operation receipt. This same-disk backup supports
+maintenance rollback; it does not demonstrate disk-loss recovery or a restored
+SQL instance.
+
+Post-backup acceptance at **08:29Z** passed retained Ace/Mako device state and
+membership, expected services, fresh workload credentials and all twelve DNS
+queries from each host. Hydra, regular PostgreSQL and both SPIRE services retained
+their process IDs and invocation IDs. Ace's original authority services and DNS
+primary resumed, then the independent restoration timer was disarmed. Original
+system/configuration pins and the access deadline stayed unchanged. This backup
+is not the separate database-only outage acceptance test. No trust continuation,
+delegation activation or unattended observation has started.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
