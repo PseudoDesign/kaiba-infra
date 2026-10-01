@@ -86,6 +86,11 @@ backup locations and follow-up issues for production installation and hardware
 qualification. Public DNS and product installation/UI remain separate milestones.
 Keep `full_qualification: false` throughout this LAN milestone.
 
+Follow-up work is tracked separately in
+[production installation, infra issue 7](https://github.com/PseudoDesign/kaiba-infra/issues/7)
+and [production hardware qualification, provisioning issue 97](https://github.com/PseudoDesign/kaiba-provisioning/issues/97).
+Neither issue moves a required LAN acceptance gate into a later milestone.
+
 ## Implementation checkpoint, 2026-10-01
 
 The contracts stack is merged through
@@ -395,8 +400,8 @@ The real local PostgreSQL/TLS fixture exercised the new reader after same-key
 cutover and restarts, then proved outage and revoked-membership denial. An
 initial test fixture used unsupported nanosecond timestamps; that failed attempt
 was retained and the corrected microsecond fixture passed. At this checkpoint,
-the new Fleet revision passed native ARM64, imported-control-plane, renderer and
-historical-campaign CI; remaining CI was still running. The preceding `e6c0e4`
+the new Fleet revision passed native x86_64/ARM64, imported-control-plane,
+identity, renderer and historical-campaign CI. The preceding `e6c0e4`
 revision passed all six checks. Synthetic tests do not establish native rollout
 or unattended acceptance.
 
@@ -411,8 +416,11 @@ changed. The private checkpoint SHA-256 is
 Provisioning PR 95's source review and 20 inventory/observer plus seven disk-guard
 tests passed. Its README conflict with the merged documentation parent was
 resolved at `208bd60fab6395eea73ea30e4638db67ba844d14`, retaining the observations
-and clarifying the later physical campaign. It is ready for review with fresh CI
-pending; immutable physical-image and Fleet pins are unchanged.
+and clarifying the later physical campaign. All selected fresh checks passed,
+including native ARM64. It merged at `abd1d963cebb6e1926a414aef78ed754ac887a2e`;
+immutable physical-image and Fleet pins are unchanged. The workflow skipped the
+older-verifier-image and hardware jobs according to its selection policy; these
+are not additional hardware passes.
 
 The next activation gates remain Ace's versioned authority transition, the
 native confined validity observer and coordinated SPIRE issuance limits.
@@ -424,3 +432,69 @@ Then complete coordinated trust/host installation, Mako/Ace canaries, remaining
 native faults, the full twenty-four-hour observation and reviewed merged
 revision deployment. The current cutoff remains **October 2 at 10:06 p.m. EDT**;
 no thirty-day delegation or unattended observation is active.
+
+### Reviewed parents merged; local authority startup read prepared
+
+[Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30) merged at
+`45db927823cf819c02387b3a6c1df67a5433b6a2` after source review and all five selected
+native/VM/renderer checks passed. The exact-head local review replay passed pilot,
+workload registry/operator and wire race tests, 23 LAN tests, and 132 migration
+tests. Three migration tests were skipped locally because that invocation lacked
+the isolated PostgreSQL/age setup; the packaged CI supplies those dependencies.
+The renewal child now targets `main`. Its squash-history conflict resolution
+verified that merged main was byte-identical to the child's existing parent,
+then preserved the validated renewal tree.
+
+Provisioning PR 96 now also targets `main`. Revision
+`0cf14a1` rechecks clock certainty, forward time, the owner packet and the current
+credential interval after the authenticated authority read and immediately before
+saving trust continuation. The protected-client and publication race suites pass,
+including clock loss, rollback and approval/credential expiry during that read.
+Failed attempts do not change retained state. Fresh CI remains the merge gate.
+
+Fleet revision `5d1a3996ad2f27708dd36a1f9e9eeddbbe920861` adds
+`kaiba-pilot-authority-term` for Ace's post-database, pre-API startup phase. It
+requires the exact local peer socket and uses a read-only READ COMMITTED
+transaction under the lifecycle lock. It reads schema-qualified authority tables,
+checks the latest pinned delegation and every retained membership, and reports
+only sanitized scope/expiry data. It performs no migrations or initialization and
+cannot use TCP, passwords, fallback connections or cached authority state.
+
+The pilot race suite and packaged renewal rehearsal pass. The latter exercises a
+SELECT-only reader role, successful reads with Fleet stopped, database outage and
+recovery, retained-key cutover, member/delegation revocation and stale search-path
+decoys. The packaged result is
+`/nix/store/d309ha6b4w92is8sir2kdawyxym9ad15-kaiba-pilot-renewal-delegation`.
+It includes five delegation, five controller and five publication scenarios,
+plus trust/certificate checks. The earlier build that omitted an untracked source
+file is retained as a failed attempt; the corrected candidate passed. ARM64/VM CI
+for the new revision is pending.
+
+The local reader does not itself implement the versioned authority transition or
+SPIRE issuance guard. Upstream SPIRE 1.15.2
+[workload signing](https://github.com/spiffe/spire/blob/v1.15.2/pkg/server/api/svid/v1/service.go)
+passes the registration's requested TTL to the CA; its
+[credential composer interface](https://github.com/spiffe/spire/blob/v1.15.2/pkg/server/plugin/credentialcomposer/credentialcomposer.go)
+does not expose X.509 validity fields. Therefore registration cleanup or a
+composer attribute alone is insufficient to enforce an absolute term cutoff.
+Qualify the actual signing lifetime and shutdown enforcement before activation.
+
+No live host, deadline, private key or credential installation changed during
+these reviews. Ace generation 14 and Mako generation 15 remain the deployed
+baseline. The authority transition, confined validity observer, coordinated trust
+installation, canaries, native fault acceptance, twenty-four-hour unattended run
+and final merged-revision deployment remain open. No term is active and
+`full_qualification` remains false.
+
+Read-only SPIRE inventory at **16:42Z** found nine registrations: five expire
+at the existing pilot cutoff, while the Ace probe and Ace/Mako/Malak aliases
+have no entry expiry. The installed agent and default X.509 TTLs are one hour.
+The explicit continuity operation must bound the intended Ace/Mako registration
+set and preserve Malak's exclusion; it must not automatically carry the old
+Malak alias into the new term. No registration was changed by this inventory.
+The first inventory parser expected an object where Nix serialized a singleton
+list; the corrected read retained that actual shape and collected public settings
+only. Registration expiry remains a cleanup measure, not the signing cutoff.
+
+The private parent-merge/implementation checkpoint SHA-256 is
+`6435efeeae4ee0a6af818c09df38dec7ff231ab977542d0fc764dd030c98b783`.
