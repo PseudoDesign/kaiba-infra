@@ -116,8 +116,9 @@ exact durable grants, a durable controller and protected workers. Same-key issue
 CA continuation preserves original scope records and grants through an append-only
 transition. Revision `6f9a6c4419a0b9a0cf462539eeec4cf21d3cc726` passed native x86_64,
 ARM64, imported-control-plane and identity VM CI. The local authenticated fresh
-observation renderer and its unit/race tests are implemented; durable publication,
-host continuity, startup receipts and live activation remain open.
+observation renderer and append-only publication path are implemented and tested.
+Measured-bound controller-plan generation, host continuity, startup receipts and
+live activation remain open.
 
 [Provisioning PR 96](https://github.com/PseudoDesign/kaiba-provisioning/pull/96)
 adds explicit protected-client trust continuation without replacing device keys.
@@ -261,3 +262,33 @@ Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 record whether a qualified successor can activate or a separately reviewed
 existing-protocol bridge is needed. Preserve the stopped state/expiry boundary if
 neither is ready. The twenty-four-hour acceptance requirement is not shortened.
+
+### Durable publication checkpoint
+
+Fleet revision `3986be1a5e62e584e9aff98b792fc8cdcc25aaa6` and provisioning revision
+`4da4de1c5895ac99e93aefb8bc036449f82a58bd` add a confined publication command and
+compatible readers. Each predecessor operation retains its original observation,
+records and evidence in an immutable journal. One atomic append exposes the
+complete batch to both readers without restarting services or changing original
+selections. Reader grants pin exact principals, enrollment instances and the
+thirty-day delegation interval.
+
+Go race tests passed for publication, renewal and observation-reader packages.
+The packaged cross-repository check passed at
+`/nix/store/fn6068wqmy4jms7khkmhypdwp4y7jm1h-kaiba-pilot-renewal-delegation`:
+five delegation, three controller, four publication and five trust-continuation
+scenarios, plus certificate preparation tests. Publication used real mTLS and
+disposable PostgreSQL with a synthetic observer. It verified new-record reads on
+a retained TLS connection, unchanged reader processes, original record availability,
+retry reconciliation, changed-observation and revocation denial, and unchanged
+disposable memberships. It does not qualify hardware observation or unattended
+live renewal. The compatible consumer has a separate test dependency pin;
+historical enrollment and physical-campaign pins are unchanged.
+
+The publication receipt deliberately does not authorize renewal. The controller's
+plan producer still needs authenticated new-record acceptance and measured trust,
+host-continuity and SPIRE registration bounds. Compatible host configuration,
+management/worker credentials, coordinated CA/leaf rollout and activation remain
+open. None of this publication code is enabled on the live pilot. Exact-head CI,
+remaining native fault acceptance, the full twenty-four-hour observation and
+reviewed merged deployment are still required.
