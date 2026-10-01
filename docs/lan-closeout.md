@@ -498,3 +498,26 @@ only. Registration expiry remains a cleanup measure, not the signing cutoff.
 
 The private parent-merge/implementation checkpoint SHA-256 is
 `6435efeeae4ee0a6af818c09df38dec7ff231ab977542d0fc764dd030c98b783`.
+
+### Host-foundation review and merge
+
+[Host PR 14](https://github.com/PseudoDesign/nix-pseudo-design/pull/14) merged at
+`d5ccc0fc8e6a97f15c81633297523f0d89931d9f`. Review found and corrected the
+activation helper's use of `systemctl is-active` with several unit names, which
+succeeds if any one is active. It now checks each service and automount
+individually. ShellCheck, Bash syntax and three isolated health-check scenarios
+passed without invoking live service actions. Nix reproduced the exact recorded
+generation-10 closure, `ylpbjk8jzr195l7yn7f713sgjfimicbs`, so the helper correction
+does not change that system composition. This repository exposes no PR CI for
+this head; the recorded native installation and reproduced closure are the
+evidence, not a missing-CI pass.
+
+Host PR 15 now targets `main` at
+`a785a9ba9757dd2737646df3bdc37e757d8998c4`. The merge verified the parent changed
+only that helper, then preserved the LAN child's existing configuration and
+prepared member guard. No host was deployed or restarted. Provisioning
+`0cf14a19674b1b5a6a544ffde91988c7e9e6db84` has passed all selected fresh checks,
+including native ARM64 operator packages and x86 core checks. Fleet `5d1a399`
+has passed both native architectures, imported-control-plane, renderer and
+historical-campaign checks; the identity VM was still running at this update.
+Renewal and host deployment gates above remain open.
