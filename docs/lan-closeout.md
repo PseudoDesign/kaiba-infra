@@ -117,8 +117,8 @@ CA continuation preserves original scope records and grants through an append-on
 transition. Revision `6f9a6c4419a0b9a0cf462539eeec4cf21d3cc726` passed native x86_64,
 ARM64, imported-control-plane and identity VM CI. The local authenticated fresh
 observation renderer and append-only publication path are implemented and tested.
-Measured-bound controller-plan generation, host continuity, startup receipts and
-live activation remain open.
+Measured-bound controller-plan generation is now implemented; its native validity
+observer, host continuity, startup receipts and live activation remain open.
 
 [Provisioning PR 96](https://github.com/PseudoDesign/kaiba-provisioning/pull/96)
 adds explicit protected-client trust continuation without replacing device keys.
@@ -286,9 +286,51 @@ live renewal. The compatible consumer has a separate test dependency pin;
 historical enrollment and physical-campaign pins are unchanged.
 
 The publication receipt deliberately does not authorize renewal. The controller's
-plan producer still needs authenticated new-record acceptance and measured trust,
-host-continuity and SPIRE registration bounds. Compatible host configuration,
+plan producer now checks authenticated new-record acceptance and consumes separately
+observed trust, host-continuity and SPIRE registration bounds. Its native observer
+and compatible host configuration,
 management/worker credentials, coordinated CA/leaf rollout and activation remain
 open. None of this publication code is enabled on the live pilot. Exact-head CI,
 remaining native fault acceptance, the full twenty-four-hour observation and
 reviewed merged deployment are still required.
+
+### Measured plans and confined service credentials
+
+Fleet revision `3a30d72fb0f32a61b0f8d50b80584f4b150b9d5d` adds versioned plan
+preparation and exact pending-operation reconciliation. Plans retain the observed
+trust, continuity and registration limits, source references, observation-age
+limit, predecessor and operation ID. Lost-reply retries preserve the original
+request and records. A shorter live limit blocks an unfinished operation without
+silently shortening its authorization or issuing another credential.
+
+The complete local packaged check passed, including five delegation, three
+controller and five publication/plan scenarios,
+trust-continuation checks and certificate preparation tests. Go race checks passed
+for the pilot and publication packages. The plan fixture uses actual fixture
+certificate dates but **synthetic** host and SPIRE-registration observations.
+Production observer wiring and the versioned authority/member startup transitions
+remain required. The workload registry's fixed policy pin also needs an explicit
+delegation-bound transition so renewed admission records preserve DNS eligibility.
+Do not enable timers with hand-written validity claims in place of those adapters.
+
+Fresh read-only checks at **09:17–09:18Z** passed retained memberships, expected
+services and twelve DNS queries per host. Mako's first baseline collection failed;
+that attempt was retained, and a subsequent diagnostic collection passed. No
+service, credential installation or deadline changed.
+
+Eleven credential-preparation tests cover the five confined service profiles,
+scope/expiry rejection, interrupted key/CSR/signing operations and lost-reply
+reconciliation. Candidate preparation installs no certificate and activates no
+delegation. Operational signing instructions and custody details remain in the
+private handoff. The checkpoint SHA-256 is
+`131c5be9897099b5f7fee688e7ab14f2f56464bd74ddf66081b5863ac8d0e8cf`.
+
+Provisioning's documentation parent [PR 94](https://github.com/PseudoDesign/kaiba-provisioning/pull/94)
+is reviewed and merged at `2fc247199f8b03cca85b7e3c20b24fc6197d6648`.
+The physical-evidence parent [PR 95](https://github.com/PseudoDesign/kaiba-provisioning/pull/95)
+now targets `main` and includes the previously tested CI isolation fix at
+`b0ad66059e5211989328832667ccdbc8b80ce99a`; historical physical pins are unchanged.
+Its new checks and Fleet's latest native/VM checks are still pending at this
+checkpoint. Skipped hardware jobs are not passes. Remaining reviews, merged
+deployment, native faults, retained-key canaries and the actual twenty-four-hour
+observation still gate closure. No thirty-day term is active.
