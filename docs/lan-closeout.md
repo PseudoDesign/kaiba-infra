@@ -370,3 +370,57 @@ unattended observation has started. The original deadline and
 `full_qualification: false` remain unchanged. Remaining reviews, merged deployment,
 native faults, canary renewals and the actual twenty-four-hour run still gate
 LAN milestone closure.
+
+### Authenticated term reader and prepared member continuation
+
+Fleet revision `a2a69985e17d41e2b04c6dcc70af89d074eae44c` adds a restricted
+host-term read. It checks the latest delegation and retained membership under
+the renewal/cutover lock. Only that enrollment's worker reader may use it;
+revocation, expiry, changed identity/key/issuer/permissions and unavailable
+authority deny startup permission. The CLI independently validates the exact
+contract and pinned term. Offline contract verification reports a non-current
+result and cannot satisfy the startup guard.
+
+Host revision `9833cf765e8726d5eefed0d71386a3d1ada0055e` adds an optional Mako
+continuation receipt and reader configuration with immutable hashes. The
+original receipt, admitted SPIFFE node and cached keys remain intact. Activation
+must predate the original cutoff; the new term must last exactly thirty days;
+the authenticated read must be fresh; and the cached node certificate cannot
+outlast the term. The option defaults to disabled and is not installed live.
+
+Local validation passed: pilot Go race tests, 22 member-guard tests, the two-host
+Nix module check and the packaged renewal rehearsal (five delegation, four
+controller and five publication scenarios, plus trust/certificate checks).
+The real local PostgreSQL/TLS fixture exercised the new reader after same-key
+cutover and restarts, then proved outage and revoked-membership denial. An
+initial test fixture used unsupported nanosecond timestamps; that failed attempt
+was retained and the corrected microsecond fixture passed. At this checkpoint,
+the new Fleet revision passed native ARM64, imported-control-plane, renderer and
+historical-campaign CI; remaining CI was still running. The preceding `e6c0e4`
+revision passed all six checks. Synthetic tests do not establish native rollout
+or unattended acceptance.
+
+Read-only captures at **16:04Z** passed Ace's 17 services, Mako's seven services,
+retained memberships and twelve DNS queries on each host. At **16:06Z**, Malak's
+six former authority units were inactive with PID zero and loaded fence checks;
+authority listeners and the source mapping were absent. Private fence files were
+not reopened. No live services, keys, credential installations or deadlines were
+changed. The private checkpoint SHA-256 is
+`974554ee9c48a084864df99be90db68ff794538cedb6d4350cdc72d76509d4b8`.
+
+Provisioning PR 95's source review and 20 inventory/observer plus seven disk-guard
+tests passed. Its README conflict with the merged documentation parent was
+resolved at `208bd60fab6395eea73ea30e4638db67ba844d14`, retaining the observations
+and clarifying the later physical campaign. It is ready for review with fresh CI
+pending; immutable physical-image and Fleet pins are unchanged.
+
+The next activation gates remain Ace's versioned authority transition, the
+native confined validity observer and coordinated SPIRE issuance limits.
+SPIRE documents registration `entryExpiry` as
+[data cleanup, not a security boundary](https://spiffe.io/docs/latest/deploying/spire_server/).
+Its timestamp alone cannot qualify a validity observation: certificate lifetimes
+and issuance must also be bounded by the applicable authorization and term.
+Then complete coordinated trust/host installation, Mako/Ace canaries, remaining
+native faults, the full twenty-four-hour observation and reviewed merged
+revision deployment. The current cutoff remains **October 2 at 10:06 p.m. EDT**;
+no thirty-day delegation or unattended observation is active.
