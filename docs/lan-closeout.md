@@ -97,22 +97,35 @@ The DNS stack is merged through
 module, native ARM64 package and DNS VM checks. These are reviewed dependency
 revisions, not a claim that the live deployment has changed.
 
+Fleet's parent stack is reviewed and merged in dependency order:
+
+| Change | Merged revision |
+| --- | --- |
+| [SPIRE foundation, PR 27](https://github.com/PseudoDesign/kaiba-fleet/pull/27) | `cb1598744703883acea0843e43253a4e28743cf7` |
+| [Live workload registry, PR 28](https://github.com/PseudoDesign/kaiba-fleet/pull/28) | `f7f230771f4ad2e21fc4fab276430591db22c753` |
+| [Persistent identity pilot, PR 29](https://github.com/PseudoDesign/kaiba-fleet/pull/29) | `e7070111863e7660e965d7ef4ad811015e8bf8de` |
+
+Each exact PR head passed native x86_64/ARM64 enrollment and its applicable
+identity/DNS/persistent-pilot VM workflow. The remaining LAN integration PR 30
+now targets `main`; renewal PR 31 remains its child. Deployment still uses the
+recorded earlier closures until all deployment gates pass.
+
 [Fleet PR 31](https://github.com/PseudoDesign/kaiba-fleet/pull/31) implements owner
 create/read/revoke APIs, restricted delegation routes, independent issuer checks,
 exact durable grants, a durable controller and protected workers. Same-key issuer
 CA continuation preserves original scope records and grants through an append-only
-transition. Revision `7b0ce6a510ec69be6700ab89397d9a5bf92c5403` passed native x86_64,
+transition. Revision `6f9a6c4419a0b9a0cf462539eeec4cf21d3cc726` passed native x86_64,
 ARM64, imported-control-plane and identity VM CI. The local authenticated fresh
 observation renderer and its unit/race tests are implemented; durable publication,
 host continuity, startup receipts and live activation remain open.
 
 [Provisioning PR 96](https://github.com/PseudoDesign/kaiba-provisioning/pull/96)
 adds explicit protected-client trust continuation without replacing device keys.
-Its native ARM64 checks passed. Its first x86 workflow failed fetching the private
-historical Fleet dependency. The full historical campaign check is being moved
-to Fleet's private CI without changing the physical campaign pins or giving
+Its x86 and native ARM64 checks passed. Its first x86 workflow failed fetching the
+private historical Fleet dependency. The full historical campaign check now runs
+and passes in Fleet's private CI without changing physical campaign pins or giving
 public PRs a private-repository credential. Require that separate result; a green
-public workflow is not evidence that the private integration ran.
+public workflow alone is not evidence that the private integration ran.
 
 Malak's retained CA custody inventory completed at **2026-10-01T04:49:23Z**
 using the existing recovery slot. Both management and transport certificates
@@ -123,18 +136,34 @@ inspection failures are retained; no token reset or reenrollment was performed.
 
 Candidate-only CA continuation tooling now matches each retained key to its CA,
 locks key memory before reading it, records durable signing intents, and validates
-successors using the production Go certificate verifier. Eight candidate tests and
-thirteen custody tests pass. Packaged delegation/controller/trust checks pass at
+successors using the production Go certificate verifier. Eleven candidate/custody-owner
+tests and thirteen source custody tests pass locally. Packaged delegation/controller/trust
+checks, including the original eight signing fixtures, pass at
 `/nix/store/mvbrp0qkm5d2avcn3c4gjgif221h96aa-kaiba-pilot-renewal-delegation`.
 The source preparation packet proposes CA expiry `2026-11-08T00:00:00Z`; packet
 SHA-256 is `6c68821d438a6c1732fa6dbb987abf4ff37881682b4a6489228573d295fcf554`.
-It has not yet been executed. Candidate preparation does not install certificates,
-activate a term, extend access, or replace private keys. Issuer/leaf continuation,
-host continuity and the stopped-writer backup remain deployment prerequisites.
+The source packet completed at **2026-10-01T05:01:00Z**, preparing management and
+transport candidates on Malak. Its read-only source mapping closed and source
+services stayed fenced. Ace prepared its issuer candidate at **05:06:34Z** after
+eight native ARM64 candidate tests passed. All three candidates retain their
+original public keys and expire **2026-11-08T00:00:00Z**. They remain uninstalled.
+
+| CA role | Candidate certificate SHA-256 (DER) |
+| --- | --- |
+| Management | `9ca29292727434255339b29185a15343b823414075e76aea71c9de27bb52a372` |
+| Transport | `67d38f19e4a308b6305c9d5b6e79d9349b0eba90da5d3f7abe6c3a7b6f436379` |
+| Issuer | `1182d5b2915b3a223eda4e473c415ee787cfe6951c57df6526eed7d9ec5cc2cd` |
+
+Candidate preparation does not activate a term, extend access, or replace private
+keys. Coordinated trust installation, leaf continuation, host continuity and the
+stopped-writer backup remain deployment prerequisites. The operator handoff copies
+only the two public source CA certificates after checking these exact fingerprints;
+the signing keys remain on their custody hosts.
 
 The separated historical NVMe campaign check now passes in private Fleet CI, and
-provisioning's x86 and native ARM64 checks pass. The candidate-tool changes need
-their own current-head CI. No live credential/deadline was changed, and no
+provisioning's x86 and native ARM64 checks pass. The service-owner support at Fleet
+revision `46c2dda` has eleven passing local tests; its new CI run must finish before
+merging it. No live credential/deadline was changed, and no
 thirty-day term or unattended observation has started.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
