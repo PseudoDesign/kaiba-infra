@@ -119,9 +119,14 @@ stopped on the unavailable mount; the separate read-only inspection then stopped
 before unlock on a token/keyslot assumption. The owner-provided nonsecret header
 projection confirmed recorded token `1` points to slot `2`, with PIN and touch
 required. The corrected inspection validates that actual association; seven
-policy/cleanup tests pass. Read-only custody inspection still needs the owner's
-local authentication. No source authority was activated, no live credential or
-deadline was changed, and no thirty-day term or unattended observation has started.
+policy/cleanup tests pass. The subsequent inspection reached the enrolled YubiKey but reported an incorrect
+FIDO2 PIN. Host checks confirmed no mapper remained and all six source services
+were inactive. The owner selected the existing LUKS recovery passphrase for a
+separate read-only inspection; token authentication is disabled in that explicit
+mode. Thirteen inspection policy/cleanup tests pass. Actual custody verification
+still needs local authentication. No source authority was activated, no live
+credential or deadline was changed, and no thirty-day term or unattended
+observation has started.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
