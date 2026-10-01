@@ -114,19 +114,28 @@ to Fleet's private CI without changing the physical campaign pins or giving
 public PRs a private-repository credential. Require that separate result; a green
 public workflow is not evidence that the private integration ran.
 
-Malak's retained CA container was locked after reboot. The first custody inventory
-stopped on the unavailable mount; the separate read-only inspection then stopped
-before unlock on a token/keyslot assumption. The owner-provided nonsecret header
-projection confirmed recorded token `1` points to slot `2`, with PIN and touch
-required. The corrected inspection validates that actual association; seven
-policy/cleanup tests pass. The subsequent inspection reached the enrolled YubiKey but reported an incorrect
-FIDO2 PIN. Host checks confirmed no mapper remained and all six source services
-were inactive. The owner selected the existing LUKS recovery passphrase for a
-separate read-only inspection; token authentication is disabled in that explicit
-mode. Thirteen inspection policy/cleanup tests pass. Actual custody verification
-still needs local authentication. No source authority was activated, no live
-credential or deadline was changed, and no thirty-day term or unattended
-observation has started.
+Malak's retained CA custody inventory completed at **2026-10-01T04:49:23Z**
+using the existing recovery slot. Both management and transport certificates
+matched their expected fingerprints; adjacent keys were regular, single-link,
+root-owned 0600 files. The read-only mapping closed and all source services
+remained inactive. Keys were not opened by the inventory. The preceding token
+inspection failures are retained; no token reset or reenrollment was performed.
+
+Candidate-only CA continuation tooling now matches each retained key to its CA,
+locks key memory before reading it, records durable signing intents, and validates
+successors using the production Go certificate verifier. Eight candidate tests and
+thirteen custody tests pass. Packaged delegation/controller/trust checks pass at
+`/nix/store/mvbrp0qkm5d2avcn3c4gjgif221h96aa-kaiba-pilot-renewal-delegation`.
+The source preparation packet proposes CA expiry `2026-11-08T00:00:00Z`; packet
+SHA-256 is `6c68821d438a6c1732fa6dbb987abf4ff37881682b4a6489228573d295fcf554`.
+It has not yet been executed. Candidate preparation does not install certificates,
+activate a term, extend access, or replace private keys. Issuer/leaf continuation,
+host continuity and the stopped-writer backup remain deployment prerequisites.
+
+The separated historical NVMe campaign check now passes in private Fleet CI, and
+provisioning's x86 and native ARM64 checks pass. The candidate-tool changes need
+their own current-head CI. No live credential/deadline was changed, and no
+thirty-day term or unattended observation has started.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
