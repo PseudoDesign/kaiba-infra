@@ -162,9 +162,45 @@ the signing keys remain on their custody hosts.
 
 The separated historical NVMe campaign check now passes in private Fleet CI, and
 provisioning's x86 and native ARM64 checks pass. The service-owner support at Fleet
-revision `46c2dda` has eleven passing local tests; its new CI run must finish before
-merging it. No live credential/deadline was changed, and no
+revision `46c2dda5bb83a6ac239033a48402b6a4fd4745e7` passed native x86_64/ARM64,
+imported-control-plane, identity, renderer and historical NVMe CI. No live
+credential/deadline was changed, and no
 thirty-day term or unattended observation has started.
+
+### Trust staging and service-certificate checkpoint
+
+The public CA handoff passed exact fingerprint checks. All three public candidates
+are staged on Ace and Mako, still uninstalled. The original migration manifest and
+deadline remain unchanged. The new trust-staging guard accepts a pinned owner
+receipt only under that original deadline and retains the exact replaced artifacts
+in its checked archive. It cannot activate the thirty-day term.
+
+Validation passed: 147 packaged migration tests without skips, nine guard tests,
+Nix module evaluation and 27 native ARM64 staging/policy tests. The imported
+control-plane VM passed with retained memberships across restart, archive-tamper
+denial, recovery after archive restoration and original-deadline enforcement.
+The VM result is `/nix/store/c8v0hwg0klki2vggg25815p39pfc1g9b-vm-test-run-kaiba-imported-pilot-control-plane`.
+Its first attempt exposed asynchronous dependent-unit shutdown in the test
+orchestration; that failed attempt remains recorded. The successful rehearsal
+explicitly stops and checks every pilot unit. Live stopped-writer procedures must
+do the same rather than treating target shutdown as proof that all writers stopped.
+
+Ace prepared six public CSRs using its retained service keys. Independent checks
+on Malak verified their signatures and exact original certificate fields before
+accessing any CA key. Ten signing/reconciliation tests passed both locally and
+natively on ARM64. The source signing packet requests uninstalled leaf candidates
+expiring `2026-11-07T00:00:00Z`, bounded by the continued CAs. Packet SHA-256:
+`3eb0a0a7a5a354caa4c11bfe892d5f7e90786f64df0d78a9aa1610b6a752f2f1`.
+Signing through the local recovery-passphrase ceremony is pending; preparation
+does not install certificates, replace keys, or activate renewal. Existing service
+certificates and private keys remain on Ace.
+
+These staging and candidate changes are pushed as Fleet revision
+`588cf5ad83e0c17bbe4f47ff9b0f4f4772a88f37`; its new CI run remains required.
+Packaged delegation/controller and certificate checks passed at
+`/nix/store/342j5fyc3y60ngnrhfcmqg0fwm2b5swn-kaiba-pilot-renewal-delegation`.
+The private checkpoint digest is
+`b0719e7e64a71a05265cc59a2e960af9816b8244cd625c29b2487cdc0486c515`.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
