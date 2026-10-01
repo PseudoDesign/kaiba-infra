@@ -32,14 +32,41 @@ local rehearsal passed fifteen publication, controller and trust scenarios with
 the merged package combination. Historical fixture pins remain unchanged.
 
 [Authority continuation PR 33](https://github.com/PseudoDesign/kaiba-fleet/pull/33)
-is a draft at `8dae345ce0d32dc1342c5d28de7fd339a072603a`. It adds optional,
+merged at `f65d3950a35c48867bc146c66d12d2667380f588` after all six selected CI
+jobs passed. It adds optional,
 owner-pinned successor records and fresh local term checks before network
 services start, with no Fleet API boot dependency. Eleven continuation boundary
 tests, the original nine guard tests, module checks and nine isolated PostgreSQL
 guard groups pass locally. The native rehearsal accepts the actual Go/SQL reader
 output through the Python guard. Its separate database role is checked for exact
 read access, including denial of inherited, PUBLIC, column, sequence and grant
-option privileges. Fresh CI on this revision remains pending.
+option privileges.
+
+[SPIRE expiry PR 34](https://github.com/PseudoDesign/kaiba-fleet/pull/34) merged
+at `36ede3589a13785e030ec69a4fb09fc176476a8c`, also with all six selected CI
+jobs passing. Its stock SPIRE fixture proves an upstream CA's absolute expiry
+bounds the issuer chain and X.509 leaf, survives restart and unavailable upstream
+certificate files, and denies issuance after actual expiry. JWT issuance is
+explicitly disabled in this fixture. Registration expiry alone is not a signing
+cap; this result does not qualify the live registration or bundle transition.
+
+[Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) at `9ee9bba`
+and [provisioning PR 98](https://github.com/PseudoDesign/kaiba-provisioning/pull/98)
+at `9ed2f75` remain drafts. They add root-owned observation consumption,
+optional measured refresh before a controller tick, and authenticated inspection
+of the protected client's effective installed trust. Existing status responses
+and historical fixture pins remain unchanged. The root file boundary passed a
+NixOS VM check as an unprivileged reader; Go race and module checks passed.
+Seven local cross-process scenarios with actual mTLS and disposable PostgreSQL
+verified trust reads before/after renewal and restart, wrong-principal denial,
+and denial after membership/delegation revocation. Current CI is still pending;
+the new optional native trust mode awaits a merged provisioning deployment pin.
+
+A separate read-only custody inventory is prepared for the owner/station
+management certificates retained on fenced Malak. Five public-metadata tests and
+thirteen existing read-only mapping/cleanup tests pass. The local recovery-slot
+inspection still needs owner authentication. Service candidate certificates do
+not establish the lifetime of owner administration or term reapproval access.
 
 [Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) at
 `7fa6d53` now selects the merged Fleet packages and merged DNS interface
@@ -57,7 +84,9 @@ Then run the actual Mako/Ace canaries, remaining fault acceptance and 24-hour
 observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
-The private checkpoint SHA-256 is
+The latest private checkpoint SHA-256 is
+`b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4`.
+Its predecessor is
 `d75e52741fe90dd7d2c84229dea64d84ec4eefb82484f978df967db576e1ed7d`.
 Failed local fixture and unauthenticated-fetch attempts are retained with their
 corrections; none changed a live host.
