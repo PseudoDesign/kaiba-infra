@@ -109,7 +109,7 @@ keep the outcome not qualified. This matrix authorizes no OTP programming,
 TPM clearing, signing, disk writes, or physical provisioning; those actions use
 the provisioning repository's concrete reviewed campaign procedures.
 
-## Current pilot: remaining physical tests
+## Current pilot and disposable NVMe observations
 
 On 2026-09-30, Ace generation 13 passed one attended clean 30-second PoE
 power cycle with LAN available. Its root, retained identities, all 17 protected
@@ -133,8 +133,9 @@ Do not disable these gates or certificate validity checks to obtain an offline
 success. A production offline profile still needs a reviewed time policy and
 boot/rollback/state-continuity implementation.
 
-The next bounded physical observation can test **offline startup refusal and
-online recovery**, with these prerequisites:
+The disposable profile has now passed **offline startup refusal and online
+recovery**, as recorded below. Follow-on tests of the original pilot or a new
+production profile still require the following procedure and evidence:
 
 1. Confirm an independent local console and a way to keep PoE power while
    isolating every Ethernet, Wi-Fi and USB network/time path. Disconnecting Ace's
@@ -169,17 +170,37 @@ filesystem, matching firmware/kernel/initrd, and a successful ARM64 QEMU NVMe
 boot with unsynchronized-time initialization refusal. Real Fleet/PostgreSQL
 software rehearsals passed both revocation commit boundaries, retained-key
 checks, current-backup restoration and detection of an obsolete backup through
-independent expectations. QEMU bypasses the Pi EEPROM; no spare has been written
-or physically booted, and no physical abrupt-loss result is claimed.
+independent expectations. QEMU bypasses the Pi EEPROM; that preparation report
+predates the separate physical observations below.
 
-Abrupt power-loss testing still requires the specific spare's write/readback
-receipt, successful initial boot and a demonstrated restore. Prepare its exact disk identity and nonproduction
-state, independent complete backups, a demonstrated restore, console evidence,
-and the durable transaction boundaries to interrupt. Each boundary needs a
-pristine control, interrupted attempt and post-recovery state comparison;
-acknowledged revocations must not return. A random unplug of the live pilot is
-not this campaign. Synthetic crash/recovery results must stay separate from
-physical device and storage evidence.
+The [2026-09-30 physical campaign](https://github.com/PseudoDesign/kaiba-provisioning/blob/codex/offline-qualification-evidence/docs/observations/2026-09-30-nvme-physical-qualification.json)
+ran on a Samsung 970 EVO 500GB spare installed in Ace, with the original pilot
+NVMe disconnected. The operator reported successful full image readback on
+Malak; Ace then booted the exact built system with a read-only lower root and
+separate writable test state. Synthetic SPIRE and Fleet backup/restore checks
+passed, and the owner explicitly approved private backup copies on Malak.
 
-The original pilot deadline remains `2026-10-03T02:06:35Z`. No physical isolation
-or abrupt power-loss attempt has been performed for these remaining cases.
+One physical PoE cut before the revocation transaction committed left the member
+active. One cut after acknowledgement left it revoked. Independent receipts on
+Malak, different boot IDs, retained keys/certificates, exactly two issuances per
+case and a healthy control member support both observations. Cut timing and
+duration were operator-controlled, not independently instrumented. Restoring the
+old synthetic backup reinstated active state, which failed the separately saved
+revocation expectation; the preserved current case was then restored and passed
+the revoked-state check. This demonstrates external detection, not hardware
+rollback prevention.
+
+An attended clean cold start with software network isolation produced explicit
+clock-guard refusal, with neither protected daemon starting in that boot. After
+the operator disarmed isolation and rebooted, synchronized time and SPIRE
+services returned. An explicit workload probe obtained a fresh credential, and
+both retained Fleet cases still passed. Offline wall-clock timestamps were
+untrusted; boot identity separates the observations. This does not establish
+trusted offline time or autonomous offline operation.
+
+The bounded disposable-media campaign has passed. The second drive swap and
+startup acceptance of Ace's original pilot remain pending. The original pilot
+deadline remains `2026-10-03T02:06:35Z`. Full qualification and every production
+matrix row remain open: these synthetic observations do not qualify the original
+NVMe's durability, encrypted-storage enforcement, secure boot, protected keys,
+hardware monotonic state or rollback prevention.
