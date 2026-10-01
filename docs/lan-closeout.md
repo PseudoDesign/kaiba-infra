@@ -309,8 +309,8 @@ trust-continuation checks and certificate preparation tests. Go race checks pass
 for the pilot and publication packages. The plan fixture uses actual fixture
 certificate dates but **synthetic** host and SPIRE-registration observations.
 Production observer wiring and the versioned authority/member startup transitions
-remain required. The workload registry's fixed policy pin also needs an explicit
-delegation-bound transition so renewed admission records preserve DNS eligibility.
+remain required. The workload registry's delegation-bound transition is implemented
+in the checkpoint below; its live configuration and privileges remain to be deployed.
 Do not enable timers with hand-written validity claims in place of those adapters.
 
 Fresh read-only checks at **09:17–09:18Z** passed retained memberships, expected
@@ -334,3 +334,39 @@ Its new checks and Fleet's latest native/VM checks are still pending at this
 checkpoint. Skipped hardware jobs are not passes. Remaining reviews, merged
 deployment, native faults, retained-key canaries and the actual twenty-four-hour
 observation still gate closure. No thirty-day term is active.
+
+### Verified service candidates and workload continuity
+
+All five confined renewal-service certificate candidates passed signature,
+original-CSR, role, key and validity checks and are staged on their destination
+hosts. They remain uninstalled. Read-only checks at **15:05–15:06Z** passed
+retained memberships, expected services and all twelve DNS queries per host.
+Mako's first collection failed and was retained; its subsequent diagnostic
+collection passed. At **15:24Z**, Malak's six former authority units remained
+inactive behind their loaded fences, with no authority listeners or source mapping.
+
+Fleet revision `e6c0e415562b67bc241f4e1d05711cee8ec0e015` adds the explicit
+workload continuity transition. It pins the original bindings and the approved
+delegation, reads current authority under the lifecycle lock on every request,
+and accepts only matching delegated renewal successors after policy refresh.
+A recovered original binding can be pinned; a later recovery cannot inherit that
+permission. Revocation and unavailable authority deny access on retained TLS
+connections without reverting to the original policy. Existing DNS grants stay
+intact, and short authorization results are clipped to current validity bounds.
+
+The full pilot Go race suite and the registry race suite against disposable
+PostgreSQL passed. The packaged registry check also passed, including renewed
+policy access, revocation over the same TLS connection, outage/recovery, expiry
+clipping, read-only SQL privileges and rejection of writable-schema authority
+decoys. CI now runs the PostgreSQL check on native x86_64 and ARM64; checks for
+this revision are pending. The preceding Fleet revision passed all its native
+and VM CI. Provisioning PR 95's selected checks passed; its skipped hardware and
+older-image jobs remain explicitly unqualified.
+
+The private checkpoint SHA-256 is `cd7d2aa110c3ca3ca3b2a9b56134a3b867a8a79f97951c60e9cdb56383fd501d`.
+Native validity observation, authority/member startup transitions and coordinated
+host/trust installation still gate activation. No thirty-day delegation or
+unattended observation has started. The original deadline and
+`full_qualification: false` remain unchanged. Remaining reviews, merged deployment,
+native faults, canary renewals and the actual twenty-four-hour run still gate
+LAN milestone closure.
