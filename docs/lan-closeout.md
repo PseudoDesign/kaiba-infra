@@ -64,9 +64,15 @@ and historical fixture pins remain unchanged. The root file boundary passed a
 NixOS VM check as an unprivileged reader; Go race and module checks passed.
 Seven local cross-process scenarios with actual mTLS and disposable PostgreSQL
 verified trust reads before/after renewal and restart, wrong-principal denial,
-and denial after membership/delegation revocation. The new optional native trust
-mode awaits an updated provisioning deployment pin; its candidate native rehearsal
-does not substitute for that deployment check.
+and denial after membership/delegation revocation. The native trust mode is now
+enabled in [Fleet PR 38](https://github.com/PseudoDesign/kaiba-fleet/pull/38),
+merged at `eece476cd90e32571893f4cfe636686d80d7b3a5` from reviewed head
+`f41804b85688d294e35a9d449160fb8a4cbacf0b`. It selects provisioning's merged
+revision through the deployment input only. The local packaged rehearsal passed
+seventeen publication, controller and trust-transition scenarios, including
+authenticated trust reads across renewal/restart and revoked-authority denial.
+All six selected CI checks passed, including native ARM64 and x86_64. These
+packages are not deployed.
 
 PR 35 also adds the explicit native publication-store integration. The import
 guard permits exactly the observation/admission publication directory under a
@@ -124,6 +130,28 @@ The corrected inventory confirms all original certificate/configuration hashes,
 enabled existing approval/cutover paths, and absent delegation/publication config.
 No key contents or database rows were read and no host was changed.
 
+[Fleet PR 39](https://github.com/PseudoDesign/kaiba-fleet/pull/39), at `3a5a4fe`,
+adds the successor host-policy executable and includes merged PR 38. It composes
+current approved certificate/configuration checks with unchanged historical
+migration and recovery proofs, retaining actual-host, host-key, no-swap and
+synchronized-clock checks. The parent import guard supplies the immutable receipt
+pin as an argument after checking the executable hash; this avoids a circular
+hash dependency. A composed test also caught and corrected the current certificate
+inventory treating an archived migration certificate as an active certificate.
+
+All 77 continuity tests, eighteen legacy target tests, nine recovery tests,
+fourteen current-policy tests and twelve authority-continuity tests pass locally,
+along with packaged guard/module checks. The six composed successor cases include
+both original and recovered histories after predecessor expiry, and fail closed
+on changed keys/proofs, permission expansion, expired current credentials and
+term expiry. At **21:46 UTC**, a read-only native check on Ace revalidated its
+actual recovered migration proofs and retained transport key correspondence.
+Two earlier attempts lacked a dependency in the historical source tree and are
+retained; the complete candidate source corrected the rehearsal. No database
+was accessed or key exported. This is historical-proof acceptance only: the new
+guard is uninstalled, full transition/restoration acceptance remains outstanding,
+and PR 39 CI is pending on the combined revision.
+
 Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
 seven expected services and all twelve primary/replica DNS queries. Ace's
 retained state, membership, workload and all twelve DNS queries also pass their
@@ -175,8 +203,8 @@ been installed: Ace generation 14 and Mako generation 15 remain the recorded
 running deployment. No delegation, unattended timer or 24-hour observation is
 active, and the original deadline remains in force.
 
-Activation still requires acceptance of the current certificate/configuration
-verifier, a successor host-policy executable and reviewed operation producer,
+Activation still requires native acceptance of the current certificate/configuration
+verifier and successor host-policy executable, plus a reviewed operation producer,
 confined validity observation, SPIRE signing limits,
 coordinated publication/trust installation and native restoration rehearsal.
 Then run the actual Mako/Ace canaries, remaining fault acceptance and 24-hour
@@ -184,8 +212,10 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`fb4d7d4e9f26ea8542453594e09c2c82ca516a23f4602912029e2d97af12b118`.
+`8048cfd6cbbb71cf3fa2f5e2091b054be70bc29056baa5c022a58ff64684ecc2`.
 Its predecessors are
+`89aee406b7467894006fcd3c740019ce0bcadbd4615a05ea5ca410f9e324e118`,
+`fb4d7d4e9f26ea8542453594e09c2c82ca516a23f4602912029e2d97af12b118`,
 `80d4b4c26042eae5310f750ea32a1c539d1d4085171af17ce101f3b549e26dcf`,
 `6b49166cec12d69ef2f476dc35115f33ad536953b3b6ff32abf7f8e411da6f04`,
 `eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`,
