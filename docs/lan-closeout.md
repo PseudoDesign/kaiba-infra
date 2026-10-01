@@ -129,7 +129,19 @@ still found it inactive and the named pilot, SPIRE, DNS, regular PostgreSQL,
 Hydra web and evaluator services running. The owner confirmed the stop was
 unintentional, started the existing runner at Ace's console, and reported
 `active`. The remote start attempt did not execute: Ace rejected the workspace
-SSH key. A new full host baseline remains outstanding.
+SSH key. The owner subsequently restored restricted, 24-hour workspace access
+from Malak. Fresh SSH and passwordless administrative checks passed on Ace.
+At **20:52 UTC**, its retained state/membership, seventeen expected services and
+all twelve DNS queries passed. Mako's fresh baseline could not run because it
+also rejected the workspace key; owner recovery was requested.
+
+The repeat Hydra stop is now explained: `hydra-check-space.service` runs every
+five minutes and stops the queue runner below **20 GiB** available. At 20:54 UTC,
+Ace had about **14.7 GiB** free. A second authorized start passed, but does not
+resolve this storage guard. A read-only inventory found 1,704 unrooted Nix store
+paths occupying about 110 GiB. No paths have been deleted; retained qualification
+tools and runtime references must be protected before selecting cleanup. Keep
+the space guard enabled. The pilot and regular database services remain active.
 
 At **20:29 UTC**, TLS-verified reads through Hydra's Mako LAN proxy confirmed the
 exact provisioning PR 98 evaluation had nine successful builds and one unfinished
@@ -158,8 +170,9 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`6b49166cec12d69ef2f476dc35115f33ad536953b3b6ff32abf7f8e411da6f04`.
+`80d4b4c26042eae5310f750ea32a1c539d1d4085171af17ce101f3b549e26dcf`.
 Its predecessors are
+`6b49166cec12d69ef2f476dc35115f33ad536953b3b6ff32abf7f8e411da6f04`,
 `eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`,
 `032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`,
 `fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`,
