@@ -116,9 +116,12 @@ public workflow is not evidence that the private integration ran.
 
 Malak's retained CA container was locked after reboot. The first custody inventory
 stopped on the unavailable mount; the separate read-only inspection then stopped
-before unlock on a token-policy mismatch. Nonsecret token metadata diagnosis is
-pending. No source authority was activated, no live credential/deadline was
-changed, and no thirty-day term or unattended observation has started.
+before unlock on a token/keyslot assumption. The owner-provided nonsecret header
+projection confirmed recorded token `1` points to slot `2`, with PIN and touch
+required. The corrected inspection validates that actual association; seven
+policy/cleanup tests pass. Read-only custody inspection still needs the owner's
+local authentication. No source authority was activated, no live credential or
+deadline was changed, and no thirty-day term or unattended observation has started.
 
 Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
 10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
