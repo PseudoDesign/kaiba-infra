@@ -20,6 +20,48 @@ and transport CAs expiring October 24 and reader certificates expiring October
 rollover, preserving device keys, original grants and issuance/recovery history,
 is a prerequisite to term activation. No term has been activated.
 
+## Current implementation checkpoint — October 1
+
+The renewal components and provisioning consumer are merged: Fleet PR 31 at
+`3d4f332dfef599063105c7ac9ec7d49e16314377` and provisioning PR 96 at
+`5f40fbbf4dae1d9328ad440addfd65143e3ebd18`. Fleet PR 32 subsequently merged at
+`424d147dba78fe2ff3eabf58dda98d9928824a5c`, exposing explicit deployment packages
+from that provisioning revision. All six selected PR 32 CI jobs passed, including
+native x86_64/ARM64, imported-control-plane and identity VM checks. A separate
+local rehearsal passed fifteen publication, controller and trust scenarios with
+the merged package combination. Historical fixture pins remain unchanged.
+
+[Authority continuation PR 33](https://github.com/PseudoDesign/kaiba-fleet/pull/33)
+is a draft at `8dae345ce0d32dc1342c5d28de7fd339a072603a`. It adds optional,
+owner-pinned successor records and fresh local term checks before network
+services start, with no Fleet API boot dependency. Eleven continuation boundary
+tests, the original nine guard tests, module checks and nine isolated PostgreSQL
+guard groups pass locally. The native rehearsal accepts the actual Go/SQL reader
+output through the Python guard. Its separate database role is checked for exact
+read access, including denial of inherited, PUBLIC, column, sequence and grant
+option privileges. Fresh CI on this revision remains pending.
+
+[Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) at
+`7fa6d53` now selects the merged Fleet packages and merged DNS interface
+`e1f18fbc355b70b2d87245288d4ebb837434cbdd`. Host composition, member-guard and
+retained-device checks pass; unchanged derivations were reused where applicable.
+Hardware and regular service inputs are unchanged. These candidates have **not**
+been installed: Ace generation 14 and Mako generation 15 remain the recorded
+running deployment. No delegation, unattended timer or 24-hour observation is
+active, and the original deadline remains in force.
+
+Activation still requires the current certificate/configuration verifier and
+reviewed operation producer, confined validity observation, SPIRE signing limits,
+coordinated publication/trust installation and native restoration rehearsal.
+Then run the actual Mako/Ace canaries, remaining fault acceptance and 24-hour
+observation before final merged-revision deployment and closure. The successor
+guard alone does not satisfy those gates.
+
+The private checkpoint SHA-256 is
+`d75e52741fe90dd7d2c84229dea64d84ec4eefb82484f978df967db576e1ed7d`.
+Failed local fixture and unauthenticated-fetch attempts are retained with their
+corrections; none changed a live host.
+
 ## Implementation and acceptance sequence
 
 1. Complete an expiry inventory on both devices and a pre-deadline checkpoint.
