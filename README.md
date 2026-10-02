@@ -50,14 +50,21 @@ ordered clock-dependent startup, and Mako runs guarded generation 15. The later
 owner-attested 75-minute Malak power-off passed bounded device-access, DNS and
 post-TTL identity checks, plus one induced fresh update. Changed workstation boot
 and network return were verified separately; source authorities remain fenced.
-The original deadline is `2026-10-03T02:06:35Z`. Software validation includes 135
-migration tests with zero skips and the identity, control-plane and DNS VMs.
+The original deadline is `2026-10-03T02:06:35Z`. The latest local migration suite
+passes 155 tests with zero skips; prior identity, control-plane and DNS VM
+evidence is recorded in the closeout report.
 Broader credential lifecycle, SPIRE/database outages, publication catch-up and
 longer unattended operation remain open. Hardware/offline boot and rollback
 qualification, product installation/UI and public DNS remain separate; full
 qualification remains false. The bounded physical campaign subsequently passed, and original encrypted
 storage was restored on Ace generation 14. See the [LAN closeout implementation](docs/lan-closeout.md)
 and [LAN rollout](docs/pilot-dns-rollout.md).
+
+Reviewed merged runtimes are temporarily active on Ace and Mako; persistent boot
+profiles remain unchanged. Renewal preparation and the separate SPIRE backup are
+in draft PRs. GitHub billing/spending capacity currently prevents their CI jobs
+from executing. A thirty-day delegation and unattended renewal are not active;
+complete the reviewed trust/authority transition before the existing deadline.
 
 This is a product roadmap, not a production-readiness claim. Extend the existing
 [`kaiba-fleet`](https://github.com/PseudoDesign/kaiba-fleet) service for runtime

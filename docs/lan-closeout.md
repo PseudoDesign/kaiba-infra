@@ -269,6 +269,66 @@ No delegation, unattended timer or 24-hour observation is active. The original
 deadline and October 2 **14:00 UTC / 10 a.m. EDT** pre-deadline checkpoint remain
 in force. The staged runtime does not extend either deadline.
 
+[SPIRE transition rehearsal PR 40](https://github.com/PseudoDesign/kaiba-fleet/pull/40)
+merged at `32d1efd261e7d8086285909b73a7f8a602f1e07e` after all six CI checks
+passed. Native x86_64 and ARM64 reports each passed eight synthetic scenarios:
+explicit preparation/activation, bundle propagation, retained-node and continuing
+consumer rotation, refusal of either old-root signing path, and accounting for
+the retained overlap roots. Removing the upstream configuration produced an
+unbounded replacement signer in the fixture; the final deployment must retain
+its bounded upstream configuration. No live SPIRE cutover was performed.
+
+[SPIRE cold-backup PR 41](https://github.com/PseudoDesign/kaiba-fleet/pull/41)
+is a draft at `f1b9aac9a624f8969eb9f0aa23a9fe6f33dbc5dc`. Its local SPIRE VM
+passed encrypted full-readback backup, retained-state restart, duplicate-attempt
+refusal and watchdog termination of the worker and its child before restoration.
+The existing imported-control-plane VM passed thirteen groups with the shared
+archive engine. Twenty-eight backup tests passed natively on Ace ARM64 as the
+unprivileged operator, with no skips or live service invocation changes. This
+qualifies the operation's synthetic behavior; the separate live SPIRE backup
+has not run. Its private local-review evidence hash is
+`57e39edeaac5fd69acd8ab8f0ed5c94a60ac057f01dd5f50bc4588868d5f6627`.
+
+[Authority-preparation PR 42](https://github.com/PseudoDesign/kaiba-fleet/pull/42)
+is stacked after PR 41. Its explicit v1alpha2 preparation receipt permits only
+the reviewed automation and retained-member worker principals under the unchanged
+deadline. An existing nonempty delegation ledger consumes preparation, including
+revoked or expired history: the monitor stops relying services and preparation
+restart is refused. The owner ceremony therefore requires a fully prepared
+continuity operation and reconciliation of the same operation after a lost reply.
+Original issuer scope rows and migration proofs remain unchanged. Preparation
+does not activate a term or enable a controller.
+
+At exact PR 42 head `80eb96bfbb694ed0180564b7d30272844caeff96`, the local
+packaged migration suite passed 155 tests, guard suites passed 75 tests, ten
+disposable PostgreSQL groups passed, and Nix module evaluation passed. The full
+imported-control-plane VM passed fourteen groups, including the new consumed
+preparation boundary. Twenty-eight preparation/guard tests passed natively on
+Ace ARM64 as an unprivileged user with zero skips and unchanged live service
+invocations. The VM uses a disposable delegation-history marker; it does not
+claim a live owner ceremony or unattended renewal.
+
+At **05:49 UTC**, read-only inspection verified all sixteen active authority
+certificate files and the unchanged original manifest/configuration pins. The
+earliest authority certificate expires at the original cutoff. Renewal delegation
+and publication configuration remain absent. Malak's six loaded source fences,
+absent authority listeners and locked source mapping were checked again.
+At **05:52 UTC**, both hosts passed read-only retained-membership, encrypted
+storage, admission and expected-service checks (seventeen services on Ace and
+seven on Mako), with all twelve primary/replica DNS queries passing from each
+host. Ace's updater was active. This check did not induce workload probes,
+restart services or begin the unattended campaign; temporary and persistent
+profile selections remain as recorded above.
+
+Both drafts are blocked from review completion by GitHub Actions capacity.
+GitHub reports failed account payments or a spending limit requiring attention;
+all twelve jobs across their two current heads failed **before executing any
+steps**. These are unavailable checks, not passes. Local test results do not
+replace that missing CI. The owner has been asked to restore Actions capacity;
+then rerun and review the exact heads, merging PR 41 before PR 42. The sanitized
+CI evidence hash is
+`8581daaa18599ec383855d02f8d02d21155dc604c0ac981cf10acf0d6f88ba8c`.
+
 Activation still requires native acceptance of the current certificate/configuration
 verifier and successor host-policy executable, plus a reviewed operation producer,
 confined validity observation, SPIRE signing limits,
@@ -278,8 +338,10 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`7fe5e7397574b266662e29243bd098f3f1894a9ff66f7701bb4e79ab7544474d`.
+`08282306eed34d8453aa9b091d62534450dbdebb4d0937cc231f4b5123fb30db`.
 Its predecessors are
+`7fe5e7397574b266662e29243bd098f3f1894a9ff66f7701bb4e79ab7544474d`
+(runtime activation; retained without changes),
 `08e4dfec38e5ad8bf07df458f15db34290c3e92da44a625e2d77c5c8d4ffbd2e`
 (its inferred Mako preflight failure cause is corrected as inconclusive in the latest checkpoint),
 `93b87616bbaf14edd5576c32c9ed3d65faecf1a23988b19d1ddecdbe5bd7eafc`,
