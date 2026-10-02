@@ -20,7 +20,7 @@ and transport CAs expiring October 24 and reader certificates expiring October
 rollover, preserving device keys, original grants and issuance/recovery history,
 is a prerequisite to term activation. No term has been activated.
 
-## Current implementation checkpoint — October 1
+## Current implementation checkpoint — October 2
 
 The renewal components and provisioning consumer are merged: Fleet PR 31 at
 `3d4f332dfef599063105c7ac9ec7d49e16314377` and provisioning PR 96 at
@@ -71,8 +71,9 @@ merged at `eece476cd90e32571893f4cfe636686d80d7b3a5` from reviewed head
 revision through the deployment input only. The local packaged rehearsal passed
 seventeen publication, controller and trust-transition scenarios, including
 authenticated trust reads across renewal/restart and revoked-authority denial.
-All six selected CI checks passed, including native ARM64 and x86_64. These
-packages are not deployed.
+All six selected CI checks passed, including native ARM64 and x86_64. The
+compatible packages are now running in the temporary activation described below;
+renewal and continuation remain disabled.
 
 PR 35 also adds the explicit native publication-store integration. The import
 guard permits exactly the observation/admission publication directory under a
@@ -227,12 +228,46 @@ Private build, comparison and guard evidence is retained on Malak under
 `.worktrees/.private-observations/2026-10-02-merged-host-candidates`.
 Explicit roots on Ace under
 `/nix/var/nix/gcroots/kaiba-lan-host-candidates-20261002` retain both closures
-and their source. These candidates have **not** been installed: Ace generation
-14 and Mako generation 15 remain the running deployment. No delegation,
-unattended timer or 24-hour observation is active. The original deadline and
-October 2 **14:00 UTC / 10 a.m. EDT** pre-deadline checkpoint remain in force.
-A fresh stopped-writer backup and rehearsed deployment operation precede
-replacement of the compatible live components.
+and their source. At **04:07–04:09 UTC on October 2** (12:07–12:09 a.m. EDT), both
+merged candidates passed temporary NixOS `test` activation. Ace runs
+`ksh2kkh1cbrpzlq88jydb4fslwifbd23`; Mako runs
+`6q0q2vb1kq6714azv2fp5yb21mj7syvn`. Ace generation 14 and Mako generation 15
+remain the persistent and booted profiles. A reboot still selects those previous
+profiles; final persistent installation is outstanding.
+
+A fresh stopped-writer backup completed at **03:38 UTC**, with local decryption
+and exact file bytes, ownership and permissions verified. Its ciphertext SHA-256
+is `8f611822c39b24d62999730c945085a228046aeaedde5badbaeef0f683f96ffa`.
+The private archive is on Ace at
+`/var/lib/kaiba-pilot-continuity/cold-authority-backup-20261002/archive/authority.tar.age`.
+It covers `/srv/kaiba-pilot`, including authority/issuer history and policy. It
+excludes separate SPIRE state and Malak's source CA custody. Both hosts passed
+post-backup acceptance before activation.
+
+The [bounded activation helper](../scripts/lan-runtime-stage.py) passed fourteen
+tests. Native disposable watchdog rehearsals on both hosts demonstrated that a
+stuck worker and child terminate before restoration. Exact unit and `/etc` diffs,
+dry activation, retained-state checks and database aggregate hashes preceded
+each live activation. Both passed again afterward: unchanged memberships and
+device state, seventeen Ace services, seven Mako services, fresh workload
+observations and all twelve DNS queries from each host. Every existing authority
+table retained its rows and digest; only reviewed empty schema additions were
+permitted. Hydra, regular PostgreSQL and Ace's SPIRE processes were unchanged.
+Mako's SPIRE agent restarted with its retained admission and key cache. Its
+reviewed tmpfiles change restricts `/sys/kernel/debug` from root:sudo 0750 to
+root:root 0700. The existing workload probes were run for deployment acceptance;
+their timers and ordinary DNS renewal intervals were unchanged.
+
+Both activation watchdogs were disarmed after repeated acceptance. Root-private
+plans, receipts and logs remain on each host under
+`/var/lib/kaiba-pilot-runtime-stage/stage-<host>-merged20261002`. Failed or
+inconclusive preparation observations are retained. At **04:12 UTC**, Malak's
+six source fences remained loaded and inactive, with no authority listeners or
+source mapping.
+
+No delegation, unattended timer or 24-hour observation is active. The original
+deadline and October 2 **14:00 UTC / 10 a.m. EDT** pre-deadline checkpoint remain
+in force. The staged runtime does not extend either deadline.
 
 Activation still requires native acceptance of the current certificate/configuration
 verifier and successor host-policy executable, plus a reviewed operation producer,
@@ -243,8 +278,11 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`93b87616bbaf14edd5576c32c9ed3d65faecf1a23988b19d1ddecdbe5bd7eafc`.
+`7fe5e7397574b266662e29243bd098f3f1894a9ff66f7701bb4e79ab7544474d`.
 Its predecessors are
+`08e4dfec38e5ad8bf07df458f15db34290c3e92da44a625e2d77c5c8d4ffbd2e`
+(its inferred Mako preflight failure cause is corrected as inconclusive in the latest checkpoint),
+`93b87616bbaf14edd5576c32c9ed3d65faecf1a23988b19d1ddecdbe5bd7eafc`,
 `8048cfd6cbbb71cf3fa2f5e2091b054be70bc29056baa5c022a58ff64684ecc2`,
 `89aee406b7467894006fcd3c740019ce0bcadbd4615a05ea5ca410f9e324e118`,
 `fb4d7d4e9f26ea8542453594e09c2c82ca516a23f4602912029e2d97af12b118`,
