@@ -1,0 +1,24 @@
+name: Validate infrastructure
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  policy:
+    runs-on: kaiba-x86_64-vm
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - run: nix build --no-link -L .#checks.x86_64-linux.selector
+      - run: git diff --exit-code -- flake.lock
+  forgejo:
+    runs-on: kaiba-x86_64-vm
+    timeout-minutes: 30
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - run: nix build --no-link -L .#checks.x86_64-linux.forgejo-integration-test
+      - run: git diff --exit-code -- flake.lock

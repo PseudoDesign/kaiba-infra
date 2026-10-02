@@ -1,0 +1,13 @@
+{
+  "schema_version": "kaiba.forgejo-projects/v1",
+  "forge_url": "https://git.pseudo.design",
+  "repositories": [
+    {"source": "PseudoDesign/kaiba-infra", "destination": "PseudoDesign/kaiba-infra", "private": false},
+    {"source": "pd-codex/kaiba-contracts", "destination": "pd-codex/kaiba-contracts", "private": false},
+    {"source": "pd-codex/nixos-kaiba-network", "destination": "pd-codex/nixos-kaiba-network", "private": false},
+    {"source": "PseudoDesign/kaiba-provisioning", "destination": "PseudoDesign/kaiba-provisioning", "private": false},
+    {"source": "PseudoDesign/kaiba-fleet", "destination": "PseudoDesign/kaiba-fleet", "private": true},
+    {"source": "PseudoDesign/nix-pseudo-design", "destination": "PseudoDesign/nix-pseudo-design", "private": false}
+  ],
+  "pending": [{"name": "kaiba-ui", "reason": "Local checkout has no remote and contains uncommitted work; source/visibility requires owner input."}]
+}

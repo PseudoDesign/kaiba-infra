@@ -5,7 +5,7 @@ let
   # feature; actual concurrency is still limited to one build and two cores.
   features = [ "nixos-test" "big-parallel" ] ++ lib.optional cfg.kvm "kvm";
 in {
-  imports = [ ./hydra-integrations.nix ./hydra-ci-runs.nix ];
+  imports = [ ./hydra-integrations.nix ./hydra-ci-runs.nix ./hydra-forgejo.nix ];
   options.services.kaibaHydra = {
     enable = lib.mkEnableOption "Kaiba's serial native Hydra builder";
     publicURL = lib.mkOption { type = lib.types.str; default = "https://hydra.pseudo.design"; };
