@@ -1,0 +1,861 @@
+# Finish and ship the LAN installation
+
+Owner-approved implementation scope: 2026-09-30. Target domain:
+`pilot.kaiba.pseudo.design`. Ace owns authority and primary DNS; Mako retains
+its admitted identity and replica; Malak is an operator workstation with its
+former authority fenced. This milestone is **in progress**, not closed.
+
+## Deadline and deployment gates
+
+The existing deadline remains **2026-10-03T02:06:35Z** (October 2, 10:06 p.m.
+EDT). Do not edit it in place. Activate an explicit validated successor or
+preserve state and allow access to expire. If implementation misses the
+pre-deadline checkpoint, any bridge must be separately reviewed and use the
+existing renewal protocol; approval of the overall plan is not evidence that
+a bridge was issued.
+
+The read-only expiry inventory on 2026-10-01 found installed issuer, management
+and transport CAs expiring October 24 and reader certificates expiring October
+10. These cannot support a new thirty-day term. Explicit trust/credential
+rollover, preserving device keys, original grants and issuance/recovery history,
+is a prerequisite to term activation. No term has been activated.
+
+## Current implementation checkpoint — October 2
+
+The renewal components and provisioning consumer are merged: Fleet PR 31 at
+`3d4f332dfef599063105c7ac9ec7d49e16314377` and provisioning PR 96 at
+`5f40fbbf4dae1d9328ad440addfd65143e3ebd18`. Fleet PR 32 subsequently merged at
+`424d147dba78fe2ff3eabf58dda98d9928824a5c`, exposing explicit deployment packages
+from that provisioning revision. All six selected PR 32 CI jobs passed, including
+native x86_64/ARM64, imported-control-plane and identity VM checks. A separate
+local rehearsal passed fifteen publication, controller and trust scenarios with
+the merged package combination. Historical fixture pins remain unchanged.
+
+[Authority continuation PR 33](https://github.com/PseudoDesign/kaiba-fleet/pull/33)
+merged at `f65d3950a35c48867bc146c66d12d2667380f588` after all six selected CI
+jobs passed. It adds optional,
+owner-pinned successor records and fresh local term checks before network
+services start, with no Fleet API boot dependency. Eleven continuation boundary
+tests, the original nine guard tests, module checks and nine isolated PostgreSQL
+guard groups pass locally. The native rehearsal accepts the actual Go/SQL reader
+output through the Python guard. Its separate database role is checked for exact
+read access, including denial of inherited, PUBLIC, column, sequence and grant
+option privileges.
+
+[SPIRE expiry PR 34](https://github.com/PseudoDesign/kaiba-fleet/pull/34) merged
+at `36ede3589a13785e030ec69a4fb09fc176476a8c`, also with all six selected CI
+jobs passing. Its stock SPIRE fixture proves an upstream CA's absolute expiry
+bounds the issuer chain and X.509 leaf, survives restart and unavailable upstream
+certificate files, and denies issuance after actual expiry. JWT issuance is
+explicitly disabled in this fixture. Registration expiry alone is not a signing
+cap; this result does not qualify the live registration or bundle transition.
+
+[Fleet PR 35](https://github.com/PseudoDesign/kaiba-fleet/pull/35) merged at
+`0927ce792f3f63c12a74d4a7b46458ab52e32368` after review and all six selected CI
+jobs passed on `dbbcc3f`. [Provisioning PR 98](https://github.com/PseudoDesign/kaiba-provisioning/pull/98)
+merged at `30c35edd336bd61dda87993c92de742c01fa37c2`, from reviewed head
+`9ed2f7566516dd7d1512c9a038077d58f588a943`, after all seven selected CI checks
+passed, including all ten Hydra builds. The planner excluded two optional
+expensive matrices; Pages deployment was skipped for the pull request. These
+skips are not test passes. These changes add root-owned observation consumption,
+optional measured refresh before a controller tick, and authenticated inspection
+of the protected client's effective installed trust. Existing status responses
+and historical fixture pins remain unchanged. The root file boundary passed a
+NixOS VM check as an unprivileged reader; Go race and module checks passed.
+Seven local cross-process scenarios with actual mTLS and disposable PostgreSQL
+verified trust reads before/after renewal and restart, wrong-principal denial,
+and denial after membership/delegation revocation. The native trust mode is now
+enabled in [Fleet PR 38](https://github.com/PseudoDesign/kaiba-fleet/pull/38),
+merged at `eece476cd90e32571893f4cfe636686d80d7b3a5` from reviewed head
+`f41804b85688d294e35a9d449160fb8a4cbacf0b`. It selects provisioning's merged
+revision through the deployment input only. The local packaged rehearsal passed
+seventeen publication, controller and trust-transition scenarios, including
+authenticated trust reads across renewal/restart and revoked-authority denial.
+All six selected CI checks passed, including native ARM64 and x86_64. The
+compatible packages are now running in the temporary activation described below;
+renewal and continuation remain disabled.
+
+PR 35 also adds the explicit native publication-store integration. The import
+guard permits exactly the observation/admission publication directory under a
+validated continuation, checks matching term/member scope and numeric ownership,
+and preserves all other immutable file checks. Only the publisher writes; the
+two record services gain group read access. Four boundary-test groups, the nine
+original import tests, eleven continuation tests, Nix module evaluation and a
+VM with actual root/publisher/reader ownership pass. No publication directory or
+batch is initialized by enabling this option.
+
+The owner completed the read-only management custody inventory at **19:05 UTC**.
+Both retained operator/station certificates expire **October 9 at 10 p.m. EDT**,
+before the intended term ends. Their key metadata is verified; that inspection
+did not open keys or prove key/certificate correspondence. Source services stayed
+fenced and the temporary read-only mapping closed. The private owner-reported
+inventory evidence SHA-256 is
+`3c6f47ecd654276325f4ffdfcf4fa8e248b447ec35dd9bf18228d5ccc1500da6`.
+
+A separate owner-terminal packet now prepares one uninstalled operator candidate
+using the retained key and management CA, preserving its exact principal and
+signed scope. The station is excluded. Eight candidate tests, thirteen leaf
+tests and thirteen read-only mapping/cleanup tests pass. The ceremony is published
+in [Fleet PR 36](https://github.com/PseudoDesign/kaiba-fleet/pull/36) at
+reviewed head `b6c2167c444c0dbf2a5d704420102b364f473ffd`. All six selected CI
+jobs passed, and it merged at `752c8ffdbfa01d7d70c11cb0561493d1e826ce6a`.
+The owner completed it at **19:20 UTC**. Independent public-handoff verification
+confirmed the retained key, exact planned signed scope, management CA signature
+and candidate expiry **2026-11-07T00:00:00Z**. The temporary source mapping closed;
+no private key was exported. Verification evidence SHA-256:
+`e92f4509ea84e4b8f6e46f6f7b637c3d8ea26a03978ad595e57c42cd9d702463`.
+The candidate remains uninstalled. This operation does not extend the pilot
+deadline or activate a delegation.
+
+[Fleet PR 37](https://github.com/PseudoDesign/kaiba-fleet/pull/37) at
+`f5622cefd5b4624e3df71454c12a0b53c849ec7e` adds the optional current certificate
+and configuration verifier. It permits only the exact reviewed renewal/publication
+additions and same-key trust references; other grants, callbacks, permissions and
+recovery settings retain their predecessor values. Active authority certificates
+must all be inventoried, signature-verified and valid for the full term at the
+real current time. Fourteen boundary/guard integration tests, eleven continuation
+and nine staging regressions, plus Nix guard/module checks pass. The isolated
+imported-control-plane VM passed thirteen regression scenarios with the optional
+verifier disabled; that is not acceptance of a new live continuation. All six
+selected CI jobs passed on the reviewed head, and PR 37 merged at
+`4e738b7e561fa979f803cf3fa1eca424c6a25c71`. This does not
+replace the host-policy executable or fresh database guard, and remains disabled
+on the live pilot.
+
+The native public-certificate inventory found **sixteen files containing seventeen
+certificates**, including Fleet's intentional management-plus-issuer trust bundle.
+Two earlier inventory attempts assumed a single certificate and failed closed;
+both are retained. The verifier now explicitly preserves each bundle's root count,
+order, keys and signed scope, and requires an issuer reference for every member.
+The corrected inventory confirms all original certificate/configuration hashes,
+enabled existing approval/cutover paths, and absent delegation/publication config.
+No key contents or database rows were read and no host was changed.
+
+[Fleet PR 39](https://github.com/PseudoDesign/kaiba-fleet/pull/39), merged at
+`d7027c24b523a1030b855ec8fe1b6582ad2ce1aa` from reviewed head
+`3a5a4fe8a88562a87c750c521feafaf2c312c102`, adds the successor host-policy executable and includes merged PR 38. It composes
+current approved certificate/configuration checks with unchanged historical
+migration and recovery proofs, retaining actual-host, host-key, no-swap and
+synchronized-clock checks. The parent import guard supplies the immutable receipt
+pin as an argument after checking the executable hash; this avoids a circular
+hash dependency. A composed test also caught and corrected the current certificate
+inventory treating an archived migration certificate as an active certificate.
+
+All 77 continuity tests, eighteen legacy target tests, nine recovery tests,
+fourteen current-policy tests and twelve authority-continuity tests pass locally,
+along with packaged guard/module checks. The six composed successor cases include
+both original and recovered histories after predecessor expiry, and fail closed
+on changed keys/proofs, permission expansion, expired current credentials and
+term expiry. At **21:46 UTC**, a read-only native check on Ace revalidated its
+actual recovered migration proofs and retained transport key correspondence.
+Two earlier attempts lacked a dependency in the historical source tree and are
+retained; the complete candidate source corrected the rehearsal. No database
+was accessed or key exported. This is historical-proof acceptance only: the new
+guard is uninstalled, full transition/restoration acceptance remains outstanding,
+and all six selected PR 39 CI checks passed on the combined revision.
+
+Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
+seven expected services and all twelve primary/replica DNS queries. Ace's
+retained state, membership, workload and all twelve DNS queries also pass their
+targeted checks. Its full host baseline failed because Hydra's queue runner
+was inactive after a clean stop at 17:05 UTC. A fresh status read at **19:32 UTC**
+still found it inactive and the named pilot, SPIRE, DNS, regular PostgreSQL,
+Hydra web and evaluator services running. The owner confirmed the stop was
+unintentional, started the existing runner at Ace's console, and reported
+`active`. The remote start attempt did not execute: Ace rejected the workspace
+SSH key. The owner subsequently restored restricted, 24-hour workspace access
+from Malak. Fresh SSH and passwordless administrative checks passed on Ace.
+At **20:52 UTC**, its retained state/membership, seventeen expected services and
+all twelve DNS queries passed. Mako's fresh baseline could not run because it
+also rejected the workspace key; owner recovery was requested. The owner restored
+Mako access afterward. At **03:16 UTC on October 2** (October 1, 11:16 p.m. EDT),
+fresh authenticated checks passed on both hosts: retained state and memberships,
+seventeen Ace services, seven Mako services and twelve DNS queries from each.
+Mako’s current authorization still ends at the original deadline; expired
+historical certificates in its retained history are not current-membership
+failures. At **03:25 UTC**, Malak’s six loaded source fences remained inactive,
+with no authority listeners or source mapping.
+
+The repeat Hydra stop is now explained: `hydra-check-space.service` runs every
+five minutes and stops the queue runner below **20 GiB** available. At 20:54 UTC,
+Ace had about **14.7 GiB** free. The owner authorized cleanup. Before collection,
+387 explicit Nix roots protected store paths referenced by project records,
+runtime configuration and active processes. Collection removed 254 unrooted
+store paths and recovered **20.1 GiB of actual available space**, leaving
+**34.8 GiB** free. Nix reported 30.7 GiB of deleted path sizes; the filesystem
+availability measurement is the capacity recovered. Every retained path remains
+valid, all system-profile links are unchanged, and no backups were removed.
+
+Hydra restarted at **21:08 UTC** and remained in the same invocation through
+the ordinary space-guard check at **21:10:08 UTC**. The guard and its timer are
+unchanged. Ace's fresh post-cleanup baseline passed its retained membership,
+seventeen expected services and all twelve primary/replica DNS queries.
+Private receipts and the collection log are on Ace under
+`/var/lib/kaiba-store-maintenance/ace-store-cleanup-20261001`; the retention roots
+are under `/nix/var/nix/gcroots/kaiba-lan-closeout-20261001`. Keep these roots until
+their retained runtime and qualification references receive an explicit review.
+
+At **21:10 UTC**, TLS-verified reads through Hydra's Mako LAN proxy confirmed all
+ten builds passed for the exact provisioning PR 98 evaluation, including the
+previously pending `stable-campaign-provisioner-unsigned-artifacts` (239).
+The GitHub Hydra gate also passed, allowing the reviewed PR to merge.
+Malak's six source services remain fenced and
+inactive, its authority listeners are absent, and its source mapping is closed.
+The failed Ace baseline and an earlier inconclusive Mako sample are retained.
+
+[Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) merged at
+`5e0110459dd743d24ea7679b480dc9ce3a84b10a`, from reviewed head
+`72cf3f8a6cd582230e2d738ec137c8dae7c591a4`. It selects merged Fleet
+`d7027c24b523a1030b855ec8fe1b6582ad2ce1aa`, deployable provisioning
+`30c35edd336bd61dda87993c92de742c01fa37c2` and DNS
+`e1f18fbc355b70b2d87245288d4ebb837434cbdd`. Historical fixture and hardware
+pins are unchanged. Two-host composition, admitted-member guard, tmpfiles,
+retained-device persistence VM and legacy encrypted-storage checks pass.
+The host repository has **no PR CI checks**; their absence is not a pass.
+
+Both active profiles built natively on Ace, and the merged revision archives to
+exactly the reviewed source/dependency tree. Comparison with installed profiles
+confirmed unchanged kernel/initrd/firmware, filesystems, service sets and enabled
+units. Eight Ace pilot units change package/guard references; Mako changes its
+admission-guard references and tmpfiles rule. Regular application units are
+unchanged. The candidate Ace storage/import guard and Mako admission guard passed
+read-only native checks against retained state, with continuation disabled.
+This verifies compatibility with the existing policy, not a new term.
+
+The candidate manifest SHA-256 is
+`0e938940d6b7bf0d50db7d1595043c58c42b5cf8e53453917e5a2ff56c6e9c4a`.
+Private build, comparison and guard evidence is retained on Malak under
+`.worktrees/.private-observations/2026-10-02-merged-host-candidates`.
+Explicit roots on Ace under
+`/nix/var/nix/gcroots/kaiba-lan-host-candidates-20261002` retain both closures
+and their source. At **04:07–04:09 UTC on October 2** (12:07–12:09 a.m. EDT), both
+merged candidates passed temporary NixOS `test` activation. Ace runs
+`ksh2kkh1cbrpzlq88jydb4fslwifbd23`; Mako runs
+`6q0q2vb1kq6714azv2fp5yb21mj7syvn`. Ace generation 14 and Mako generation 15
+remain the persistent and booted profiles. A reboot still selects those previous
+profiles; final persistent installation is outstanding.
+
+A fresh stopped-writer backup completed at **03:38 UTC**, with local decryption
+and exact file bytes, ownership and permissions verified. Its ciphertext SHA-256
+is `8f611822c39b24d62999730c945085a228046aeaedde5badbaeef0f683f96ffa`.
+The private archive is on Ace at
+`/var/lib/kaiba-pilot-continuity/cold-authority-backup-20261002/archive/authority.tar.age`.
+It covers `/srv/kaiba-pilot`, including authority/issuer history and policy. It
+excludes separate SPIRE state and Malak's source CA custody. Both hosts passed
+post-backup acceptance before activation.
+
+The [bounded activation helper](../scripts/lan-runtime-stage.py) passed fourteen
+tests. Native disposable watchdog rehearsals on both hosts demonstrated that a
+stuck worker and child terminate before restoration. Exact unit and `/etc` diffs,
+dry activation, retained-state checks and database aggregate hashes preceded
+each live activation. Both passed again afterward: unchanged memberships and
+device state, seventeen Ace services, seven Mako services, fresh workload
+observations and all twelve DNS queries from each host. Every existing authority
+table retained its rows and digest; only reviewed empty schema additions were
+permitted. Hydra, regular PostgreSQL and Ace's SPIRE processes were unchanged.
+Mako's SPIRE agent restarted with its retained admission and key cache. Its
+reviewed tmpfiles change restricts `/sys/kernel/debug` from root:sudo 0750 to
+root:root 0700. The existing workload probes were run for deployment acceptance;
+their timers and ordinary DNS renewal intervals were unchanged.
+
+Both activation watchdogs were disarmed after repeated acceptance. Root-private
+plans, receipts and logs remain on each host under
+`/var/lib/kaiba-pilot-runtime-stage/stage-<host>-merged20261002`. Failed or
+inconclusive preparation observations are retained. At **04:12 UTC**, Malak's
+six source fences remained loaded and inactive, with no authority listeners or
+source mapping.
+
+No delegation, unattended timer or 24-hour observation is active. The original
+deadline and October 2 **14:00 UTC / 10 a.m. EDT** pre-deadline checkpoint remain
+in force. The staged runtime does not extend either deadline.
+
+[SPIRE transition rehearsal PR 40](https://github.com/PseudoDesign/kaiba-fleet/pull/40)
+merged at `32d1efd261e7d8086285909b73a7f8a602f1e07e` after all six CI checks
+passed. Native x86_64 and ARM64 reports each passed eight synthetic scenarios:
+explicit preparation/activation, bundle propagation, retained-node and continuing
+consumer rotation, refusal of either old-root signing path, and accounting for
+the retained overlap roots. Removing the upstream configuration produced an
+unbounded replacement signer in the fixture; the final deployment must retain
+its bounded upstream configuration. No live SPIRE cutover was performed.
+
+[SPIRE cold-backup PR 41](https://github.com/PseudoDesign/kaiba-fleet/pull/41)
+is a draft at `f1b9aac9a624f8969eb9f0aa23a9fe6f33dbc5dc`. Its local SPIRE VM
+passed encrypted full-readback backup, retained-state restart, duplicate-attempt
+refusal and watchdog termination of the worker and its child before restoration.
+The existing imported-control-plane VM passed thirteen groups with the shared
+archive engine. Twenty-eight backup tests passed natively on Ace ARM64 as the
+unprivileged operator, with no skips or live service invocation changes. This
+qualifies the operation's synthetic behavior; the separate live SPIRE backup
+has not run. Its private local-review evidence hash is
+`57e39edeaac5fd69acd8ab8f0ed5c94a60ac057f01dd5f50bc4588868d5f6627`.
+
+[Authority-preparation PR 42](https://github.com/PseudoDesign/kaiba-fleet/pull/42)
+is stacked after PR 41. Its explicit v1alpha2 preparation receipt permits only
+the reviewed automation and retained-member worker principals under the unchanged
+deadline. An existing nonempty delegation ledger consumes preparation, including
+revoked or expired history: the monitor stops relying services and preparation
+restart is refused. The owner ceremony therefore requires a fully prepared
+continuity operation and reconciliation of the same operation after a lost reply.
+Original issuer scope rows and migration proofs remain unchanged. Preparation
+does not activate a term or enable a controller.
+
+At exact PR 42 head `80eb96bfbb694ed0180564b7d30272844caeff96`, the local
+packaged migration suite passed 155 tests, guard suites passed 75 tests, ten
+disposable PostgreSQL groups passed, and Nix module evaluation passed. The full
+imported-control-plane VM passed fourteen groups, including the new consumed
+preparation boundary. Twenty-eight preparation/guard tests passed natively on
+Ace ARM64 as an unprivileged user with zero skips and unchanged live service
+invocations. The VM uses a disposable delegation-history marker; it does not
+claim a live owner ceremony or unattended renewal.
+
+At **05:49 UTC**, read-only inspection verified all sixteen active authority
+certificate files and the unchanged original manifest/configuration pins. The
+earliest authority certificate expires at the original cutoff. Renewal delegation
+and publication configuration remain absent. Malak's six loaded source fences,
+absent authority listeners and locked source mapping were checked again.
+At **05:52 UTC**, both hosts passed read-only retained-membership, encrypted
+storage, admission and expected-service checks (seventeen services on Ace and
+seven on Mako), with all twelve primary/replica DNS queries passing from each
+host. Ace's updater was active. This check did not induce workload probes,
+restart services or begin the unattended campaign; temporary and persistent
+profile selections remain as recorded above.
+
+Both drafts are blocked from review completion by GitHub Actions capacity.
+GitHub reports failed account payments or a spending limit requiring attention;
+all twelve jobs across their two current heads failed **before executing any
+steps**. These are unavailable checks, not passes. Local test results do not
+replace that missing CI. The owner has been asked to restore Actions capacity;
+then rerun and review the exact heads, merging PR 41 before PR 42. The sanitized
+CI evidence hash is
+`8581daaa18599ec383855d02f8d02d21155dc604c0ac981cf10acf0d6f88ba8c`.
+
+Activation still requires native acceptance of the current certificate/configuration
+verifier and successor host-policy executable, plus a reviewed operation producer,
+confined validity observation, SPIRE signing limits,
+coordinated publication/trust installation and native restoration rehearsal.
+Then run the actual Mako/Ace canaries, remaining fault acceptance and 24-hour
+observation before final merged-revision deployment and closure. The successor
+guard alone does not satisfy those gates.
+
+The latest private checkpoint SHA-256 is
+`08282306eed34d8453aa9b091d62534450dbdebb4d0937cc231f4b5123fb30db`.
+Its predecessors are
+`7fe5e7397574b266662e29243bd098f3f1894a9ff66f7701bb4e79ab7544474d`
+(runtime activation; retained without changes),
+`08e4dfec38e5ad8bf07df458f15db34290c3e92da44a625e2d77c5c8d4ffbd2e`
+(its inferred Mako preflight failure cause is corrected as inconclusive in the latest checkpoint),
+`93b87616bbaf14edd5576c32c9ed3d65faecf1a23988b19d1ddecdbe5bd7eafc`,
+`8048cfd6cbbb71cf3fa2f5e2091b054be70bc29056baa5c022a58ff64684ecc2`,
+`89aee406b7467894006fcd3c740019ce0bcadbd4615a05ea5ca410f9e324e118`,
+`fb4d7d4e9f26ea8542453594e09c2c82ca516a23f4602912029e2d97af12b118`,
+`80d4b4c26042eae5310f750ea32a1c539d1d4085171af17ce101f3b549e26dcf`,
+`6b49166cec12d69ef2f476dc35115f33ad536953b3b6ff32abf7f8e411da6f04`,
+`eafe40b08702432290566f19eb0f45b6a926447c93667961fd71560855d2c0f8`,
+`032cff3ff86f611ebff2502c4419fe7139ddab319a499c8ea45d49d35082f934`,
+`fd319b9effda961f2db9cf78a75120ef9d698a1ec8d907e464ded9d999f91168`,
+`b0c71b5f8b1f5cc32d7b151ac57fdcbb58a49ee8c4df3b774cdd4bb8143a02d4` and
+`d75e52741fe90dd7d2c84229dea64d84ec4eefb82484f978df967db576e1ed7d`.
+Failed local fixture and unauthenticated-fetch attempts are retained with their
+corrections; none changed a live host.
+
+## Implementation and acceptance sequence
+
+1. Complete an expiry inventory on both devices and a pre-deadline checkpoint.
+   Implement the additive renewal-delegation contract, owner create/read/revoke
+   APIs, restricted automation principal and issuer verification. Pin exact
+   enrollment instances, keys, scope and accepted evidence gaps. A term is
+   exactly thirty days; individual authorizations are at most seven days.
+2. Implement a durable Ace controller and protected workers on both devices.
+   Check every five minutes; start below the smaller of 48 hours or half the
+   issued lifetime. Keep one unfinished operation per predecessor. Reconcile
+   lost responses with its original ID; ambiguous issuance or cutover blocks
+   progress. Refresh evidence within existing freshness rules. Changed evidence
+   or exceptions requires owner review. No workstation dependency or automatic
+   replacement identity is allowed.
+3. Add a versioned host continuity transition, preserving migration proofs and
+   appending successor records. Coordinate authority guards, admitted-startup
+   receipts, admission records and SPIRE registration expiration. Expose term
+   and credential expiry, renewal state and blocked reason in CLI/systemd health;
+   warn locally at seven days, 24 hours and six hours before term end.
+4. Rehearse disposable-member revocation, replacement denial, permission changes
+   on retained TLS connections, continuing-consumer workload rotation, bounded
+   SPIRE/private-database outages, and publication/removal replica convergence
+   within 60 seconds. Live faults need watchdog restoration and bounded windows.
+   Preserve real memberships, Hydra and regular PostgreSQL. Exercise lost replies,
+   restart, revocation during renewal, duplicate execution, stale records and
+   term expiry in automated fixtures; preserve failed attempt evidence.
+5. Capture fresh baselines and verify a stopped-writer encrypted backup of the
+   real authority, issuer history and policy. Deploy compatible readers, guards
+   and disabled components first. Activate the exact approved delegation only
+   after trust and acceptance gates pass. Renew Mako first, then Ace, using
+   retained keys and initial 24-hour canary credentials. Prove successor access,
+   predecessor denial, stable identity and complete history before enabling
+   unattended renewal. Subsequent credentials may last up to seven days, clipped
+   by every applicable bound.
+6. Observe **24 actual hours** with no induced updater restarts or shortened DNS
+   intervals. Require an unattended operational renewal on each device, at least
+   two ordinary six-hour DNS lease renewals, fresh workload credentials, healthy
+   access and matching primary/replica DNS. Ambiguous operations, unexpected
+   identity changes or new service failures fail acceptance. Verify persistent
+   configuration and supported restarts with recovery access available.
+7. Review and merge parent PRs before children: contracts and DNS interfaces,
+   then Fleet, then provisioning consumers and host configurations. Preserve
+   immutable historical test pins; update deployable pins to reviewed merged
+   revisions, rebuild and deploy those exact closures. Repeat original-storage,
+   retained-key, service/credential/updater, twelve DNS-query and source-fence
+   acceptance. Record deployed revisions and close only after every gate passes.
+
+Required checks include contract conformance, renewal state machines,
+authorization, real PostgreSQL, Go race, Nix modules, VMs and native ARM64.
+Missing CI is not a pass. Record skipped checks and their reasons.
+
+## Evidence and handoff
+
+The [bounded physical campaign](offline-qualification.md) is complete. Original
+encrypted storage is restored; Ace generation 14 and Mako generation 15 passed
+the recorded return checks. No additional drive swaps or destructive power
+tests are planned. This does not establish hardware rollback protection,
+secure boot, autonomous offline operation or full production qualification.
+
+Keep raw credentials, rows and backups private. Publish sanitized outcomes and
+evidence hashes. The handoff must include the deployed revision manifest,
+delegation expiry and owner reapproval procedure, acceptance report, private
+backup locations and follow-up issues for production installation and hardware
+qualification. Public DNS and product installation/UI remain separate milestones.
+Keep `full_qualification: false` throughout this LAN milestone.
+
+Follow-up work is tracked separately in
+[production installation, infra issue 7](https://github.com/PseudoDesign/kaiba-infra/issues/7)
+and [production hardware qualification, provisioning issue 97](https://github.com/PseudoDesign/kaiba-provisioning/issues/97).
+Neither issue moves a required LAN acceptance gate into a later milestone.
+
+## Implementation checkpoint, 2026-10-01
+
+The contracts stack is merged through
+[PR 15](https://github.com/pd-codex/kaiba-contracts/pull/15), revision
+`8bf0dc6822805b151ad29c459896f85119f87e0b`; 124 contract tests pass locally.
+The DNS stack is merged through
+[PR 4](https://github.com/pd-codex/nixos-kaiba-network/pull/4), revision
+`e1f18fbc355b70b2d87245288d4ebb837434cbdd`. Its exact PR head passed unit,
+module, native ARM64 package and DNS VM checks. These are reviewed dependency
+revisions, not a claim that the live deployment has changed.
+
+Fleet's parent stack is reviewed and merged in dependency order:
+
+| Change | Merged revision |
+| --- | --- |
+| [SPIRE foundation, PR 27](https://github.com/PseudoDesign/kaiba-fleet/pull/27) | `cb1598744703883acea0843e43253a4e28743cf7` |
+| [Live workload registry, PR 28](https://github.com/PseudoDesign/kaiba-fleet/pull/28) | `f7f230771f4ad2e21fc4fab276430591db22c753` |
+| [Persistent identity pilot, PR 29](https://github.com/PseudoDesign/kaiba-fleet/pull/29) | `e7070111863e7660e965d7ef4ad811015e8bf8de` |
+
+Each exact PR head passed native x86_64/ARM64 enrollment and its applicable
+identity/DNS/persistent-pilot VM workflow. The remaining LAN integration PR 30
+now targets `main`; renewal PR 31 remains its child. Deployment still uses the
+recorded earlier closures until all deployment gates pass.
+
+[Fleet PR 31](https://github.com/PseudoDesign/kaiba-fleet/pull/31) implements owner
+create/read/revoke APIs, restricted delegation routes, independent issuer checks,
+exact durable grants, a durable controller and protected workers. Same-key issuer
+CA continuation preserves original scope records and grants through an append-only
+transition. Revision `6f9a6c4419a0b9a0cf462539eeec4cf21d3cc726` passed native x86_64,
+ARM64, imported-control-plane and identity VM CI. The local authenticated fresh
+observation renderer and append-only publication path are implemented and tested.
+Measured-bound controller-plan generation is now implemented; its native validity
+observer, host continuity, startup receipts and live activation remain open.
+
+[Provisioning PR 96](https://github.com/PseudoDesign/kaiba-provisioning/pull/96)
+adds explicit protected-client trust continuation without replacing device keys.
+Its x86 and native ARM64 checks passed. Its first x86 workflow failed fetching the
+private historical Fleet dependency. The full historical campaign check now runs
+and passes in Fleet's private CI without changing physical campaign pins or giving
+public PRs a private-repository credential. Require that separate result; a green
+public workflow alone is not evidence that the private integration ran.
+
+Malak's retained CA custody inventory completed at **2026-10-01T04:49:23Z**
+using the existing recovery slot. Both management and transport certificates
+matched their expected fingerprints; adjacent keys were regular, single-link,
+root-owned 0600 files. The read-only mapping closed and all source services
+remained inactive. Keys were not opened by the inventory. The preceding token
+inspection failures are retained; no token reset or reenrollment was performed.
+
+Candidate-only CA continuation tooling now matches each retained key to its CA,
+locks key memory before reading it, records durable signing intents, and validates
+successors using the production Go certificate verifier. Eleven candidate/custody-owner
+tests and thirteen source custody tests pass locally. Packaged delegation/controller/trust
+checks, including the original eight signing fixtures, pass at
+`/nix/store/mvbrp0qkm5d2avcn3c4gjgif221h96aa-kaiba-pilot-renewal-delegation`.
+The source preparation packet proposes CA expiry `2026-11-08T00:00:00Z`; packet
+SHA-256 is `6c68821d438a6c1732fa6dbb987abf4ff37881682b4a6489228573d295fcf554`.
+The source packet completed at **2026-10-01T05:01:00Z**, preparing management and
+transport candidates on Malak. Its read-only source mapping closed and source
+services stayed fenced. Ace prepared its issuer candidate at **05:06:34Z** after
+eight native ARM64 candidate tests passed. All three candidates retain their
+original public keys and expire **2026-11-08T00:00:00Z**. They remain uninstalled.
+
+| CA role | Candidate certificate SHA-256 (DER) |
+| --- | --- |
+| Management | `9ca29292727434255339b29185a15343b823414075e76aea71c9de27bb52a372` |
+| Transport | `67d38f19e4a308b6305c9d5b6e79d9349b0eba90da5d3f7abe6c3a7b6f436379` |
+| Issuer | `1182d5b2915b3a223eda4e473c415ee787cfe6951c57df6526eed7d9ec5cc2cd` |
+
+Candidate preparation does not activate a term, extend access, or replace private
+keys. Coordinated trust installation, leaf continuation, host continuity and the
+stopped-writer backup were deployment prerequisites; the backup is now verified below. The operator handoff copies
+only the two public source CA certificates after checking these exact fingerprints;
+the signing keys remain on their custody hosts.
+
+The separated historical NVMe campaign check now passes in private Fleet CI, and
+provisioning's x86 and native ARM64 checks pass. The service-owner support at Fleet
+revision `46c2dda5bb83a6ac239033a48402b6a4fd4745e7` passed native x86_64/ARM64,
+imported-control-plane, identity, renderer and historical NVMe CI. No live
+credential/deadline was changed, and no
+thirty-day term or unattended observation has started.
+
+### Trust staging and service-certificate checkpoint
+
+The public CA handoff passed exact fingerprint checks. All three public candidates
+are staged on Ace and Mako, still uninstalled. The original migration manifest and
+deadline remain unchanged. The new trust-staging guard accepts a pinned owner
+receipt only under that original deadline and retains the exact replaced artifacts
+in its checked archive. It cannot activate the thirty-day term.
+
+Validation passed: 147 packaged migration tests without skips, nine guard tests,
+Nix module evaluation and 27 native ARM64 staging/policy tests. The imported
+control-plane VM passed with retained memberships across restart, archive-tamper
+denial, recovery after archive restoration and original-deadline enforcement.
+The VM result is `/nix/store/c8v0hwg0klki2vggg25815p39pfc1g9b-vm-test-run-kaiba-imported-pilot-control-plane`.
+Its first attempt exposed asynchronous dependent-unit shutdown in the test
+orchestration; that failed attempt remains recorded. The successful rehearsal
+explicitly stops and checks every pilot unit. Live stopped-writer procedures must
+do the same rather than treating target shutdown as proof that all writers stopped.
+
+Ace prepared six public CSRs using its retained service keys. Independent checks
+on Malak verified their signatures and exact original certificate fields before
+accessing any CA key. Ten signing/reconciliation tests passed both locally and
+natively on ARM64. The source signing packet requests uninstalled leaf candidates
+expiring `2026-11-07T00:00:00Z`, bounded by the continued CAs. Packet SHA-256:
+`3eb0a0a7a5a354caa4c11bfe892d5f7e90786f64df0d78a9aa1610b6a752f2f1`.
+The local recovery-passphrase ceremony completed at **2026-10-01T07:39:28Z**.
+All six receipts match the exact plans, retained keys and unchanged identity
+fields. The source mapping closed and source services stayed fenced. Its private
+result SHA-256 is
+`99b228c924c6d39b3a4af1f5305eec5eac05ca539b0cbc11445891efb224352b`.
+
+The owner completed a separate private handoff of only the public candidate
+certificates. Ace independently checked them against its live predecessors and
+staged them at **07:45:02Z**. All four authority services remained active and
+existing certificates/configurations were unchanged. No private keys were opened
+by handoff or staging. Thirteen local leaf-candidate tests now include incomplete
+handoff, changed-history, appended-content and expiry rejection. Candidate
+preparation and staging do not install certificates, replace keys, or activate
+renewal. Existing service certificates and private keys remain on Ace.
+
+These staging and candidate changes are pushed as Fleet revision
+`588cf5ad83e0c17bbe4f47ff9b0f4f4772a88f37`; native x86_64/ARM64,
+imported-control-plane, identity, renderer and historical NVMe CI all passed.
+Packaged delegation/controller and certificate checks passed at
+`/nix/store/342j5fyc3y60ngnrhfcmqg0fwm2b5swn-kaiba-pilot-renewal-delegation`.
+The private checkpoint digest is
+`b0719e7e64a71a05265cc59a2e960af9816b8244cd625c29b2487cdc0486c515`.
+
+Fresh pre-continuity baselines at **07:55Z** passed on Ace and Mako: retained
+device-state and membership hashes, original encrypted storage, expected services,
+synchronized time, fresh workload credentials and all twelve DNS queries from
+each host. Malak's six loaded source fences still match the accepted post-reboot
+definitions, with no authority listeners. No live trust or deadline changed.
+
+The cold-backup helper covers `/srv/kaiba-pilot`, including the private
+Fleet/issuer PostgreSQL cluster and policy/issuance history. It uses the running
+pilot's PostgreSQL 18 tools, not the host-default PostgreSQL 17 tool. It encrypts
+to Ace's retained migration recipient and verifies full local decryption against
+file bytes, owners and permissions. Separate SPIRE state and Malak's fenced CA
+container are outside this backup operation and remain unchanged.
+
+The first isolated backup VM rehearsal passed decryption/readback, retained
+memberships, watchdog restoration and preservation of unrelated PostgreSQL. A
+later exact-wrapper rehearsal refused a guard unit that finished shutdown in
+`failed` state with no process; restoration succeeded and the failed attempt was
+retained. The corrected predicate accepts only inactive/failed units with PID
+zero, rejects running/transitional states, and passed its native ARM64 regression.
+The final wrapper VM passed in 375.67 seconds, including restoration of a service
+with DNS primary's guard dependency. Its immutable result is
+`/nix/store/ki864knwsck3407qax95km5dk7srz6pa-vm-test-run-kaiba-imported-pilot-control-plane`.
+Four cold-backup and six operation tests also passed natively on ARM64.
+
+The real stopped-writer backup completed at **2026-10-01T08:28:49Z**. All 1,864
+files passed full authenticated decryption and comparison of bytes, ownership and
+permissions. Cipher SHA-256:
+`37b98b25f4101052478ba186f3bec011c03aa933ae6ba8c24873634478243989`.
+The archive and retained age recovery key remain private on Ace; their exact
+locations are in the private operation receipt. This same-disk backup supports
+maintenance rollback; it does not demonstrate disk-loss recovery or a restored
+SQL instance.
+
+Post-backup acceptance at **08:29Z** passed retained Ace/Mako device state and
+membership, expected services, fresh workload credentials and all twelve DNS
+queries from each host. Hydra, regular PostgreSQL and both SPIRE services retained
+their process IDs and invocation IDs. Ace's original authority services and DNS
+primary resumed, then the independent restoration timer was disarmed. Original
+system/configuration pins and the access deadline stayed unchanged. This backup
+is not the separate database-only outage acceptance test. No trust continuation,
+delegation activation or unattended observation has started.
+
+Set the pre-deadline decision checkpoint at **2026-10-02T14:00:00Z** (October 2,
+10 a.m. EDT), leaving twelve hours before the original deadline. At that point,
+record whether a qualified successor can activate or a separately reviewed
+existing-protocol bridge is needed. Preserve the stopped state/expiry boundary if
+neither is ready. The twenty-four-hour acceptance requirement is not shortened.
+
+### Durable publication checkpoint
+
+Fleet revision `3986be1a5e62e584e9aff98b792fc8cdcc25aaa6` and provisioning revision
+`4da4de1c5895ac99e93aefb8bc036449f82a58bd` add a confined publication command and
+compatible readers. Each predecessor operation retains its original observation,
+records and evidence in an immutable journal. One atomic append exposes the
+complete batch to both readers without restarting services or changing original
+selections. Reader grants pin exact principals, enrollment instances and the
+thirty-day delegation interval.
+
+Go race tests passed for publication, renewal and observation-reader packages.
+The packaged cross-repository check passed at
+`/nix/store/fn6068wqmy4jms7khkmhypdwp4y7jm1h-kaiba-pilot-renewal-delegation`:
+five delegation, three controller, four publication and five trust-continuation
+scenarios, plus certificate preparation tests. Publication used real mTLS and
+disposable PostgreSQL with a synthetic observer. It verified new-record reads on
+a retained TLS connection, unchanged reader processes, original record availability,
+retry reconciliation, changed-observation and revocation denial, and unchanged
+disposable memberships. It does not qualify hardware observation or unattended
+live renewal. The compatible consumer has a separate test dependency pin;
+historical enrollment and physical-campaign pins are unchanged.
+
+The publication receipt deliberately does not authorize renewal. The controller's
+plan producer now checks authenticated new-record acceptance and consumes separately
+observed trust, host-continuity and SPIRE registration bounds. Its native observer
+and compatible host configuration,
+management/worker credentials, coordinated CA/leaf rollout and activation remain
+open. None of this publication code is enabled on the live pilot. Exact-head CI,
+remaining native fault acceptance, the full twenty-four-hour observation and
+reviewed merged deployment are still required.
+
+### Measured plans and confined service credentials
+
+Fleet revision `3a30d72fb0f32a61b0f8d50b80584f4b150b9d5d` adds versioned plan
+preparation and exact pending-operation reconciliation. Plans retain the observed
+trust, continuity and registration limits, source references, observation-age
+limit, predecessor and operation ID. Lost-reply retries preserve the original
+request and records. A shorter live limit blocks an unfinished operation without
+silently shortening its authorization or issuing another credential.
+
+The complete local packaged check passed, including five delegation, three
+controller and five publication/plan scenarios,
+trust-continuation checks and certificate preparation tests. Go race checks passed
+for the pilot and publication packages. The plan fixture uses actual fixture
+certificate dates but **synthetic** host and SPIRE-registration observations.
+Production observer wiring and the versioned authority/member startup transitions
+remain required. The workload registry's delegation-bound transition is implemented
+in the checkpoint below; its live configuration and privileges remain to be deployed.
+Do not enable timers with hand-written validity claims in place of those adapters.
+
+Fresh read-only checks at **09:17–09:18Z** passed retained memberships, expected
+services and twelve DNS queries per host. Mako's first baseline collection failed;
+that attempt was retained, and a subsequent diagnostic collection passed. No
+service, credential installation or deadline changed.
+
+Eleven credential-preparation tests cover the five confined service profiles,
+scope/expiry rejection, interrupted key/CSR/signing operations and lost-reply
+reconciliation. Candidate preparation installs no certificate and activates no
+delegation. Operational signing instructions and custody details remain in the
+private handoff. The checkpoint SHA-256 is
+`131c5be9897099b5f7fee688e7ab14f2f56464bd74ddf66081b5863ac8d0e8cf`.
+
+Provisioning's documentation parent [PR 94](https://github.com/PseudoDesign/kaiba-provisioning/pull/94)
+is reviewed and merged at `2fc247199f8b03cca85b7e3c20b24fc6197d6648`.
+The physical-evidence parent [PR 95](https://github.com/PseudoDesign/kaiba-provisioning/pull/95)
+now targets `main` and includes the previously tested CI isolation fix at
+`b0ad66059e5211989328832667ccdbc8b80ce99a`; historical physical pins are unchanged.
+Its new checks and Fleet's latest native/VM checks are still pending at this
+checkpoint. Skipped hardware jobs are not passes. Remaining reviews, merged
+deployment, native faults, retained-key canaries and the actual twenty-four-hour
+observation still gate closure. No thirty-day term is active.
+
+### Verified service candidates and workload continuity
+
+All five confined renewal-service certificate candidates passed signature,
+original-CSR, role, key and validity checks and are staged on their destination
+hosts. They remain uninstalled. Read-only checks at **15:05–15:06Z** passed
+retained memberships, expected services and all twelve DNS queries per host.
+Mako's first collection failed and was retained; its subsequent diagnostic
+collection passed. At **15:24Z**, Malak's six former authority units remained
+inactive behind their loaded fences, with no authority listeners or source mapping.
+
+Fleet revision `e6c0e415562b67bc241f4e1d05711cee8ec0e015` adds the explicit
+workload continuity transition. It pins the original bindings and the approved
+delegation, reads current authority under the lifecycle lock on every request,
+and accepts only matching delegated renewal successors after policy refresh.
+A recovered original binding can be pinned; a later recovery cannot inherit that
+permission. Revocation and unavailable authority deny access on retained TLS
+connections without reverting to the original policy. Existing DNS grants stay
+intact, and short authorization results are clipped to current validity bounds.
+
+The full pilot Go race suite and the registry race suite against disposable
+PostgreSQL passed. The packaged registry check also passed, including renewed
+policy access, revocation over the same TLS connection, outage/recovery, expiry
+clipping, read-only SQL privileges and rejection of writable-schema authority
+decoys. CI now runs the PostgreSQL check on native x86_64 and ARM64; checks for
+this revision are pending. The preceding Fleet revision passed all its native
+and VM CI. Provisioning PR 95's selected checks passed; its skipped hardware and
+older-image jobs remain explicitly unqualified.
+
+The private checkpoint SHA-256 is `cd7d2aa110c3ca3ca3b2a9b56134a3b867a8a79f97951c60e9cdb56383fd501d`.
+Native validity observation, authority/member startup transitions and coordinated
+host/trust installation still gate activation. No thirty-day delegation or
+unattended observation has started. The original deadline and
+`full_qualification: false` remain unchanged. Remaining reviews, merged deployment,
+native faults, canary renewals and the actual twenty-four-hour run still gate
+LAN milestone closure.
+
+### Authenticated term reader and prepared member continuation
+
+Fleet revision `a2a69985e17d41e2b04c6dcc70af89d074eae44c` adds a restricted
+host-term read. It checks the latest delegation and retained membership under
+the renewal/cutover lock. Only that enrollment's worker reader may use it;
+revocation, expiry, changed identity/key/issuer/permissions and unavailable
+authority deny startup permission. The CLI independently validates the exact
+contract and pinned term. Offline contract verification reports a non-current
+result and cannot satisfy the startup guard.
+
+Host revision `9833cf765e8726d5eefed0d71386a3d1ada0055e` adds an optional Mako
+continuation receipt and reader configuration with immutable hashes. The
+original receipt, admitted SPIFFE node and cached keys remain intact. Activation
+must predate the original cutoff; the new term must last exactly thirty days;
+the authenticated read must be fresh; and the cached node certificate cannot
+outlast the term. The option defaults to disabled and is not installed live.
+
+Local validation passed: pilot Go race tests, 22 member-guard tests, the two-host
+Nix module check and the packaged renewal rehearsal (five delegation, four
+controller and five publication scenarios, plus trust/certificate checks).
+The real local PostgreSQL/TLS fixture exercised the new reader after same-key
+cutover and restarts, then proved outage and revoked-membership denial. An
+initial test fixture used unsupported nanosecond timestamps; that failed attempt
+was retained and the corrected microsecond fixture passed. At this checkpoint,
+the new Fleet revision passed native x86_64/ARM64, imported-control-plane,
+identity, renderer and historical-campaign CI. The preceding `e6c0e4`
+revision passed all six checks. Synthetic tests do not establish native rollout
+or unattended acceptance.
+
+Read-only captures at **16:04Z** passed Ace's 17 services, Mako's seven services,
+retained memberships and twelve DNS queries on each host. At **16:06Z**, Malak's
+six former authority units were inactive with PID zero and loaded fence checks;
+authority listeners and the source mapping were absent. Private fence files were
+not reopened. No live services, keys, credential installations or deadlines were
+changed. The private checkpoint SHA-256 is
+`974554ee9c48a084864df99be90db68ff794538cedb6d4350cdc72d76509d4b8`.
+
+Provisioning PR 95's source review and 20 inventory/observer plus seven disk-guard
+tests passed. Its README conflict with the merged documentation parent was
+resolved at `208bd60fab6395eea73ea30e4638db67ba844d14`, retaining the observations
+and clarifying the later physical campaign. All selected fresh checks passed,
+including native ARM64. It merged at `abd1d963cebb6e1926a414aef78ed754ac887a2e`;
+immutable physical-image and Fleet pins are unchanged. The workflow skipped the
+older-verifier-image and hardware jobs according to its selection policy; these
+are not additional hardware passes.
+
+The next activation gates remain Ace's versioned authority transition, the
+native confined validity observer and coordinated SPIRE issuance limits.
+SPIRE documents registration `entryExpiry` as
+[data cleanup, not a security boundary](https://spiffe.io/docs/latest/deploying/spire_server/).
+Its timestamp alone cannot qualify a validity observation: certificate lifetimes
+and issuance must also be bounded by the applicable authorization and term.
+Then complete coordinated trust/host installation, Mako/Ace canaries, remaining
+native faults, the full twenty-four-hour observation and reviewed merged
+revision deployment. The current cutoff remains **October 2 at 10:06 p.m. EDT**;
+no thirty-day delegation or unattended observation is active.
+
+### Reviewed parents merged; local authority startup read prepared
+
+[Fleet PR 30](https://github.com/PseudoDesign/kaiba-fleet/pull/30) merged at
+`45db927823cf819c02387b3a6c1df67a5433b6a2` after source review and all five selected
+native/VM/renderer checks passed. The exact-head local review replay passed pilot,
+workload registry/operator and wire race tests, 23 LAN tests, and 132 migration
+tests. Three migration tests were skipped locally because that invocation lacked
+the isolated PostgreSQL/age setup; the packaged CI supplies those dependencies.
+The renewal child now targets `main`. Its squash-history conflict resolution
+verified that merged main was byte-identical to the child's existing parent,
+then preserved the validated renewal tree.
+
+Provisioning PR 96 now also targets `main`. Revision
+`0cf14a1` rechecks clock certainty, forward time, the owner packet and the current
+credential interval after the authenticated authority read and immediately before
+saving trust continuation. The protected-client and publication race suites pass,
+including clock loss, rollback and approval/credential expiry during that read.
+Failed attempts do not change retained state. Fresh CI remains the merge gate.
+
+Fleet revision `5d1a3996ad2f27708dd36a1f9e9eeddbbe920861` adds
+`kaiba-pilot-authority-term` for Ace's post-database, pre-API startup phase. It
+requires the exact local peer socket and uses a read-only READ COMMITTED
+transaction under the lifecycle lock. It reads schema-qualified authority tables,
+checks the latest pinned delegation and every retained membership, and reports
+only sanitized scope/expiry data. It performs no migrations or initialization and
+cannot use TCP, passwords, fallback connections or cached authority state.
+
+The pilot race suite and packaged renewal rehearsal pass. The latter exercises a
+SELECT-only reader role, successful reads with Fleet stopped, database outage and
+recovery, retained-key cutover, member/delegation revocation and stale search-path
+decoys. The packaged result is
+`/nix/store/d309ha6b4w92is8sir2kdawyxym9ad15-kaiba-pilot-renewal-delegation`.
+It includes five delegation, five controller and five publication scenarios,
+plus trust/certificate checks. The earlier build that omitted an untracked source
+file is retained as a failed attempt; the corrected candidate passed. ARM64/VM CI
+for the new revision is pending.
+
+The local reader does not itself implement the versioned authority transition or
+SPIRE issuance guard. Upstream SPIRE 1.15.2
+[workload signing](https://github.com/spiffe/spire/blob/v1.15.2/pkg/server/api/svid/v1/service.go)
+passes the registration's requested TTL to the CA; its
+[credential composer interface](https://github.com/spiffe/spire/blob/v1.15.2/pkg/server/plugin/credentialcomposer/credentialcomposer.go)
+does not expose X.509 validity fields. Therefore registration cleanup or a
+composer attribute alone is insufficient to enforce an absolute term cutoff.
+Qualify the actual signing lifetime and shutdown enforcement before activation.
+
+No live host, deadline, private key or credential installation changed during
+these reviews. Ace generation 14 and Mako generation 15 remain the deployed
+baseline. The authority transition, confined validity observer, coordinated trust
+installation, canaries, native fault acceptance, twenty-four-hour unattended run
+and final merged-revision deployment remain open. No term is active and
+`full_qualification` remains false.
+
+Read-only SPIRE inventory at **16:42Z** found nine registrations: five expire
+at the existing pilot cutoff, while the Ace probe and Ace/Mako/Malak aliases
+have no entry expiry. The installed agent and default X.509 TTLs are one hour.
+The explicit continuity operation must bound the intended Ace/Mako registration
+set and preserve Malak's exclusion; it must not automatically carry the old
+Malak alias into the new term. No registration was changed by this inventory.
+The first inventory parser expected an object where Nix serialized a singleton
+list; the corrected read retained that actual shape and collected public settings
+only. Registration expiry remains a cleanup measure, not the signing cutoff.
+
+The private parent-merge/implementation checkpoint SHA-256 is
+`6435efeeae4ee0a6af818c09df38dec7ff231ab977542d0fc764dd030c98b783`.
+
+### Host-foundation review and merge
+
+[Host PR 14](https://github.com/PseudoDesign/nix-pseudo-design/pull/14) merged at
+`d5ccc0fc8e6a97f15c81633297523f0d89931d9f`. Review found and corrected the
+activation helper's use of `systemctl is-active` with several unit names, which
+succeeds if any one is active. It now checks each service and automount
+individually. ShellCheck, Bash syntax and three isolated health-check scenarios
+passed without invoking live service actions. Nix reproduced the exact recorded
+generation-10 closure, `ylpbjk8jzr195l7yn7f713sgjfimicbs`, so the helper correction
+does not change that system composition. This repository exposes no PR CI for
+this head; the recorded native installation and reproduced closure are the
+evidence, not a missing-CI pass.
+
+Host PR 15 now targets `main` at
+`a785a9ba9757dd2737646df3bdc37e757d8998c4`. The merge verified the parent changed
+only that helper, then preserved the LAN child's existing configuration and
+prepared member guard. No host was deployed or restarted. Provisioning
+`0cf14a19674b1b5a6a544ffde91988c7e9e6db84` has passed all selected fresh checks,
+including native ARM64 operator packages and x86 core checks. Fleet `5d1a399`
+has passed both native architectures, imported-control-plane, renderer and
+historical-campaign checks; the identity VM was still running at this update.
+Renewal and host deployment gates above remain open.
