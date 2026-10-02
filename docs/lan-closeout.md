@@ -130,8 +130,9 @@ The corrected inventory confirms all original certificate/configuration hashes,
 enabled existing approval/cutover paths, and absent delegation/publication config.
 No key contents or database rows were read and no host was changed.
 
-[Fleet PR 39](https://github.com/PseudoDesign/kaiba-fleet/pull/39), at `3a5a4fe`,
-adds the successor host-policy executable and includes merged PR 38. It composes
+[Fleet PR 39](https://github.com/PseudoDesign/kaiba-fleet/pull/39), merged at
+`d7027c24b523a1030b855ec8fe1b6582ad2ce1aa` from reviewed head
+`3a5a4fe8a88562a87c750c521feafaf2c312c102`, adds the successor host-policy executable and includes merged PR 38. It composes
 current approved certificate/configuration checks with unchanged historical
 migration and recovery proofs, retaining actual-host, host-key, no-swap and
 synchronized-clock checks. The parent import guard supplies the immutable receipt
@@ -150,7 +151,7 @@ Two earlier attempts lacked a dependency in the historical source tree and are
 retained; the complete candidate source corrected the rehearsal. No database
 was accessed or key exported. This is historical-proof acceptance only: the new
 guard is uninstalled, full transition/restoration acceptance remains outstanding,
-and PR 39 CI is pending on the combined revision.
+and all six selected PR 39 CI checks passed on the combined revision.
 
 Fresh read-only checks at 18:54–18:58 UTC confirmed Mako's retained membership,
 seven expected services and all twelve primary/replica DNS queries. Ace's
@@ -165,7 +166,14 @@ SSH key. The owner subsequently restored restricted, 24-hour workspace access
 from Malak. Fresh SSH and passwordless administrative checks passed on Ace.
 At **20:52 UTC**, its retained state/membership, seventeen expected services and
 all twelve DNS queries passed. Mako's fresh baseline could not run because it
-also rejected the workspace key; owner recovery was requested.
+also rejected the workspace key; owner recovery was requested. The owner restored
+Mako access afterward. At **03:16 UTC on October 2** (October 1, 11:16 p.m. EDT),
+fresh authenticated checks passed on both hosts: retained state and memberships,
+seventeen Ace services, seven Mako services and twelve DNS queries from each.
+Mako’s current authorization still ends at the original deadline; expired
+historical certificates in its retained history are not current-membership
+failures. At **03:25 UTC**, Malak’s six loaded source fences remained inactive,
+with no authority listeners or source mapping.
 
 The repeat Hydra stop is now explained: `hydra-check-space.service` runs every
 five minutes and stops the queue runner below **20 GiB** available. At 20:54 UTC,
@@ -194,14 +202,37 @@ Malak's six source services remain fenced and
 inactive, its authority listeners are absent, and its source mapping is closed.
 The failed Ace baseline and an earlier inconclusive Mako sample are retained.
 
-[Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) at
-`7fa6d53` now selects the merged Fleet packages and merged DNS interface
-`e1f18fbc355b70b2d87245288d4ebb837434cbdd`. Host composition, member-guard and
-retained-device checks pass; unchanged derivations were reused where applicable.
-Hardware and regular service inputs are unchanged. These candidates have **not**
-been installed: Ace generation 14 and Mako generation 15 remain the recorded
-running deployment. No delegation, unattended timer or 24-hour observation is
-active, and the original deadline remains in force.
+[Host PR 15](https://github.com/PseudoDesign/nix-pseudo-design/pull/15) merged at
+`5e0110459dd743d24ea7679b480dc9ce3a84b10a`, from reviewed head
+`72cf3f8a6cd582230e2d738ec137c8dae7c591a4`. It selects merged Fleet
+`d7027c24b523a1030b855ec8fe1b6582ad2ce1aa`, deployable provisioning
+`30c35edd336bd61dda87993c92de742c01fa37c2` and DNS
+`e1f18fbc355b70b2d87245288d4ebb837434cbdd`. Historical fixture and hardware
+pins are unchanged. Two-host composition, admitted-member guard, tmpfiles,
+retained-device persistence VM and legacy encrypted-storage checks pass.
+The host repository has **no PR CI checks**; their absence is not a pass.
+
+Both active profiles built natively on Ace, and the merged revision archives to
+exactly the reviewed source/dependency tree. Comparison with installed profiles
+confirmed unchanged kernel/initrd/firmware, filesystems, service sets and enabled
+units. Eight Ace pilot units change package/guard references; Mako changes its
+admission-guard references and tmpfiles rule. Regular application units are
+unchanged. The candidate Ace storage/import guard and Mako admission guard passed
+read-only native checks against retained state, with continuation disabled.
+This verifies compatibility with the existing policy, not a new term.
+
+The candidate manifest SHA-256 is
+`0e938940d6b7bf0d50db7d1595043c58c42b5cf8e53453917e5a2ff56c6e9c4a`.
+Private build, comparison and guard evidence is retained on Malak under
+`.worktrees/.private-observations/2026-10-02-merged-host-candidates`.
+Explicit roots on Ace under
+`/nix/var/nix/gcroots/kaiba-lan-host-candidates-20261002` retain both closures
+and their source. These candidates have **not** been installed: Ace generation
+14 and Mako generation 15 remain the running deployment. No delegation,
+unattended timer or 24-hour observation is active. The original deadline and
+October 2 **14:00 UTC / 10 a.m. EDT** pre-deadline checkpoint remain in force.
+A fresh stopped-writer backup and rehearsed deployment operation precede
+replacement of the compatible live components.
 
 Activation still requires native acceptance of the current certificate/configuration
 verifier and successor host-policy executable, plus a reviewed operation producer,
@@ -212,8 +243,9 @@ observation before final merged-revision deployment and closure. The successor
 guard alone does not satisfy those gates.
 
 The latest private checkpoint SHA-256 is
-`8048cfd6cbbb71cf3fa2f5e2091b054be70bc29056baa5c022a58ff64684ecc2`.
+`93b87616bbaf14edd5576c32c9ed3d65faecf1a23988b19d1ddecdbe5bd7eafc`.
 Its predecessors are
+`8048cfd6cbbb71cf3fa2f5e2091b054be70bc29056baa5c022a58ff64684ecc2`,
 `89aee406b7467894006fcd3c740019ce0bcadbd4615a05ea5ca410f9e324e118`,
 `fb4d7d4e9f26ea8542453594e09c2c82ca516a23f4602912029e2d97af12b118`,
 `80d4b4c26042eae5310f750ea32a1c539d1d4085171af17ce101f3b549e26dcf`,
